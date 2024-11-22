@@ -12,7 +12,7 @@ public interface IGenericRepository<T> where T : class
          CancellationToken cancellationToken = default);
     Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations, CancellationToken cancellationToken = default);
     Task<T?> GetByIdAsync(int id);
-    Task AddAsync(T entity, CancellationToken cancellationToken = default);
+    Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default);
     void Delete(T entity);
     void DeleteRange(IEnumerable<T> entities);
 }

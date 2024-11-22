@@ -10,4 +10,8 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LibrarySystem.Data\LibrarySystem.Data.csproj" />
+  </ItemGroup>
+
 </Project>

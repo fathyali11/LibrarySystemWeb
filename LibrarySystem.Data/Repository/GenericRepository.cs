@@ -71,9 +71,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.FindAsync(id);
     }
     
-    public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         await _dbSet.AddAsync(entity,cancellationToken);
+        return entity;
     }
 
     public void Delete(T entity)

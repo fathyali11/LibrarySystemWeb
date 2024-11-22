@@ -1,4 +1,4 @@
-﻿using LibrarySystem.Domain.DTO;
+﻿using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Domain.Entities;
 using System;
 using System.Collections.Generic;

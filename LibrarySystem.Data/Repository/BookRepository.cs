@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using LibrarySystem.Data.Data;
-using LibrarySystem.Domain.DTO;
+using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Domain.IRepository;
 

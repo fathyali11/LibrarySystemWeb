@@ -1,4 +1,5 @@
 using LibrarySystem.Data.Data;
+using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Domain.Mappings;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(BookMapping).Assembly);
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
