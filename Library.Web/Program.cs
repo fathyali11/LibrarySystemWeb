@@ -1,7 +1,9 @@
 using LibrarySystem.Data.Data;
 using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Entities;
+using LibrarySystem.Domain.IRepository;
 using LibrarySystem.Domain.Mappings;
+using LibrarySystem.Services.Services.Books;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +16,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(BookMapping).Assembly);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<IBookServices, BookServices>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

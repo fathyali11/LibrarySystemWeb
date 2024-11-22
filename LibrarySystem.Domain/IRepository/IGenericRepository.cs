@@ -3,7 +3,7 @@
 namespace LibrarySystem.Domain.IRepository;
 public interface IGenericRepository<T> where T : class
 {
-    Task<IEnumerable<T>> GetAllAsync(
+    Task<IQueryable<T>> GetAllAsync(
          Expression<Func<T, bool>>? predicate = null,
          string? includedNavigations = null,
          Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
@@ -12,6 +12,7 @@ public interface IGenericRepository<T> where T : class
          CancellationToken cancellationToken = default);
     Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations, CancellationToken cancellationToken = default);
     Task<T?> GetByIdAsync(int id);
+    Task<bool> IsExits(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default);
     Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default);
     void Delete(T entity);
     void DeleteRange(IEnumerable<T> entities);
