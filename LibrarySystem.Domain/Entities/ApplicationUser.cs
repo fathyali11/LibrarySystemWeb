@@ -9,5 +9,5 @@ public class ApplicationUser:IdentityUser
     public string Address {  get; set; }=string.Empty;
     // Navigation properties
     public ICollection<Order> ?Orders { get; set; }
-    public ICollection<Payment> ?Payment { get; set; }
+    public ICollection<Payment> ?Payments { get; set; }
 }

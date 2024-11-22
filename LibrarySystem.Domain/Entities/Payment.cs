@@ -12,5 +12,5 @@ public class Payment
 
     // Navigation property
     public Order Order { get; set; } = default!;
-    public ApplicationUser User { get; set; } = default!
+    public ApplicationUser User { get; set; } = default!;
 }
