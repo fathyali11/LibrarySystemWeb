@@ -9,6 +9,7 @@ public class Payment
     public DateTime PaymentDate { get; set; }
     public string PaymentMethod { get; set; } = string.Empty;
     public string PaymentStatus { get; set; } = string.Empty;
+    public bool IsDeleted {  get; set; }
 
     // Navigation property
     public Order Order { get; set; } = default!;

@@ -8,6 +8,7 @@ public class Book
     public decimal PriceForBuy { get; set; }
     public decimal PriceForBorrow { get; set; }
     public DateTime PublishedDate { get; set; }
+    public bool IsAvailable => Quantity > 0;
     public int CategoryId { get; set; }
     public int AuthorId { get; set; }
 

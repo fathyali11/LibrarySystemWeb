@@ -6,6 +6,7 @@ public class Order
     public DateTime OrderDate { get; set; }
     public decimal TotalAmount { get; set; }
     public string OrderStatus { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
 
     // Navigation properties
     public ICollection<OrderItem> OrderItems { get; set; } = [];
