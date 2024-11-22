@@ -19,6 +19,8 @@ public class BookMapping:Profile
             .ForMember(dest => dest.IsAvailable, option => option.Ignore())
             .ForMember(dest => dest.PublishedDate, option => option.Ignore())
             .ForMember(dest => dest.Id, option => option.Ignore())
+            .ForMember(dest=>dest.Author, option => option.Ignore())
+            .ForMember(dest=>dest.Category, option => option.Ignore())
             .ReverseMap();
 
         CreateMap<Book, BookResponse>()
@@ -29,8 +31,8 @@ public class BookMapping:Profile
             .ForMember(dest => dest.PriceForBorrow, option => option.MapFrom(src => src.PriceForBorrow))
             .ForMember(dest => dest.CategoryId, option => option.MapFrom(src => src.CategoryId))
             .ForMember(dest => dest.AuthorId, option => option.MapFrom(src => src.AuthorId))
-            .ForMember(dest => dest.IsAvailable, option => option.Ignore())
-            .ForMember(dest => dest.PublishedDate, option => option.Ignore())
+            .ForMember(dest => dest.IsAvailable, option => option.MapFrom(src=>src.IsAvailable))
+            .ForMember(dest => dest.PublishedDate, option => option.MapFrom(src => src.PublishedDate))
             .ForMember(dest => dest.id, option => option.MapFrom(src => src.Id));
     }
 }

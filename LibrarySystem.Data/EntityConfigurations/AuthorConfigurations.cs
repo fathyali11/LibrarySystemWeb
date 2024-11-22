@@ -1,7 +1,7 @@
 ﻿using LibrarySystem.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-namespace LibrarySystem.Data.EntityConfigurations;
+using Microsoft.EntityFrameworkCore;
+
 public class AuthorConfigurations : IEntityTypeConfiguration<Author>
 {
     public void Configure(EntityTypeBuilder<Author> builder)
@@ -20,9 +20,9 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
             .HasMaxLength(1000);
 
         builder.HasMany(a => a.Books)
-            .WithOne()
-            .HasForeignKey("AuthorId")
-            .IsRequired() 
-            .OnDelete(DeleteBehavior.Restrict); // Cascade delete: deleting an Author deletes their books
+            .WithOne(b => b.Author) // Specify navigation property
+            .HasForeignKey(b => b.AuthorId) // Use the explicitly defined property
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict); // Restrict instead of Cascade if desired
     }
 }
