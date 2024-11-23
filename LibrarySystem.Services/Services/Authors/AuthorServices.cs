@@ -5,24 +5,60 @@ using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Author;
 using LibrarySystem.Domain.Entities;
+using Microsoft.Extensions.Caching.Distributed;
 using OneOf;
+using System.Text.Json;
 
 namespace LibrarySystem.Services.Services.Authors;
-public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork) : AuthorRepository(context, mapper), IAuthorServices
+public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork,IDistributedCache distributedCache) 
+    : AuthorRepository(context, mapper), IAuthorServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
+    private readonly IDistributedCache _distributedCache = distributedCache;
     private readonly IMapper _mapper=mapper;
     public async Task<OneOf<IEnumerable<AuthorResponse>, Error>> GetAllAuthorsAsync(CancellationToken cancellationToken = default)
     {
+        const string cashKey = "All-Authors";
+        var cashedValue=await _distributedCache.GetStringAsync(cashKey,cancellationToken);
+        if(cashedValue is not null )
+            return JsonSerializer.Deserialize<List<AuthorResponse>>(cashedValue)!;
+
         var authors = await _unitOfWork.AuthorRepository.GetAllAsync(cancellationToken: cancellationToken);
         var response=_mapper.Map<List<AuthorResponse>>(authors);
-        return response is not null?response:AuthorErrors.NotFound;
+        if (response is null)
+            return AuthorErrors.NotFound;
+        var serializedData = JsonSerializer.Serialize(response);
+        await _distributedCache.SetStringAsync(cashKey, serializedData,
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            },
+            cancellationToken);
+
+        return response;
     }
     public async Task<OneOf<IEnumerable<AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(CancellationToken cancellationToken = default)
     {
+        const string cashKey = "All-Authors-Books";
+        var cashedValue = await _distributedCache.GetStringAsync(cashKey, cancellationToken);
+        if (cashedValue is not null)
+            return JsonSerializer.Deserialize<List<AuthorWithBooksResponse>>(cashedValue)!;
+
+
         var authors=await _unitOfWork.AuthorRepository.GetAllAsync(includedNavigations:"Books",cancellationToken:cancellationToken);
         var response=_mapper.Map<List<AuthorWithBooksResponse>>(authors);
-        return response is not null ? response : AuthorErrors.NotFound;
+        if(response is null)
+            return AuthorErrors.NotFound;
+
+        var serializedData = JsonSerializer.Serialize(response);
+        await _distributedCache.SetStringAsync(cashKey, serializedData,
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            },
+            cancellationToken);
+
+        return response;
     }
     public async Task<OneOf<AuthorResponse, Error>> GetAuthorAsync(int id, CancellationToken cancellationToken = default)
     {
@@ -42,6 +78,8 @@ public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOf
         var result=await _unitOfWork.AuthorRepository.AddAsync(author,cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
         var response=_mapper.Map<AuthorResponse>(result);
+        await _distributedCache.RemoveAsync("All-Authors", cancellationToken);
+        await _distributedCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
 
@@ -56,6 +94,8 @@ public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOf
 
         await _unitOfWork.SaveChanges(cancellationToken);
         var response = _mapper.Map<AuthorResponse>(result);
+        await _distributedCache.RemoveAsync("All-Authors", cancellationToken);
+        await _distributedCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
 
@@ -71,6 +111,8 @@ public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOf
         authorFromDb!.IsDeleted = !authorFromDb.IsDeleted;
         await _unitOfWork.SaveChanges(cancellationToken: cancellationToken);
         var response = _mapper.Map<AuthorResponse>(authorFromDb);
+        await _distributedCache.RemoveAsync("All-Authors", cancellationToken);
+        await _distributedCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
 }

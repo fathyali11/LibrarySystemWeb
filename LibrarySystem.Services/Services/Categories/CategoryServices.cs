@@ -5,25 +5,55 @@ using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Categories;
 using LibrarySystem.Domain.Entities;
+using Microsoft.Extensions.Caching.Distributed;
 using OneOf;
+using System.Text.Json;
 
 namespace LibrarySystem.Services.Services.Categories;
-public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork)
+public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork,IDistributedCache distributedCache)
     : CategoryRepository(context, mapper), ICategoryServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
+    private readonly IDistributedCache _distributedCache = distributedCache;
     private readonly IMapper _mapper=mapper;
     public async Task<OneOf<IEnumerable<CategoryResponse>, Error>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
     {
+        const string cachKey = "All-Categories";
+        var cachedValue=await _distributedCache.GetStringAsync(cachKey);
+        if (cachedValue != null)
+            return JsonSerializer.Deserialize<List<CategoryResponse>>(cachedValue)!;
+
         var categories = await _unitOfWork.CategoryRepository.GetAllAsync(cancellationToken:cancellationToken);
         var responses =_mapper.Map<List<CategoryResponse>>(categories);
-        return responses is not null?responses:CategoryErrors.NotFound;
+        if (responses is null)
+            return CategoryErrors.NotFound;
+        var serializedData=JsonSerializer.Serialize(responses);
+        await _distributedCache.SetStringAsync(cachKey, serializedData, new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+        },
+            cancellationToken);
+        return responses ;
     }
     public async Task<OneOf<IEnumerable<CategoryWithBooksResponse>, Error>> GetAllCategoriesWithBooksAsync(CancellationToken cancellationToken = default)
     {
+        const string cachKey = "All-Categories-Books";
+        var cachedValue = await _distributedCache.GetStringAsync(cachKey);
+        if (cachedValue != null)
+            return JsonSerializer.Deserialize<List<CategoryWithBooksResponse>>(cachedValue)!;
+
         var categories = await _unitOfWork.CategoryRepository.GetAllAsync(includedNavigations:"Books",cancellationToken: cancellationToken);
         var responses = _mapper.Map<List<CategoryWithBooksResponse>>(categories);
-        return responses is not null ? responses : CategoryErrors.NotFound;
+
+        if (responses is null)
+            return CategoryErrors.NotFound;
+        var serializedData = JsonSerializer.Serialize(responses);
+        await _distributedCache.SetStringAsync(cachKey, serializedData, new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+        },
+            cancellationToken);
+        return responses;
     }
     public async Task<OneOf<CategoryResponse, Error>> GetCategoryByIdAsync(int id, CancellationToken cancellationToken = default)
     {
@@ -43,6 +73,8 @@ public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnit
         var result=await _unitOfWork.CategoryRepository.AddAsync(category);
         await _unitOfWork.SaveChanges(cancellationToken);
         var response=_mapper.Map<CategoryResponse>(result);
+        await _distributedCache.RemoveAsync("All-Categories", cancellationToken);
+        await _distributedCache.RemoveAsync("All-Categories-Books", cancellationToken);
         return response is not null ? response : CategoryErrors.NotFound;
     }
     public async Task<OneOf<CategoryResponse, Error>> UpdateCategoryAsync(int id, CategoryRequest request, CancellationToken cancellationToken = default)
@@ -56,6 +88,8 @@ public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnit
         var result = await _unitOfWork.CategoryRepository.UpdateAsync(id, request);
         await _unitOfWork.SaveChanges(cancellationToken);
         var response = _mapper.Map<CategoryResponse>(result);
+        await _distributedCache.RemoveAsync("All-Categories", cancellationToken);
+        await _distributedCache.RemoveAsync("All-Categories-Books", cancellationToken);
         return response is not null ? response : CategoryErrors.NotFound;
     }
 
@@ -68,6 +102,8 @@ public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnit
         categoryFromDb!.IsDeleted=!categoryFromDb.IsDeleted;
         await _unitOfWork.SaveChanges(cancellationToken: cancellationToken);
         var response=_mapper.Map<CategoryResponse>(categoryFromDb);
+        await _distributedCache.RemoveAsync("All-Categories", cancellationToken);
+        await _distributedCache.RemoveAsync("All-Categories-Books", cancellationToken);
         return response is not null ? response : CategoryErrors.NotFound;
     }
 

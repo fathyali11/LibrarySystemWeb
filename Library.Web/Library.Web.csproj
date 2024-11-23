@@ -17,7 +17,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="OneOf" Version="3.0.271" />
-    <PackageReference Include="Scalar.AspNetCore" Version="1.2.43" />
+    <PackageReference Include="Scalar.AspNetCore" Version="1.2.44" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
   </ItemGroup>
 

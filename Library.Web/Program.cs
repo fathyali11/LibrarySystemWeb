@@ -13,12 +13,14 @@ using FluentValidation;
 using LibrarySystem.Domain.FluentValidations.Categories;
 using LibrarySystem.Services.Services.Authors;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// cash data 
+
+builder.Services.AddDistributedMemoryCache();
 
 
 builder.Services.AddOpenApi();
