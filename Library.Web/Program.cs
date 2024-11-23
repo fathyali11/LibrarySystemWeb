@@ -11,6 +11,7 @@ using Scalar.AspNetCore;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using LibrarySystem.Domain.FluentValidations.Categories;
+using LibrarySystem.Services.Services.Authors;
 
 
 
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IBookServices, BookServices>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -12,6 +12,6 @@ public class CategoryRepository(ApplicationDbContext context,IMapper mapper) : G
     {
         var category = await GetByIdAsync(id);
         _mapper.Map(request, category);
-        return category;
+        return category!;
     }
 }
