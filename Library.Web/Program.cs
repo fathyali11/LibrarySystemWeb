@@ -4,9 +4,15 @@ using LibrarySystem.Domain.Entities;
 using LibrarySystem.Domain.IRepository;
 using LibrarySystem.Domain.Mappings;
 using LibrarySystem.Services.Services.Books;
+using LibrarySystem.Services.Services.Categories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using LibrarySystem.Domain.FluentValidations.Categories;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +21,19 @@ builder.Services.AddControllers();
 
 
 builder.Services.AddOpenApi();
+
 builder.Services.AddAutoMapper(typeof(BookMapping).Assembly);
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters();
+
+builder.Services.AddValidatorsFromAssembly(typeof(CategoryRequestValidator).Assembly);
+
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBookServices, BookServices>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

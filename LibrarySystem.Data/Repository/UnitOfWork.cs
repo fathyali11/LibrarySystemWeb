@@ -8,9 +8,12 @@ public class UnitOfWork(ApplicationDbContext context,IMapper mapper) : IUnitOfWo
     private readonly ApplicationDbContext _context = context;
     private readonly IMapper _mapper=mapper;
     private readonly IBookRepository ?_bookRepository;
+    private readonly ICategoryRepository? _categoryRepository;
 
     public IBookRepository BookRepository =>
         _bookRepository ?? new BookRepository(_context, _mapper);
+    public ICategoryRepository CategoryRepository=>
+        _categoryRepository ?? new CategoryRepository(_context,_mapper);
 
     public async Task SaveChanges(CancellationToken cancellationToken=default)
     {

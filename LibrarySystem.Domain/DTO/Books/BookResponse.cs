@@ -1,6 +1,4 @@
-﻿
-
-namespace LibrarySystem.Domain.DTO.Books;
+﻿namespace LibrarySystem.Domain.DTO.Books;
 public record BookResponse(
     int id,
     string Title,
