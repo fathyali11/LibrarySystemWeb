@@ -3,26 +3,35 @@ using LibrarySystem.Data.Data;
 using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.Errors;
+using LibrarySystem.Domain.DTO.Author;
 using LibrarySystem.Domain.DTO.Categories;
 using LibrarySystem.Domain.Entities;
+using LibrarySystem.Services.Services.Authors;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using System.Text.Json;
 
 namespace LibrarySystem.Services.Services.Categories;
-public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork,IDistributedCache distributedCache)
+public class CategoryServices(ApplicationDbContext context, 
+    IMapper mapper,IUnitOfWork unitOfWork,
+    IDistributedCache distributedCache,
+    ILogger<CategoryServices> logger)
     : CategoryRepository(context, mapper), ICategoryServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly IDistributedCache _distributedCache = distributedCache;
+    private readonly ILogger<CategoryServices> _logger = logger;
     private readonly IMapper _mapper=mapper;
     public async Task<OneOf<IEnumerable<CategoryResponse>, Error>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
     {
         const string cachKey = "All-Categories";
         var cachedValue=await _distributedCache.GetStringAsync(cachKey);
         if (cachedValue != null)
+        {
+            _logger.LogInformation("data from cach center");
             return JsonSerializer.Deserialize<List<CategoryResponse>>(cachedValue)!;
-
+        }
         var categories = await _unitOfWork.CategoryRepository.GetAllAsync(cancellationToken:cancellationToken);
         var responses =_mapper.Map<List<CategoryResponse>>(categories);
         if (responses is null)
@@ -33,6 +42,7 @@ public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnit
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
         },
             cancellationToken);
+        _logger.LogInformation("data from data base");
         return responses ;
     }
     public async Task<OneOf<IEnumerable<CategoryWithBooksResponse>, Error>> GetAllCategoriesWithBooksAsync(CancellationToken cancellationToken = default)
@@ -40,8 +50,10 @@ public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnit
         const string cachKey = "All-Categories-Books";
         var cachedValue = await _distributedCache.GetStringAsync(cachKey);
         if (cachedValue != null)
+        {
+            _logger.LogInformation("data from cach center");
             return JsonSerializer.Deserialize<List<CategoryWithBooksResponse>>(cachedValue)!;
-
+        }
         var categories = await _unitOfWork.CategoryRepository.GetAllAsync(includedNavigations:"Books",cancellationToken: cancellationToken);
         var responses = _mapper.Map<List<CategoryWithBooksResponse>>(categories);
 
@@ -53,6 +65,7 @@ public class CategoryServices(ApplicationDbContext context, IMapper mapper,IUnit
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
         },
             cancellationToken);
+        _logger.LogInformation("data from data base");
         return responses;
     }
     public async Task<OneOf<CategoryResponse, Error>> GetCategoryByIdAsync(int id, CancellationToken cancellationToken = default)

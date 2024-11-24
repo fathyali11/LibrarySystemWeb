@@ -6,22 +6,31 @@ using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Author;
 using LibrarySystem.Domain.Entities;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using System.Text.Json;
 
 namespace LibrarySystem.Services.Services.Authors;
-public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork,IDistributedCache distributedCache) 
+public class AuthorServices(ApplicationDbContext context,
+    IMapper mapper,
+    IUnitOfWork unitOfWork,
+    IDistributedCache distributedCache,
+    ILogger<AuthorServices> logger) 
     : AuthorRepository(context, mapper), IAuthorServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly IDistributedCache _distributedCache = distributedCache;
+    private readonly ILogger<AuthorServices> _logger = logger;
     private readonly IMapper _mapper=mapper;
     public async Task<OneOf<IEnumerable<AuthorResponse>, Error>> GetAllAuthorsAsync(CancellationToken cancellationToken = default)
     {
         const string cashKey = "All-Authors";
         var cashedValue=await _distributedCache.GetStringAsync(cashKey,cancellationToken);
         if(cashedValue is not null )
+        {
+            _logger.LogInformation("data from cach center");
             return JsonSerializer.Deserialize<List<AuthorResponse>>(cashedValue)!;
+        }
 
         var authors = await _unitOfWork.AuthorRepository.GetAllAsync(cancellationToken: cancellationToken);
         var response=_mapper.Map<List<AuthorResponse>>(authors);
@@ -34,7 +43,7 @@ public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOf
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             },
             cancellationToken);
-
+        _logger.LogInformation("data from data base");
         return response;
     }
     public async Task<OneOf<IEnumerable<AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(CancellationToken cancellationToken = default)
@@ -42,7 +51,10 @@ public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOf
         const string cashKey = "All-Authors-Books";
         var cashedValue = await _distributedCache.GetStringAsync(cashKey, cancellationToken);
         if (cashedValue is not null)
+        {
+            _logger.LogInformation("data from cach center");
             return JsonSerializer.Deserialize<List<AuthorWithBooksResponse>>(cashedValue)!;
+        }
 
 
         var authors=await _unitOfWork.AuthorRepository.GetAllAsync(includedNavigations:"Books",cancellationToken:cancellationToken);
@@ -57,7 +69,7 @@ public class AuthorServices(ApplicationDbContext context, IMapper mapper,IUnitOf
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             },
             cancellationToken);
-
+        _logger.LogInformation("data from data base");
         return response;
     }
     public async Task<OneOf<AuthorResponse, Error>> GetAuthorAsync(int id, CancellationToken cancellationToken = default)

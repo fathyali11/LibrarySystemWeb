@@ -12,8 +12,16 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using LibrarySystem.Domain.FluentValidations.Categories;
 using LibrarySystem.Services.Services.Authors;
-
+using Serilog;
 var builder = WebApplication.CreateBuilder(args);
+
+
+// logging
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)  
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -49,6 +57,7 @@ builder.Services.AddIdentity<ApplicationUser,IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
