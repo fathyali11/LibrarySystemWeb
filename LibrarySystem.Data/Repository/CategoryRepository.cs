@@ -8,9 +8,11 @@ namespace LibrarySystem.Data.Repository;
 public class CategoryRepository(ApplicationDbContext context,IMapper mapper) : GenericRepository<Category>(context), ICategoryRepository
 {
     private readonly IMapper _mapper=mapper;
-    public async Task<Category> UpdateAsync(int id, CategoryRequest request)
+    public async Task<Category?> UpdateAsync(int id, CategoryRequest request)
     {
         var category = await GetByIdAsync(id);
+        if (category == null) 
+            return null;
         _mapper.Map(request, category);
         return category!;
     }

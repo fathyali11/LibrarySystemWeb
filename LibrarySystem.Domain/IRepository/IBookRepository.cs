@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 namespace LibrarySystem.Domain.IRepository;
 public interface IBookRepository:IGenericRepository<Book>
 {
-    Task UpdateAsync(int id, BookRequest request);
+    Task<Book?> UpdateAsync(int id, BookRequest request);
 }

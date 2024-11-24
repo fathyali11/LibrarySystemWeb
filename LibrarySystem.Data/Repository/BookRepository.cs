@@ -10,9 +10,12 @@ public class BookRepository(ApplicationDbContext context, IMapper mapper) : Gene
 {
     private readonly IMapper _mapper=mapper;
 
-    public async Task UpdateAsync(int id, BookRequest request)
+    public async Task<Book?> UpdateAsync(int id, BookRequest request)
     {
         var book=await GetByIdAsync(id);
+        if(book == null)
+            return null;
         _mapper.Map(request, book);
+        return book;
     }
 }
