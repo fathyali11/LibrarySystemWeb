@@ -8,7 +8,8 @@ public class Book
     public decimal PriceForBuy { get; set; }
     public decimal PriceForBorrow { get; set; }
     public DateTime PublishedDate { get; set; }=DateTime.UtcNow;
-    public bool IsAvailable => Quantity > 0;
+    public bool IsAvailable { get;private set; }
+    public bool IsActive { get; set; } = true;
     public int CategoryId { get; set; }
     public int AuthorId { get; set; }
 

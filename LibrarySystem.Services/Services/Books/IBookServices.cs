@@ -9,7 +9,9 @@ namespace LibrarySystem.Services.Services.Books;
 public interface IBookServices:IBookRepository
 {
     Task<OneOf<BookResponse,Error>> AddBookAsync(BookRequest request,CancellationToken cancellationToken=default);
-    Task<OneOf<IEnumerable<BookResponse>,Error>> GetAllBooksAsync(CancellationToken cancellationToken=default);
+    Task<OneOf<IEnumerable<BookResponse>,Error>> GetAllBooksAsync(bool? includeNotAvailable = null, CancellationToken cancellationToken=default);
     Task<OneOf<BookResponse, Error>> GetBookByIdAsync(int id,CancellationToken cancellationToken=default);
     Task<OneOf<BookResponse,Error>> UpdateBookAsync(int id,BookRequest request,CancellationToken cancellationToken=default);
+    Task<OneOf<BookResponse,Error>> ToggleBookAsync(int id,CancellationToken cancellationToken=default);
+
 }

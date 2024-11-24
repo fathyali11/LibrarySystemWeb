@@ -4,6 +4,7 @@ using LibrarySystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibrarySystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124140953_updateBoolToBookTable")]
+    partial class updateBoolToBookTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,7 +131,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author", (string)null);
+                    b.ToTable("Author");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Book", b =>
@@ -185,7 +188,7 @@ namespace LibrarySystem.Data.Migrations
                     b.HasIndex("Title")
                         .IsUnique();
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.BorrowOrBuyBook", b =>
@@ -217,7 +220,7 @@ namespace LibrarySystem.Data.Migrations
                     b.HasIndex("BookId")
                         .IsUnique();
 
-                    b.ToTable("BorrowOrBuyBooks", (string)null);
+                    b.ToTable("BorrowOrBuyBooks");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Category", b =>
@@ -243,7 +246,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Order", b =>
@@ -276,7 +279,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.OrderItem", b =>
@@ -305,7 +308,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Payment", b =>
@@ -348,7 +351,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

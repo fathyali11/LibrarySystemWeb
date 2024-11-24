@@ -2,10 +2,7 @@
 using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Services.Services.Books;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
@@ -14,11 +11,11 @@ public class BooksController(IBookServices bookServices) : ControllerBase
 {
     private readonly IBookServices _bookServices=bookServices;
 
-    [HttpGet("")]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    [HttpGet("include-{include}")]
+    public async Task<IActionResult> GetAll([FromRoute]bool include,CancellationToken cancellationToken)
     {
         
-        var result=await _bookServices.GetAllBooksAsync(cancellationToken);
+        var result=await _bookServices.GetAllBooksAsync(include,cancellationToken:cancellationToken);
         return result.Match<IActionResult>(
             res => Ok(res),
             error=>error.ToProblem());
@@ -49,4 +46,12 @@ public class BooksController(IBookServices bookServices) : ControllerBase
              error => error.ToProblem());
     }
 
+    [HttpPut("toggel-status-{id}")]
+    public async Task<IActionResult> AddToggel([FromRoute]int id,CancellationToken cancellationToken)
+    {
+        var response = await _bookServices.ToggleBookAsync(id,cancellationToken);
+        return response.Match<IActionResult>(
+             res => Ok(res),
+             error => error.ToProblem());
+    }
 }

@@ -32,6 +32,7 @@ public class BookMapping:Profile
             .ForMember(dest => dest.CategoryId, option => option.MapFrom(src => src.CategoryId))
             .ForMember(dest => dest.AuthorId, option => option.MapFrom(src => src.AuthorId))
             .ForMember(dest => dest.IsAvailable, option => option.MapFrom(src=>src.IsAvailable))
+            .ForMember(dest => dest.IsActive, option => option.MapFrom(src=>src.IsActive))
             .ForMember(dest => dest.PublishedDate, option => option.MapFrom(src => src.PublishedDate))
             .ForMember(dest => dest.id, option => option.MapFrom(src => src.Id));
     }

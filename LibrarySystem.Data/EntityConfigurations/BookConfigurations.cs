@@ -33,6 +33,9 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
         builder.HasIndex(b => b.Title)
             .IsUnique();
 
+        builder.Property(b => b.IsAvailable)
+            .HasComputedColumnSql("CASE WHEN [Quantity] > 0 THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", stored: false);
+
         builder.HasOne(b => b.Author)
             .WithMany(a => a.Books)
             .HasForeignKey(b => b.AuthorId)
