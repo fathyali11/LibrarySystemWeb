@@ -10,4 +10,5 @@ public class Error
         Description = decription;
         StatusCode = statusCode;
     }
+    public static Error None = new("", "", 0);
 }
