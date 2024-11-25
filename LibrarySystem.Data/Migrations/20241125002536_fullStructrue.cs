@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LibrarySystem.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addIdentityAndEntitiesTables : Migration
+    public partial class fullStructrue : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,7 @@ namespace LibrarySystem.Data.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -60,7 +61,8 @@ namespace LibrarySystem.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Biography = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                    Biography = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,7 +76,8 @@ namespace LibrarySystem.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -196,7 +199,8 @@ namespace LibrarySystem.Data.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    OrderStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    OrderStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -221,9 +225,10 @@ namespace LibrarySystem.Data.Migrations
                     PriceForBuy = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     PriceForBorrow = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false, computedColumnSql: "CASE WHEN [Quantity] > 0 THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", stored: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
-                    AuthorId1 = table.Column<int>(type: "int", nullable: false)
+                    AuthorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -234,12 +239,6 @@ namespace LibrarySystem.Data.Migrations
                         principalTable: "Author",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Books_Author_AuthorId1",
-                        column: x => x.AuthorId1,
-                        principalTable: "Author",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Books_Category_CategoryId",
                         column: x => x.CategoryId,
@@ -259,7 +258,8 @@ namespace LibrarySystem.Data.Migrations
                     Amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PaymentStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    PaymentStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -372,11 +372,6 @@ namespace LibrarySystem.Data.Migrations
                 name: "IX_Books_AuthorId",
                 table: "Books",
                 column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Books_AuthorId1",
-                table: "Books",
-                column: "AuthorId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_CategoryId",
