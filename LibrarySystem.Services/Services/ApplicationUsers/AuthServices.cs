@@ -80,6 +80,23 @@ namespace LibrarySystem.Services.Services.ApplicationUsers
 
         }
 
+        public async Task<OneOf<bool, Error>> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if( user is null)
+                return UserErrors.NotFound;
+            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            if(!result.Succeeded)
+            {
+                var error = result.Errors.First();
+                return new Error(error.Code,error.Description,StatusCodes.Status400BadRequest);
+            }
+            return true;
+        }
+
+
+
+
         private (string token,DateTime expiresOn) GenerateTokenAsync(ApplicationUser user)
         {
             var securityKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
