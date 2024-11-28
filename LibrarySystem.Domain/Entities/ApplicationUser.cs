@@ -11,4 +11,5 @@ public class ApplicationUser:IdentityUser
     // Navigation properties
     public ICollection<Order> ?Orders { get; set; }
     public ICollection<Payment> ?Payments { get; set; }
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }

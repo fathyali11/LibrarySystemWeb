@@ -27,5 +27,11 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
             .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.OwnsMany(x => x.RefreshTokens)
+            .ToTable("RefreshTokens")
+            .WithOwner()
+            .HasForeignKey(x => x.UserId);
+            
     }
 }

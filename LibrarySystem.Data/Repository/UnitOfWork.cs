@@ -10,6 +10,7 @@ public class UnitOfWork(ApplicationDbContext context,IMapper mapper) : IUnitOfWo
     private readonly IBookRepository ?_bookRepository;
     private readonly ICategoryRepository? _categoryRepository;
     private readonly IAuthorRepository? _authorRepository;
+    private readonly IUserRepository? _userRepository;
 
     public IBookRepository BookRepository =>
         _bookRepository ?? new BookRepository(_context, _mapper);
@@ -18,6 +19,10 @@ public class UnitOfWork(ApplicationDbContext context,IMapper mapper) : IUnitOfWo
 
     public IAuthorRepository AuthorRepository=>
         _authorRepository ?? new AuthorRepository(_context,_mapper);
+
+    public IUserRepository UserRepository =>
+        _userRepository ?? new UserRepository(_context);
+        
 
     public async Task SaveChanges(CancellationToken cancellationToken=default)
     {

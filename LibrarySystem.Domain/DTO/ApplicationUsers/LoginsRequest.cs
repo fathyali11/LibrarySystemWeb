@@ -1,8 +1,5 @@
 ﻿namespace LibrarySystem.Domain.DTO.ApplicationUsers;
-public record UserRequest(
-    string FirstName,
-    string LastName,
+public record LoginsRequest(
     string Email,
-    string Address,
     string Password
     );
