@@ -17,7 +17,8 @@ namespace LibrarySystem.Domain.FluentValidations.ApplicationUsers
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.");
+                .EmailAddress().WithMessage("Invalid email format.")
+                .Must(IsGmailAddress).WithMessage("Email must be a Gmail address.");
 
             RuleFor(x => x.Address)
                 .MaximumLength(250).WithMessage("Address must not exceed 250 characters.");
@@ -31,5 +32,8 @@ namespace LibrarySystem.Domain.FluentValidations.ApplicationUsers
                .Matches(@"[!\@\#\$\%\^\&\*\(\)_\+\-]").WithMessage("Password must contain at least one special character.");
 
         }
+        private bool IsGmailAddress(string email)=>
+             email.EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase);
+        
     }
 }

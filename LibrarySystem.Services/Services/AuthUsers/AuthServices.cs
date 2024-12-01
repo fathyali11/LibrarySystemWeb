@@ -1,49 +1,66 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Abstractions;
+using LibrarySystem.Domain.Abstractions.ConstValues;
 using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.ApplicationUsers;
 using LibrarySystem.Domain.Entities;
+using LibrarySystem.Services.Services.Emails;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using OneOf;
 
-namespace LibrarySystem.Services.Services.ApplicationUsers
+namespace LibrarySystem.Services.Services.AuthUsers
 {
     public class AuthServices(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IMapper mapper,
         IOptions<JwtOptions> options,
-        IUnitOfWork unitOfWork):IAuthServices
+        IUnitOfWork unitOfWork,
+        ILogger<AuthServices> logger,
+        IEmailSender emailSender,
+        IHttpContextAccessor httpContextAccessor) :IAuthServices
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IMapper _mapper = mapper;
         private readonly JwtOptions _jwtOptions = options.Value;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<AuthServices> _logger = logger;
+        private readonly IEmailSender _emailSender = emailSender;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
         private readonly int _refreshTokenExpirationOnDays=7;
-        public async Task<OneOf<AuthResponse,Error>> RegisterAsync(RegistersRequest request, CancellationToken cancellationToken = default)
+        public async Task<OneOf<bool, Error>> RegisterAsync(RegistersRequest request, CancellationToken cancellationToken = default)
         {
             var userIsExists = await _unitOfWork.UserRepository.IsExistAsync(request.UserName, request.Email);
             if (userIsExists)
                 return UserErrors.IsFound;
-            
-            var user=_mapper.Map<ApplicationUser>(request);
-            var result=await _userManager.CreateAsync(user,request.Password);
-            if(!result.Succeeded)
+            var isGmailEmail = request.Email.EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase);
+            if (!isGmailEmail)
+                return UserErrors.InValidEmailype;
+
+            var user = _mapper.Map<ApplicationUser>(request);
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
             {
-                var error=result.Errors.FirstOrDefault();
-                return new Error(error!.Code,error.Description,StatusCodes.Status400BadRequest);
+                var error = result.Errors.FirstOrDefault();
+                return new Error(error!.Code, error.Description, StatusCodes.Status400BadRequest);
             }
 
-            return await GenerateResponse(user);
+            await SendEmail(user);
+            return true;
         }
 
         public async Task<OneOf<AuthResponse, Error>> LoginAsync(LoginsRequest request, CancellationToken cancellationToken = default)
@@ -52,14 +69,22 @@ namespace LibrarySystem.Services.Services.ApplicationUsers
             if (user is null)
                 return UserErrors.InValid;
 
-            var result=await _signInManager.CheckPasswordSignInAsync(user, request.Password,false);
+            var result=await _signInManager.PasswordSignInAsync(user, request.Password,false,false);
             if (!result.Succeeded)
             {
                 if (result.IsLockedOut)
                     return UserErrors.IsLocked;
-                return UserErrors.InValid;
+                else if(result.IsNotAllowed)
+                    return UserErrors.EmailNotConfirmed;
+                else
+                    return UserErrors.InValid;
             }
-
+            var hasRefreshToken = user.RefreshTokens.Where(x => x.IsActive).ToList();
+            if(hasRefreshToken.Any())
+            {
+                foreach (var refreshToken in hasRefreshToken)
+                    refreshToken.RevokedOn=DateTime.UtcNow;
+            }
             return await GenerateResponse(user);
         }
 
@@ -94,7 +119,38 @@ namespace LibrarySystem.Services.Services.ApplicationUsers
             return true;
         }
 
+        public async Task<OneOf<bool,Error>> ConfirmEmailAsync(ConfirmEmailRequest request,CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId);
+            if(user is null)
+                return UserErrors.NotFound;
 
+            if (user.EmailConfirmed)
+                return UserErrors.EmailConfirmed;
+            var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+            var result = await _userManager.ConfirmEmailAsync(user,token);
+            if(!result.Succeeded)
+            {
+                _logger.LogInformation("email not confirmed");
+                var error = result.Errors.First();
+                return new Error(error.Code, error.Description, StatusCodes.Status400BadRequest);
+            }
+            _logger.LogInformation("email confirmed");
+            await _unitOfWork.SaveChanges(cancellationToken);
+            return true;
+
+        }
+
+        public async Task<OneOf<bool,Error>> ResendConfirmEmailAsync(ResendConfirmEmailRequest request,CancellationToken cancellationToken=default)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if( user is null) 
+                return UserErrors.NotFound;
+
+            await SendEmail(user);
+            return true;
+
+        }
 
 
         private (string token,DateTime expiresOn) GenerateTokenAsync(ApplicationUser user)
@@ -153,6 +209,7 @@ namespace LibrarySystem.Services.Services.ApplicationUsers
             }
             catch
             {
+                _logger.LogInformation("token is not valid as validation returns null");
                 return null;
             }
         }
@@ -176,6 +233,26 @@ namespace LibrarySystem.Services.Services.ApplicationUsers
             });
             await _unitOfWork.SaveChanges();
             return response;
+        }
+
+        private async Task SendEmail(ApplicationUser user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            var origin = _httpContextAccessor.HttpContext!.Response.Headers.Origin;
+            var confirmationLink = $"{origin}api/confirm-email?token={token}&userId={user.Id}";
+
+            var keyValues = new Dictionary<string, string>()
+            {
+                {"ConfirmationLink",confirmationLink}
+            };
+            var emailBody = EmailHelper.PrepareBodyTemplate(PathsValues.TemplatesPaths, "EmailTemplate.html", keyValues);
+
+
+            _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
+            await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody);
+            _logger.LogInformation("email was sent");
         }
     }
 }

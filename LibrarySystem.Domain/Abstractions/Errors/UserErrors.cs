@@ -15,6 +15,9 @@ namespace LibrarySystem.Domain.Abstractions.Errors
         public static readonly Error IsLocked = new("User.IsLocked", "This user was locked", StatusCodes.Status401Unauthorized);
         public static readonly Error InValidToken = new("User.InValidToken", "This token is inValid", StatusCodes.Status400BadRequest);
         public static readonly Error InValidRefreshToken = new("User.InValidRefreshToken", "This refreshToken is inValid", StatusCodes.Status400BadRequest);
+        public static readonly Error EmailConfirmed = new("User.EmailConfirmed", "This email confirmed", StatusCodes.Status409Conflict);
+        public static readonly Error EmailNotConfirmed = new("User.EmailNotConfirmed", "This email not confirmed", StatusCodes.Status400BadRequest);
+        public static readonly Error InValidEmailype = new("User.InValidEmailype", "This email not gmail", StatusCodes.Status400BadRequest);
 
 
 

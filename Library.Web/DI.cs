@@ -12,8 +12,10 @@ using LibrarySystem.Services.Services.ApplicationUsers;
 using LibrarySystem.Services.Services.Authors;
 using LibrarySystem.Services.Services.Books;
 using LibrarySystem.Services.Services.Categories;
+using LibrarySystem.Services.Services.Emails;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,23 +33,30 @@ namespace Library.Web
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IAuthorServices, AuthorServices>();
             services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<IEmailSender, EmailSender>();
 
 
 
             return services
                 .AuthenticationInjection(configuration)
                 .ValidatorsInjection()
-                .MappingsInjection();
+                .MappingsInjection()
+                .EmailInjection(configuration);
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
         {
+            services.AddHttpContextAccessor();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             services.AddOptions<JwtOptions>()
@@ -92,7 +101,15 @@ namespace Library.Web
             return services;
         }
 
+        private static IServiceCollection EmailInjection(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<EmailOptions>()
+                .Bind(configuration.GetSection(nameof(EmailOptions)))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
+            return services;
+        }
 
 
     }

@@ -17,6 +17,8 @@ builder.Services.AddOpenApi();
 builder.Services.ServicesInjection(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
