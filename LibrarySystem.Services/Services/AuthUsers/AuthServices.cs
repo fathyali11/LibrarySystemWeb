@@ -1,8 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 using AutoMapper;
 using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Abstractions;
@@ -11,14 +7,12 @@ using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.ApplicationUsers;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Services.Services.Emails;
+using LibrarySystem.Services.Services.Tokens;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using OneOf;
 
 namespace LibrarySystem.Services.Services.AuthUsers
@@ -26,22 +20,22 @@ namespace LibrarySystem.Services.Services.AuthUsers
     public class AuthServices(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IMapper mapper,
-        IOptions<JwtOptions> options,
         IUnitOfWork unitOfWork,
         ILogger<AuthServices> logger,
         IEmailSender emailSender,
-        IHttpContextAccessor httpContextAccessor) :IAuthServices
+        IHttpContextAccessor httpContextAccessor,
+        ITokenServices tokenServices) :IAuthServices
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IMapper _mapper = mapper;
-        private readonly JwtOptions _jwtOptions = options.Value;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<AuthServices> _logger = logger;
         private readonly IEmailSender _emailSender = emailSender;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly ITokenServices _tokenServices = tokenServices;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
-        private readonly int _refreshTokenExpirationOnDays=7;
+        
         public async Task<OneOf<bool, Error>> RegisterAsync(RegistersRequest request, CancellationToken cancellationToken = default)
         {
             var userIsExists = await _unitOfWork.UserRepository.IsExistAsync(request.UserName, request.Email);
@@ -88,25 +82,6 @@ namespace LibrarySystem.Services.Services.AuthUsers
             return await GenerateResponse(user);
         }
 
-        public async Task<OneOf<AuthResponse, Error>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
-        {
-            var userId = ValidateToken(request.token);
-            if (userId is null)
-                return UserErrors.InValidToken;
-            var user=await _userManager.FindByIdAsync(userId);
-            if(user is null)
-                return UserErrors.InValidToken;
-            var refreshToken=user.RefreshTokens.SingleOrDefault(x=>x.Token==request.refreshToken&&x.IsActive);
-            if(refreshToken is null)
-                return UserErrors.InValidRefreshToken;
-            refreshToken.RevokedOn=DateTime.UtcNow;
-
-            return await GenerateResponse(user);
-
-        }
-
-       
-
         public async Task<OneOf<bool,Error>> ConfirmEmailAsync(ConfirmEmailRequest request,CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
@@ -141,76 +116,16 @@ namespace LibrarySystem.Services.Services.AuthUsers
         }
 
 
-        private (string token,DateTime expiresOn) GenerateTokenAsync(ApplicationUser user)
-        {
-            var securityKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
-            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes);
-            var claims = new[]
-            {
-                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!),
-                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
-                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            
-            var token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
-                claims:claims,
-                signingCredentials:signingCredentials,
-                expires:expiration
-                );
-            
-
-            return (new JwtSecurityTokenHandler().WriteToken(token), expiration);
-        }
-        private (string refreshToken,DateTime expiresOn) GenerateRefreshTokenAsync()
-        {
-            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-            var expiresOn = DateTime.UtcNow.AddDays(_refreshTokenExpirationOnDays);
-            return (token!, expiresOn);
-        }
-
-        private string? ValidateToken(string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
-
-
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    IssuerSigningKey = securityKey,
-                    ValidateIssuerSigningKey = true,
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-                var jwtToken = validatedToken as JwtSecurityToken;
-
-                return jwtToken!.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)!.Value;
-            }
-            catch
-            {
-                _logger.LogInformation("token is not valid as validation returns null");
-                return null;
-            }
-        }
         private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
         {
             var response = _mapper.Map<AuthResponse>(user);
 
-            var tokenCreation = GenerateTokenAsync(user);
+            var tokenCreation = _tokenServices.GenerateToken(user);
             response.Token = tokenCreation.token;
             response.ExpiresOn = tokenCreation.expiresOn;
 
 
-            var refreshTokenCreation = GenerateRefreshTokenAsync();
+            var refreshTokenCreation = _tokenServices.GenerateRefreshToken();
             response.RefreshToken = refreshTokenCreation.refreshToken;
             response.RefreshTokenExpiration = refreshTokenCreation.expiresOn;
 

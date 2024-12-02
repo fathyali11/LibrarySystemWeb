@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using LibrarySystem.Services.Services.AccountUsers;
+using LibrarySystem.Services.Services.Tokens;
 
 namespace Library.Web
 {
@@ -36,6 +37,7 @@ namespace Library.Web
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAccountUserServices, AccountUserServices>();
+            services.AddScoped<ITokenServices, TokenServices>();
 
 
 

@@ -1,6 +1,7 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.ApplicationUsers;
 using LibrarySystem.Services.Services.AuthUsers;
+using LibrarySystem.Services.Services.Tokens;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,11 @@ namespace Library.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthsController(IAuthServices authServices) : ControllerBase
+    public class AuthsController(IAuthServices authServices,
+        ITokenServices tokenServices) : ControllerBase
     {
         private readonly IAuthServices _authServices = authServices;
+        private readonly ITokenServices _tokenServices = tokenServices;
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegistersRequest request,CancellationToken cancellationToken)
@@ -35,15 +38,13 @@ namespace Library.Web.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
         {
-            var result = await _authServices.RefreshTokenAsync(request, cancellationToken);
+            var result = await _tokenServices.RefreshTokenAsync(request, cancellationToken);
             return result.Match<IActionResult>(
                 response => Ok(response),
                 error => error.ToProblem()
                 );
 
         }
-
-        
 
         [HttpPut("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request, CancellationToken cancellationToken)
