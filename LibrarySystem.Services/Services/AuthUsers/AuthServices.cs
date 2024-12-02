@@ -105,19 +105,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
 
         }
 
-        public async Task<OneOf<bool, Error>> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if( user is null)
-                return UserErrors.NotFound;
-            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
-            if(!result.Succeeded)
-            {
-                var error = result.Errors.First();
-                return new Error(error.Code,error.Description,StatusCodes.Status400BadRequest);
-            }
-            return true;
-        }
+       
 
         public async Task<OneOf<bool,Error>> ConfirmEmailAsync(ConfirmEmailRequest request,CancellationToken cancellationToken = default)
         {

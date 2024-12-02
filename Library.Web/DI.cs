@@ -8,7 +8,7 @@ using LibrarySystem.Domain.Entities;
 using LibrarySystem.Domain.FluentValidations.Categories;
 using LibrarySystem.Domain.IRepository;
 using LibrarySystem.Domain.Mappings;
-using LibrarySystem.Services.Services.ApplicationUsers;
+using LibrarySystem.Services.Services.AuthUsers;
 using LibrarySystem.Services.Services.Authors;
 using LibrarySystem.Services.Services.Books;
 using LibrarySystem.Services.Services.Categories;
@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using LibrarySystem.Services.Services.AccountUsers;
 
 namespace Library.Web
 {
@@ -34,6 +35,7 @@ namespace Library.Web
             services.AddScoped<IAuthorServices, AuthorServices>();
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IAccountUserServices, AccountUserServices>();
 
 
 

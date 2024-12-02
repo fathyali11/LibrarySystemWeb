@@ -43,16 +43,7 @@ namespace Library.Web.Controllers
 
         }
 
-        [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
-        {
-            var result = await _authServices.ChangePasswordAsync(request, cancellationToken);
-            return result.Match<IActionResult>(
-                response => Ok(),
-                error => error.ToProblem()
-                );
-
-        }
+        
 
         [HttpPut("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request, CancellationToken cancellationToken)
