@@ -68,5 +68,24 @@ namespace Library.Web.Controllers
 
         }
 
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordRequest request, CancellationToken cancellationToken)
+        {
+            var result=await _authServices.ForgetPasswordAsync(request,cancellationToken);
+            return result.Match<IActionResult>(
+                response=>Ok(),
+                error=> error.ToProblem()
+                );
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _authServices.ResetPasswordAsync(request, cancellationToken);
+            return result.Match<IActionResult>(
+                response => Ok(),
+                error => error.ToProblem()
+                );
+        }
     }
 }

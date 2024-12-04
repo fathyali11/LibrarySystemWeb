@@ -53,7 +53,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
                 return new Error(error!.Code, error.Description, StatusCodes.Status400BadRequest);
             }
 
-            await SendEmail(user);
+            await SendConfirmEmail(user);
             return true;
         }
 
@@ -110,12 +110,47 @@ namespace LibrarySystem.Services.Services.AuthUsers
             if( user is null) 
                 return UserErrors.NotFound;
 
-            await SendEmail(user);
+            await SendConfirmEmail(user);
             return true;
 
         }
 
+        public async Task<OneOf<bool, Error>> ForgetPasswordAsync(ForgetPasswordRequest request, CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if(user is null)
+                return true;
 
+            if(!user.EmailConfirmed)
+                return UserErrors.EmailNotConfirmed;
+
+            await SendResetPassword(user);
+
+            return true;
+        }
+
+        public async Task<OneOf<bool, Error>> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId);
+            if (user is null)
+                return true;
+            IdentityResult result;
+            try
+            {
+                var token=Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Password));
+                result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
+            }
+            catch(FormatException)
+            {
+                return UserErrors.InValidToken;
+            }
+            if(!result.Succeeded)
+            {
+                var error = result.Errors.First();
+                return new Error(error.Code, error.Description, StatusCodes.Status400BadRequest);
+            }
+            return true;
+        }
         private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
         {
             var response = _mapper.Map<AuthResponse>(user);
@@ -138,7 +173,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
             return response;
         }
 
-        private async Task SendEmail(ApplicationUser user)
+        private async Task SendConfirmEmail(ApplicationUser user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
@@ -155,6 +190,26 @@ namespace LibrarySystem.Services.Services.AuthUsers
 
             _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
             await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody);
+            _logger.LogInformation("email was sent");
+        }
+
+        private async Task SendResetPassword(ApplicationUser user)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            var origin = _httpContextAccessor.HttpContext!.Response.Headers.Origin;
+            var resetLink = $"{origin}api/reset-password?token={token}&userId={user.Id}";
+
+            var keyValues = new Dictionary<string, string>()
+            {
+                {"resetLink",resetLink}
+            };
+            var emailBody = EmailHelper.PrepareBodyTemplate(PathsValues.TemplatesPaths, "ResetPasswordTemplate.html", keyValues);
+
+
+            _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
+            await _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody);
             _logger.LogInformation("email was sent");
         }
     }
