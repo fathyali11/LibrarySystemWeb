@@ -40,5 +40,12 @@ namespace LibrarySystem.Services.Services.OrderItems
             await _unitOfWork.SaveChanges(cancellationToken);
             return orderItem;
         }
+        public async Task<bool> RemoveAsync(int id, CancellationToken cancellationToken=default)
+        {
+            var orderItem = await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
+            _unitOfWork.OrderItemRepository.Delete(orderItem!);
+            return true;
+        }
+
     }
 }

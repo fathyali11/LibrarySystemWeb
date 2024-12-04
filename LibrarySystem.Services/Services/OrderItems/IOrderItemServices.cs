@@ -8,7 +8,7 @@ namespace LibrarySystem.Services.Services.OrderItems
         Task<OrderItem> AddOrderItemAsync(BookOrderRequest request, Book book, CancellationToken cancellationToken = default);
         Task<OrderItem> PlusAsync(int id, CancellationToken cancellationToken = default);
         Task<OrderItem> MinusAsync(int id, CancellationToken cancellationToken = default);
-
+        Task<bool> RemoveAsync(int id, CancellationToken cancellationToken = default);
 
 
 
