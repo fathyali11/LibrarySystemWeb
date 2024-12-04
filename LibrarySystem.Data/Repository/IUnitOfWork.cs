@@ -9,5 +9,8 @@ public interface IUnitOfWork
     ICategoryRepository CategoryRepository { get; }
     IAuthorRepository AuthorRepository { get; }
     IUserRepository UserRepository { get; }
+    IOrderRepository OrderRepository { get; }
+    IOrderItemRepository OrderItemRepository { get; }
+    IBorrowedBookRepository BorrowedBookRepository { get; }
     Task SaveChanges(CancellationToken cancellationToken = default);
 }

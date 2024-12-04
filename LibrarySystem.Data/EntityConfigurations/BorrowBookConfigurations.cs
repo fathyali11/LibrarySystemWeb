@@ -18,12 +18,12 @@ public class BorrowBookConfigurations : IEntityTypeConfiguration<BorrowedBook>
         builder.Property(b => b.ReturnDate)
             .IsRequired(false);
 
-        builder.Property(b => b.Status)
-            .HasMaxLength(50) 
-            .IsRequired(false);
+        //builder.Property(b => b.Status)
+        //    .HasMaxLength(50) 
+        //    .IsRequired(false);
 
-        builder.Property(b => b.IsBorrow)
-            .IsRequired();
+        //builder.Property(b => b.IsBorrow)
+        //    .IsRequired();
 
         builder.HasOne(b => b.Book) 
            .WithOne()

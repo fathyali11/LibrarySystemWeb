@@ -77,6 +77,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
         return await _dbSet.AnyAsync(predicate, cancellationToken);
     }
+    public async Task<T?> ExitsOrNot(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default)
+    {
+        if (predicate is null)
+            return null;
+
+        return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
+    }
     public async Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         await _dbSet.AddAsync(entity,cancellationToken);

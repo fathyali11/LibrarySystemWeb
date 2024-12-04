@@ -13,6 +13,7 @@ public interface IGenericRepository<T> where T : class
     Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations, CancellationToken cancellationToken = default);
     Task<T?> GetByIdAsync(int id);
     Task<bool> IsExits(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default);
+    Task<T?> ExitsOrNot(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default);
     Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default);
     void Delete(T entity);
     void DeleteRange(IEnumerable<T> entities);
