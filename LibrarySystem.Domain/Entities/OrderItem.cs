@@ -9,6 +9,6 @@ public class OrderItem
     public decimal Price { get; set; }  // Price for this book (can be different for borrowing or buying)
 
     // Navigation properties
-    public BorrowOrBuyBook Book { get; set; } = default!;
+    public Book Book { get; set; } = default!;
     public Order Order { get; set; }= default!;
 }

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace LibrarySystem.Data.EntityConfigurations;
-public class BorrowOrBuyBookConfigurations : IEntityTypeConfiguration<BorrowOrBuyBook>
+public class BorrowBookConfigurations : IEntityTypeConfiguration<BorrowedBook>
 {
-    public void Configure(EntityTypeBuilder<BorrowOrBuyBook> builder)
+    public void Configure(EntityTypeBuilder<BorrowedBook> builder)
     {
         builder.HasKey(b => b.Id);
 
@@ -27,7 +27,7 @@ public class BorrowOrBuyBookConfigurations : IEntityTypeConfiguration<BorrowOrBu
 
         builder.HasOne(b => b.Book) 
            .WithOne()
-           .HasForeignKey<BorrowOrBuyBook>(b => b.BookId)
+           .HasForeignKey<BorrowedBook>(b => b.BookId)
            .IsRequired() 
            .OnDelete(DeleteBehavior.Restrict);
     }

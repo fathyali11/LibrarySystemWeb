@@ -11,7 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
     public DbSet<Book> Books { get; set; }
-    public DbSet<BorrowOrBuyBook> BorrowOrBuyBooks { get; set; }
+    public DbSet<BorrowedBook> BorrowedBooks { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Payment> Payments { get; set; }
