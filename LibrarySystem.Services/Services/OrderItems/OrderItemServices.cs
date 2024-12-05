@@ -1,6 +1,7 @@
 ﻿using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Abstractions.ConstValues;
 using LibrarySystem.Domain.DTO.Books;
+using LibrarySystem.Domain.DTO.OrderItems;
 using LibrarySystem.Domain.Entities;
 
 namespace LibrarySystem.Services.Services.OrderItems
@@ -23,10 +24,12 @@ namespace LibrarySystem.Services.Services.OrderItems
                 var response=await _unitOfWork.OrderItemRepository.AddAsync(orderItem);
                 return response!;
         }
-        public async Task<OrderItem> PlusAsync(int id,CancellationToken cancellationToken=default)
+        public async Task<OrderItem> PlusAsync(int id, CancellationToken cancellationToken=default)
         {
             var orderItem=await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
             orderItem!.Quantity++;
+            var order= await _unitOfWork.OrderRepository.GetByIdAsync(orderItem.OrderId);
+            order!.TotalAmount += orderItem.Price;
             await _unitOfWork.SaveChanges(cancellationToken);
             return orderItem;
         }
@@ -35,6 +38,8 @@ namespace LibrarySystem.Services.Services.OrderItems
             var orderItem = await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
             if(orderItem!.Quantity>0)
             {
+                var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderItem.OrderId);
+                order!.TotalAmount -= orderItem.Price;
                 orderItem.Quantity--;
             }
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -43,7 +48,10 @@ namespace LibrarySystem.Services.Services.OrderItems
         public async Task<bool> RemoveAsync(int id, CancellationToken cancellationToken=default)
         {
             var orderItem = await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
+            var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderItem!.OrderId);
+            order!.TotalAmount-=(orderItem.Price*orderItem.Quantity);
             _unitOfWork.OrderItemRepository.Delete(orderItem!);
+            await _unitOfWork.SaveChanges(cancellationToken);
             return true;
         }
 
