@@ -70,7 +70,13 @@ namespace LibrarySystem.Services.Services.Orders
             return response;
         }
 
-
+        public async Task<bool> RemoveOrdersAsync(int id,CancellationToken cancellationToken=default)
+        {
+            var order=await _unitOfWork.OrderRepository.GetByIdAsync(id);
+            _unitOfWork.OrderRepository.Delete(order!);
+            await _unitOfWork.SaveChanges(cancellationToken);
+            return true;
+        }
 
 
 

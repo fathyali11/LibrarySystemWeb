@@ -38,5 +38,12 @@ namespace Library.Web.Controllers
                 error => error.ToProblem()
                 );
         }
+
+        [HttpDelete("delete-{id}")]
+        public async Task<IActionResult> Delete(int id,CancellationToken cancellationToken)
+        {
+            var result = await _orderServices.RemoveOrdersAsync(id, cancellationToken);
+            return result ?Ok():BadRequest();
+        }
     }
 }
