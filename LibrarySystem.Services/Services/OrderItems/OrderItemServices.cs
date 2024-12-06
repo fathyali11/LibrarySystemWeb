@@ -1,7 +1,6 @@
 ﻿using LibrarySystem.Data.Repository;
 using LibrarySystem.Domain.Abstractions.ConstValues;
 using LibrarySystem.Domain.DTO.Books;
-using LibrarySystem.Domain.DTO.OrderItems;
 using LibrarySystem.Domain.Entities;
 
 namespace LibrarySystem.Services.Services.OrderItems
@@ -28,6 +27,8 @@ namespace LibrarySystem.Services.Services.OrderItems
         {
             var orderItem=await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
             orderItem!.Quantity++;
+            var book=await _unitOfWork.BookRepository.GetByIdAsync(orderItem.BookId);
+            book!.Quantity--;
             var order= await _unitOfWork.OrderRepository.GetByIdAsync(orderItem.OrderId);
             order!.TotalAmount += orderItem.Price;
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -38,6 +39,8 @@ namespace LibrarySystem.Services.Services.OrderItems
             var orderItem = await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
             if(orderItem!.Quantity>0)
             {
+                var book = await _unitOfWork.BookRepository.GetByIdAsync(orderItem.BookId);
+                book!.Quantity++;
                 var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderItem.OrderId);
                 order!.TotalAmount -= orderItem.Price;
                 orderItem.Quantity--;
@@ -48,6 +51,8 @@ namespace LibrarySystem.Services.Services.OrderItems
         public async Task<bool> RemoveAsync(int id, CancellationToken cancellationToken=default)
         {
             var orderItem = await _unitOfWork.OrderItemRepository.GetByIdAsync(id);
+            var book = await _unitOfWork.BookRepository.GetByIdAsync(orderItem.BookId);
+            book!.Quantity += orderItem.Quantity;
             var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderItem!.OrderId);
             order!.TotalAmount-=(orderItem.Price*orderItem.Quantity);
             _unitOfWork.OrderItemRepository.Delete(orderItem!);
