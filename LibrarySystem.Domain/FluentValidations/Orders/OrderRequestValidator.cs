@@ -18,8 +18,6 @@ namespace LibrarySystem.Domain.FluentValidations.Orders
                     books.RuleFor(x => x.Type)
                     .Must(type => type == "borrow" || type == "purchase");
 
-                    books.RuleFor(x => x.Price)
-                        .GreaterThan(0).WithMessage("Price must be a positive integer.");
 
                     books.RuleFor(x => x.CategoryId)
                         .GreaterThan(0).WithMessage("Category ID must be a positive integer.");
