@@ -16,5 +16,14 @@ namespace LibrarySystem.Data.Repository
                 .ToListAsync(cancellationToken);
             return orders;
         }
+        public async Task<Order> GetByIdWithBooksAsync(string userId,CancellationToken cancellationToken = default)
+        {
+            var orders = await _context.Orders
+                .Where(o=>o.UserId==userId)
+                .Include(o => o.OrderItems)
+                .ThenInclude(b => b.Book)
+                .ToListAsync(cancellationToken);
+            return orders.SingleOrDefault()!;
+        }
     }
 }
