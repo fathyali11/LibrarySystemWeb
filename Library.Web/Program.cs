@@ -1,6 +1,7 @@
 using Scalar.AspNetCore;
 using Serilog;
 using Library.Web;
+using LibrarySystem.Domain.Abstractions;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -17,7 +18,7 @@ builder.Services.AddOpenApi();
 builder.Services.ServicesInjection(builder.Configuration);
 
 var app = builder.Build();
-
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())

@@ -52,7 +52,8 @@ namespace Library.Web
                 .AuthenticationInjection(configuration)
                 .ValidatorsInjection()
                 .MappingsInjection()
-                .EmailInjection(configuration);
+                .EmailInjection(configuration)
+                .ExceptionHandlerInjection();
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
@@ -121,7 +122,12 @@ namespace Library.Web
 
             return services;
         }
-
+        private static IServiceCollection ExceptionHandlerInjection(this IServiceCollection services)
+        {
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
+            return services;
+        }
 
     }
 }
