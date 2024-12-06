@@ -19,7 +19,7 @@ namespace LibrarySystem.Services.Services.Orders
         private const int _daysToReturnBorrowedBook = 14;
         public async Task<OneOf<OrderResponse, Error>> AddOrderAsync(string userId, OrderRequest request, CancellationToken cancellationToken = default)
         {
-            var orderFromDb=await _unitOfWork.OrderRepository.ExitsOrNot(x=> x.UserId == userId);
+            var orderFromDb = await _unitOfWork.OrderRepository.GetByIdWithBooksAsync(userId,cancellationToken);
             Order order;
             if(orderFromDb is not null)
             {
@@ -37,25 +37,31 @@ namespace LibrarySystem.Services.Services.Orders
 
             foreach (var bookRequest in request.Books)
             {
-                var bookFromDb = await _unitOfWork.BookRepository.IsAvailableAsync(bookRequest.BookId);
+                var bookFromDb = await _unitOfWork.BookRepository.ExitsOrNot(x => (x.Id == bookRequest.BookId && x.IsAvailable && x.IsActive),cancellationToken);//IsAvailableAsync(bookRequest.BookId);
                 if (bookFromDb is null)
                     return BookErrors.NotAvailable;
+                if (bookRequest.Quantity > bookFromDb.Quantity)
+                    return OrderErrors.NotEnoughQuantity;
 
-                bookFromDb.Quantity -= bookRequest.Quantity;
+                
 
                 await HandelBorrowBookAsync(bookRequest, userId);
 
                 
-                var orderItemFromDb = await _unitOfWork.OrderItemRepository.ExitsOrNot(x => x.BookId == bookRequest.BookId);
+                var orderItemFromDb = await _unitOfWork.OrderItemRepository.ExitsOrNot(x => x.BookId == bookRequest.BookId,cancellationToken);
                 if (orderItemFromDb is not null)
                 {
+                    if(orderItemFromDb.Quantity != orderItemFromDb.Quantity)
+                        bookFromDb.Quantity -= bookRequest.Quantity;
+
                     orderItemFromDb.Quantity = bookRequest.Quantity;
                     continue;
                 }
+                bookFromDb.Quantity -= bookRequest.Quantity;
                 var orderItem = await _orderItemServices.AddOrderItemAsync(bookRequest, bookFromDb, cancellationToken);
                 order.OrderItems.Add(orderItem);
             }
-            order.TotalAmount = CalculateTotalPrice(request);
+            order.TotalAmount = CalculateTotalPrice(order);
             await _unitOfWork.SaveChanges(cancellationToken);
 
             var response = _mapper.Map<OrderResponse>(order);
@@ -90,8 +96,6 @@ namespace LibrarySystem.Services.Services.Orders
         }
 
 
-
-
         private async Task HandelBorrowBookAsync(BookOrderRequest book,string userId)
         {
             if (string.Equals(book.Type, OrderTypes.Borrow, StringComparison.OrdinalIgnoreCase))
@@ -106,10 +110,10 @@ namespace LibrarySystem.Services.Services.Orders
                 await _unitOfWork.BorrowedBookRepository.AddAsync(borrowBook);
             }
         }
-        private decimal CalculateTotalPrice(OrderRequest request)
+        private decimal CalculateTotalPrice(Order order)
         {
             decimal totalPrice = 0;
-            foreach (var book in request.Books)
+            foreach (var book in order.OrderItems)
                 totalPrice += (book.Quantity * book.Price);
             return totalPrice;
         }
