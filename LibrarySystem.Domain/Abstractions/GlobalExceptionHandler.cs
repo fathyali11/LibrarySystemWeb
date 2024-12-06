@@ -11,12 +11,12 @@ namespace LibrarySystem.Domain.Abstractions
         private readonly ILogger<GlobalExceptionHandler> _logger= logger;
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            _logger.LogError(exception,"\nthere is a problem\n",exception.Message);
+            
 
             if (httpContext == null || httpContext.Response.HasStarted)
                 return false;
 
-            
+            _logger.LogError(exception, "\nthere is a problem\n", exception.Message);
 
             var response = new ProblemDetails
             {
