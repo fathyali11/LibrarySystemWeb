@@ -78,9 +78,16 @@ namespace LibrarySystem.Services.Services.Orders
             return true;
         }
 
+        public async Task<OneOf<bool, Error>> ConfirmOrderAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var order = await _unitOfWork.OrderRepository.GetByIdAsync(id);
+            if(order is null)
+                return OrderErrors.NotFound;
 
-
-
+            order.OrderStatus=OrderStatuss.Completed;
+            await _unitOfWork.SaveChanges(cancellationToken);
+            return true;
+        }
 
 
 

@@ -10,7 +10,7 @@ namespace LibrarySystem.Services.Services.Orders
         Task<OneOf<List<OrderResponse>, Error>> GetAllOrdersAsync(string userId,CancellationToken cancellationToken=default);
         Task<bool> RemoveOrdersAsync(int id, CancellationToken cancellationToken = default);
 
-
+        Task<OneOf<bool,Error>> ConfirmOrderAsync(int id,CancellationToken cancellationToken=default);
 
 
 

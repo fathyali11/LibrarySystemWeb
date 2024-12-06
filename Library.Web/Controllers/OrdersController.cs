@@ -39,11 +39,21 @@ namespace Library.Web.Controllers
                 );
         }
 
-        [HttpDelete("delete-{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id,CancellationToken cancellationToken)
         {
             var result = await _orderServices.RemoveOrdersAsync(id, cancellationToken);
             return result ?Ok():BadRequest();
+        }
+
+        [HttpPut("confirm-order-{id}")]
+        public async Task<IActionResult> ConfirmOrder(int id, CancellationToken cancellationToken)
+        {
+            var result = await _orderServices.ConfirmOrderAsync(id, cancellationToken);
+            return result.Match<IActionResult>(
+                response=>Ok(),
+                error => error.ToProblem()
+                );
         }
     }
 }
