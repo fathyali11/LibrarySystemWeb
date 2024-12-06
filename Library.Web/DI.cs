@@ -22,6 +22,7 @@ using LibrarySystem.Services.Services.AccountUsers;
 using LibrarySystem.Services.Services.Tokens;
 using LibrarySystem.Services.Services.Orders;
 using LibrarySystem.Services.Services.OrderItems;
+using LibrarySystem.Services.Services.Cashing;
 
 namespace Library.Web
 {
@@ -45,7 +46,7 @@ namespace Library.Web
             services.AddScoped<IOrderItemServices, OrderItemServices>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
-
+            services.AddScoped<ICacheServices,CashServices>();
 
 
             return services
