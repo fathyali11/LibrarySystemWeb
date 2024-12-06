@@ -3,7 +3,6 @@ using LibrarySystem.Data.Data;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Domain.IRepository;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace LibrarySystem.Data.Repository;
@@ -19,6 +18,4 @@ public class BookRepository(ApplicationDbContext context, IMapper mapper) : Gene
         _mapper.Map(request, book);
         return book;
     }
-    public async Task<Book?> IsAvailableAsync(int id)=>
-        await _context.Books.FirstOrDefaultAsync(x => x.Id == id && x.IsAvailable && x.IsActive);
 }
