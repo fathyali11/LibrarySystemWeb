@@ -6,34 +6,35 @@ using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Domain.DTO.Orders;
 using LibrarySystem.Domain.Entities;
+using LibrarySystem.Services.Services.Cashing;
 using LibrarySystem.Services.Services.OrderItems;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace LibrarySystem.Services.Services.Orders
 {
-    public class OrderServices(IUnitOfWork unitOfWork,IMapper mapper,IOrderItemServices orderItemServices): IOrderServices
+    public class OrderServices(IUnitOfWork unitOfWork,
+        IMapper mapper,
+        IOrderItemServices orderItemServices,
+        ICacheServices cacheServices,
+        ILogger<OrderServices> logger): IOrderServices
     {
         private readonly IUnitOfWork _unitOfWork=unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IOrderItemServices _orderItemServices = orderItemServices;
+        private readonly ICacheServices _cacheServices = cacheServices;
+        private readonly ILogger<OrderServices> _logger = logger;
         private const int _daysToReturnBorrowedBook = 14;
         public async Task<OneOf<OrderResponse, Error>> AddOrderAsync(string userId, OrderRequest request, CancellationToken cancellationToken = default)
         {
-            var orderFromDb = await _unitOfWork.OrderRepository.GetByIdWithBooksAsync(userId,cancellationToken);
+            var cachKey = $"order-{userId}";
             Order order;
-            if(orderFromDb is not null)
+            var orderFromDb = await _unitOfWork.OrderRepository.GetByIdWithBooksAsync(userId, cancellationToken);
+            order = orderFromDb ?? new Order
             {
-                order = orderFromDb;
-            }
-            else
-            {
-                order = new Order()
-                {
-                    UserId = userId,
-                    OrderStatus = OrderStatuss.Pending
-                };
-                await _unitOfWork.OrderRepository.AddAsync(order);
-            }
+                UserId = userId,
+                OrderStatus = OrderStatuss.Pending
+            };
 
             foreach (var bookRequest in request.Books)
             {
@@ -58,40 +59,61 @@ namespace LibrarySystem.Services.Services.Orders
                     continue;
                 }
                 bookFromDb.Quantity -= bookRequest.Quantity;
-                var orderItem = await _orderItemServices.AddOrderItemAsync(bookRequest, bookFromDb, cancellationToken);
+                var orderItem = await _orderItemServices.AddOrderItemAsync(bookRequest, bookFromDb, userId,cancellationToken);
                 order.OrderItems.Add(orderItem);
             }
             order.TotalAmount = CalculateTotalPrice(order);
+            if(orderFromDb is null)
+                await _unitOfWork.OrderRepository.AddAsync(order);
             await _unitOfWork.SaveChanges(cancellationToken);
 
             var response = _mapper.Map<OrderResponse>(order);
+            await _cacheServices.RemoveAsync(cachKey, cancellationToken);
             return response;
         }
 
         public async Task<OneOf<List<OrderResponse>, Error>> GetAllOrdersAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var orders = await _unitOfWork.OrderRepository.GetAllWithBooksAsync(cancellationToken);
+            var cachKey = $"order-{userId}";
+            var cashedValue=await _cacheServices.GetAsync<List<OrderResponse>>(cachKey, cancellationToken);
+            List<Order> orders = [];
+            if(cashedValue is not null)
+            {
+                _logger.LogInformation("data from cach center");
+                return cashedValue.ToList();
+            }
+            else
+                orders = await _unitOfWork.OrderRepository.GetAllWithBooksAsync(cancellationToken);
+
             
+
             var response=_mapper.Map<List<OrderResponse>>(orders);
+            await _cacheServices.SetAsync(cachKey, response, cancellationToken);
+            _logger.LogInformation("data from data base");
             return response;
         }
 
-        public async Task<bool> RemoveOrdersAsync(int id,CancellationToken cancellationToken=default)
+        public async Task<bool> RemoveOrdersAsync(int id,string userId,CancellationToken cancellationToken=default)
         {
             var order=await _unitOfWork.OrderRepository.GetByIdAsync(id);
             _unitOfWork.OrderRepository.Delete(order!);
             await _unitOfWork.SaveChanges(cancellationToken);
+            await _cacheServices.RemoveAsync($"order-{userId}", cancellationToken);
             return true;
         }
 
-        public async Task<OneOf<bool, Error>> ConfirmOrderAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<OneOf<bool, Error>> ConfirmOrderAsync(int id, string userId, CancellationToken cancellationToken = default)
         {
             var order = await _unitOfWork.OrderRepository.GetByIdAsync(id);
             if(order is null)
                 return OrderErrors.NotFound;
 
+            if (order.OrderStatus == OrderStatuss.Completed)
+                return true;
+
             order.OrderStatus=OrderStatuss.Completed;
             await _unitOfWork.SaveChanges(cancellationToken);
+            await _cacheServices.RemoveAsync($"order-{userId}", cancellationToken);
             return true;
         }
 
