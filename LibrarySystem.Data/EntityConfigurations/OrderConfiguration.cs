@@ -8,14 +8,14 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.HasKey(o => o.Id);
 
-        builder.Property(o => o.OrderDate)
+        builder.Property(o => o.CreatedAt)
             .IsRequired();
 
         builder.Property(o => o.TotalAmount)
             .HasColumnType("decimal(10, 2)")
             .IsRequired();
 
-        builder.Property(o => o.OrderStatus)
+        builder.Property(o => o.Status)
             .HasMaxLength(50)
             .IsRequired();
 

@@ -3,12 +3,17 @@ public class Order
 {
     public int Id { get; set; }
     public string UserId { get; set; }=string.Empty;
-    public DateTime OrderDate { get; set; }=DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }=DateTime.UtcNow;
     public decimal TotalAmount { get; set; }
-    public string OrderStatus { get; set; } = string.Empty;
-    public bool IsDeleted { get; set; }
+    public string Status { get; set; } = string.Empty;
+
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string Email {  get; set; } = string.Empty;
+    public string Phone { get; set; }= string.Empty;
 
     // Navigation properties
     public ICollection<OrderItem> OrderItems { get; set; } = [];
-    public ApplicationUser User { get; set; } = default!;  // Assuming User entity exists
+    public ApplicationUser User { get; set; } = default!;
 }

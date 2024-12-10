@@ -12,4 +12,5 @@ public class ApplicationUser:IdentityUser
     public ICollection<Order> ?Orders { get; set; }
     public ICollection<Payment> ?Payments { get; set; }
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+    //public ICollection<Fine> ?Fines { get; set; }
 }

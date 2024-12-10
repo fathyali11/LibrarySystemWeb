@@ -1,5 +1,5 @@
-﻿namespace LibrarySystem.Domain.DTO.Books;
-public record BookOrderRequest(
+﻿namespace LibrarySystem.Domain.DTO.Orders;
+public record OrderItemRequest(
     int BookId,
     string Type,
     int Quantity,

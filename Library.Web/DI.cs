@@ -20,8 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using LibrarySystem.Services.Services.AccountUsers;
 using LibrarySystem.Services.Services.Tokens;
-using LibrarySystem.Services.Services.Orders;
-using LibrarySystem.Services.Services.OrderItems;
+
 using LibrarySystem.Services.Services.Cashing;
 
 namespace Library.Web
@@ -41,9 +40,9 @@ namespace Library.Web
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAccountUserServices, AccountUserServices>();
             services.AddScoped<ITokenServices, TokenServices>();
-            services.AddScoped<IOrderServices, OrderServices>();
+            //services.AddScoped<IOrderServices, OrderServices>();
             services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IOrderItemServices, OrderItemServices>();
+           // services.AddScoped<IOrderItemServices, OrderItemServices>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
