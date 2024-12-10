@@ -46,8 +46,10 @@ namespace Library.Web
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
+            #pragma warning disable
+            services.AddHybridCache();
+            #pragma warning restore
 
-            
 
             return services
                 .AuthenticationInjection(configuration)
