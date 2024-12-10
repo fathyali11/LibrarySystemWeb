@@ -1,1 +1,1 @@
-﻿DBCC CHECKIDENT ('Books', RESEED, 0);
+﻿DBCC CHECKIDENT ('Categories', RESEED, 0);
