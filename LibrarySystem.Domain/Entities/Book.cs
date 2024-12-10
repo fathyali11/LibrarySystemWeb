@@ -2,15 +2,25 @@
 public class Book
 {
     public int Id { get; set; }
+
+
+    // for book as a document 
     public string Title { get; set; }=string.Empty;
     public string RandomTitle {  get; set; }=string.Empty;
+    public string FileContentType {  get; set; }=string.Empty;
+    public string FileExtension { get; set; } = string.Empty;
+
+    // for book as a image 
+    public string ImageName { get; set; } = string.Empty;
+    public string RandomImageName { get; set; } = string.Empty;
+    public string ImageContentType { get; set; } = string.Empty;
+    public string ImageExtension { get; set; } = string.Empty;
+
     public string Description { get; set; } = string.Empty;
     public int Quantity { get; set; }
     public decimal PriceForBuy { get; set; }
     public decimal PriceForBorrow { get; set; }
     public DateTime PublishedDate { get; set; }=DateTime.UtcNow;
-    public string ImageName {  get; set; }=string.Empty;
-    public string RandomImageName {  get; set; }=string.Empty;
     public bool IsAvailable { get;private set; }
     public bool IsActive { get; set; } = true;
     public int CategoryId { get; set; }

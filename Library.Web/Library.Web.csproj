@@ -31,4 +31,9 @@
     <ProjectReference Include="..\LibrarySystem.Services\LibrarySystem.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\books\" />
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

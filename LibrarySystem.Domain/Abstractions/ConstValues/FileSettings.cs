@@ -15,6 +15,6 @@ public class FileSettings
     public static readonly List<string> AllowedDocumentSignatures = new List<string>
     {
         "25-50",    // PDF
-        "50-4B",    // DOC
+        "50-4B"   // DOC,
     };
 }

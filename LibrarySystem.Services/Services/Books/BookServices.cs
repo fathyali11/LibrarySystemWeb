@@ -5,6 +5,8 @@ using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Domain.Entities;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 
@@ -12,27 +14,32 @@ namespace LibrarySystem.Services.Services.Books;
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
-    HybridCache hybridCache) : BookRepository(context, mapper), IBookServices
+    HybridCache hybridCache,IWebHostEnvironment webHostEnvironment) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
-
+    private readonly string _filesPath = webHostEnvironment.WebRootPath;
     public async Task<OneOf<BookResponse, Error>> AddBookAsync(BookRequest request, CancellationToken cancellationToken = default)
     {
-        var bookIsExists=await _unitOfWork.BookRepository.IsExits(x=>x.Title== request.Title, cancellationToken);
+        var bookIsExists=await _unitOfWork.BookRepository.IsExits(x=>x.Title== request.Document.FileName, cancellationToken);
         if (bookIsExists)
             return BookErrors.Found;
+
         var categoryIsExists=await _unitOfWork.CategoryRepository.IsExits(x=>x.Id==request.CategoryId, cancellationToken);
         if (!categoryIsExists)
             return CategoryErrors.NotFound;
+
         var authorIsExists = await _unitOfWork.AuthorRepository.IsExits(x => x.Id == request.AuthorId, cancellationToken);
         if (!authorIsExists)
             return AuthorErrors.NotFound;
 
-
-
         Book book = _mapper.Map<Book>(request);
+
+        await SaveFile(request.Document, $"{_filesPath}/books");
+        await SaveFile(request.Image, $"{_filesPath}/images");
+
+
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
         var response = _mapper.Map<BookResponse>(result);
@@ -57,7 +64,6 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<List<BookResponse>>(books);
         return response;
     }
-
     public async Task<OneOf<BookResponse, Error>> GetBookByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if(id<0)
@@ -94,5 +100,13 @@ public class BookServices(ApplicationDbContext context,
         await _unitOfWork.SaveChanges(cancellationToken);
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
+    }
+
+    private async Task SaveFile(IFormFile file,string path)
+    {
+        var randomfileName = Path.GetRandomFileName();
+        var fullPath= Path.Combine(path, randomfileName);
+        using var stream = File.Create(fullPath);
+        await file.CopyToAsync(stream);
     }
 }
