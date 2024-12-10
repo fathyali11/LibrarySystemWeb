@@ -47,6 +47,7 @@ namespace Library.Web
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
 
+            
 
             return services
                 .AuthenticationInjection(configuration)

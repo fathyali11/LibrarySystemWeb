@@ -5,10 +5,13 @@ using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Domain.Entities;
+using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 
 namespace LibrarySystem.Services.Services.Books;
-public class BookServices(ApplicationDbContext context, IMapper mapper,IUnitOfWork unitOfWork) : BookRepository(context, mapper), IBookServices
+public class BookServices(ApplicationDbContext context,
+    IMapper mapper,
+    IUnitOfWork unitOfWork) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly IMapper _mapper=mapper;

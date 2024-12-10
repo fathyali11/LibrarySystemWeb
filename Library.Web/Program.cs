@@ -1,7 +1,6 @@
+using Library.Web;
 using Scalar.AspNetCore;
 using Serilog;
-using Library.Web;
-using LibrarySystem.Domain.Abstractions;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -16,7 +15,9 @@ builder.Services.AddControllers();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddOpenApi();
 builder.Services.ServicesInjection(builder.Configuration);
-
+//#pragma warning disable
+//builder.Services.AddHybridCache();
+//#pragma warning restore
 var app = builder.Build();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();

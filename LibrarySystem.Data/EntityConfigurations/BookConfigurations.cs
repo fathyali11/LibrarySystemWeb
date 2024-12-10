@@ -15,6 +15,18 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(b => b.RandomTitle)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(b => b.ImageName)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(b => b.RandomImageName)
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.Property(b => b.AuthorId)
             .IsRequired();
 
