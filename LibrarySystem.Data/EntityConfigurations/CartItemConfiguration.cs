@@ -22,6 +22,9 @@ namespace LibrarySystem.Data.EntityConfigurations
                 .HasColumnType("decimal(10, 2)")
                 .IsRequired();
 
+            builder.Property(oi => oi.OrderType)
+            .IsRequired();
+
             builder.HasOne(oi => oi.Book)
                 .WithMany()
                 .HasForeignKey(oi => oi.BookId)
