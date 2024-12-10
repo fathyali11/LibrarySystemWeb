@@ -19,10 +19,26 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasMaxLength(50)
             .IsRequired();
 
+        builder.Property(o => o.FirstName)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.Property(o => o.LastName)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.Property(o => o.Address)
+            .HasMaxLength(250)
+            .IsRequired();
+
+        builder.Property(o => o.Email)
+           .HasMaxLength(256)
+           .IsRequired();
+
         builder.HasMany(o => o.OrderItems)
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(o => o.User)
             .WithMany()

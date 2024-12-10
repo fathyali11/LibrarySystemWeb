@@ -6,10 +6,10 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
 {
     public void Configure(EntityTypeBuilder<Author> builder)
     {
-        builder.HasKey(a => a.Id);
+        builder.HasIndex(a => a.Name)
+            .IsUnique();
 
-        builder.Property(a => a.Id)
-            .ValueGeneratedOnAdd();
+        builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Name)
             .IsRequired()
@@ -20,9 +20,9 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
             .HasMaxLength(1000);
 
         builder.HasMany(a => a.Books)
-            .WithOne(b => b.Author) // Specify navigation property
-            .HasForeignKey(b => b.AuthorId) // Use the explicitly defined property
+            .WithOne(b => b.Author) 
+            .HasForeignKey(b => b.AuthorId) 
             .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict); // Restrict instead of Cascade if desired
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

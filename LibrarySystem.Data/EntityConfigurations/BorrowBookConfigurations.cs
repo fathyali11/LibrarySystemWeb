@@ -15,20 +15,19 @@ public class BorrowBookConfigurations : IEntityTypeConfiguration<BorrowedBook>
         builder.Property(b => b.BorrowDate)
             .IsRequired();
 
+        builder.Property(b => b.DueDate)
+            .IsRequired();
+
         builder.Property(b => b.ReturnDate)
             .IsRequired(false);
 
-        //builder.Property(b => b.Status)
-        //    .HasMaxLength(50) 
-        //    .IsRequired(false);
-
-        //builder.Property(b => b.IsBorrow)
-        //    .IsRequired();
+          
 
         builder.HasOne(b => b.Book) 
            .WithOne()
            .HasForeignKey<BorrowedBook>(b => b.BookId)
            .IsRequired() 
            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

@@ -18,4 +18,5 @@ public class Book
     // Navigation properties
     public Category Category { get; set; } = default!;
     public Author Author { get; set; } = default!;
+    public ICollection<Review> ?Reviews { get; set; }
 }

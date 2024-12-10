@@ -8,7 +8,7 @@
         public string UserId { get; set; } = string.Empty;
         public int BorrowBookId { get; set; }
 
-        public ApplicationUser ApplicationUser { get; set; } = default!;
+        public ApplicationUser User { get; set; } = default!;
         public BorrowedBook BorrowedBook { get; set; } = default!;
 
     }

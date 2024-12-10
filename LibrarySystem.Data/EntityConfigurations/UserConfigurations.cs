@@ -6,6 +6,8 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
+        builder.HasIndex(u => new { u.UserName, u.Email });
+
         builder.Property(u => u.FirstName)
             .HasMaxLength(100)
             .IsRequired();
@@ -28,10 +30,24 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(c => c.Cart)
+            .WithOne(u => u.User)
+            .HasForeignKey<Cart>(c => c.UserId);
+
         builder.OwnsMany(x => x.RefreshTokens)
             .ToTable("RefreshTokens")
             .WithOwner()
             .HasForeignKey(x => x.UserId);
-            
+
+        builder.HasMany(r=>r.Reviews)
+            .WithOne(u=>u.User)
+            .HasForeignKey(u=>u.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(r => r.Fines)
+            .WithOne(u => u.User)
+            .HasForeignKey(u => u.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

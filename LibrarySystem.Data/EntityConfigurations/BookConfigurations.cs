@@ -6,10 +6,10 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
 {
     public void Configure(EntityTypeBuilder<Book> builder)
     {
-        builder.HasKey(b => b.Id);
+        builder.HasIndex(b => b.Title)
+            .IsUnique();
 
-        builder.Property(b => b.Id)
-            .ValueGeneratedOnAdd();
+        builder.HasKey(b => b.Id);
 
         builder.Property(b => b.Title)
             .IsRequired()
@@ -30,8 +30,7 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
             .IsRequired()
             .HasColumnType("decimal(10, 2)");
 
-        builder.HasIndex(b => b.Title)
-            .IsUnique();
+        
 
         builder.Property(b => b.IsAvailable)
             .HasComputedColumnSql("CASE WHEN [Quantity] > 0 THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", stored: false);
@@ -45,5 +44,10 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
             .WithMany(c => c.Books)
             .HasForeignKey(b => b.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(b => b.Reviews)
+                .WithOne(r => r.Book)
+                .HasForeignKey(b => b.BookId)
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }
