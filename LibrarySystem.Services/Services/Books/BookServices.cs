@@ -11,9 +11,11 @@ using OneOf;
 namespace LibrarySystem.Services.Services.Books;
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
-    IUnitOfWork unitOfWork) : BookRepository(context, mapper), IBookServices
+    IUnitOfWork unitOfWork,
+    HybridCache hybridCache) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
+    private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
 
     public async Task<OneOf<BookResponse, Error>> AddBookAsync(BookRequest request, CancellationToken cancellationToken = default)

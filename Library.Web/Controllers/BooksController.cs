@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using LibrarySystem.Domain.Abstractions;
+﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Services.Services.Books;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +20,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             error=>error.ToProblem());
     }
     [HttpPost("")]
-    public async Task<IActionResult> Add([FromBody]BookRequest request,CancellationToken cancellationToken)
+    public async Task<IActionResult> Add([FromForm]BookRequest request,CancellationToken cancellationToken)
     {
         var response=await _bookServices.AddBookAsync(request,cancellationToken);
         return response.Match<IActionResult>(
