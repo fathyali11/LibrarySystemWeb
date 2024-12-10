@@ -5,7 +5,7 @@ using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.Errors;
 using LibrarySystem.Domain.DTO.Author;
 using LibrarySystem.Domain.Entities;
-using LibrarySystem.Services.Services.Cashing;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 using OneOf;
 
@@ -13,51 +13,42 @@ namespace LibrarySystem.Services.Services.Authors;
 public class AuthorServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
-    ICacheServices cacheServices,
+    HybridCache hybridCache,
     ILogger<AuthorServices> logger) 
     : AuthorRepository(context, mapper), IAuthorServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
-    private readonly ICacheServices _cacheServices=cacheServices;
+    private readonly HybridCache _hybridCache=hybridCache;
     private readonly ILogger<AuthorServices> _logger = logger;
     private readonly IMapper _mapper=mapper;
     public async Task<OneOf<IEnumerable<AuthorResponse>, Error>> GetAllAuthorsAsync(CancellationToken cancellationToken = default)
     {
         const string cashKey = "All-Authors";
-        var cashedValue=await _cacheServices.GetAsync<List<AuthorResponse>>(cashKey,cancellationToken);
-        if(cashedValue is not null )
-        {
-            _logger.LogInformation("data from cach center");
-            return cashedValue;
-        }
+        var authers = await _hybridCache.GetOrCreateAsync(
+                cashKey,
+                async cached =>
+                {
 
-        var authors = await _unitOfWork.AuthorRepository.GetAllAsync(cancellationToken: cancellationToken);
-        var response=_mapper.Map<List<AuthorResponse>>(authors);
-        if (response is null)
-            return AuthorErrors.NotFound;
-        await _cacheServices.SetAsync(cashKey, response,cancellationToken);
-        _logger.LogInformation("data from data base");
-        return response;
+                    var authorEntities = await _unitOfWork.AuthorRepository.GetAllAsync(cancellationToken: cancellationToken);
+                    return _mapper.Map<List<AuthorResponse>>(authorEntities);
+                }
+            );
+        return authers;
     }
     public async Task<OneOf<IEnumerable<AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(CancellationToken cancellationToken = default)
     {
+        
         const string cashKey = "All-Authors-Books";
-        var cashedValue = await _cacheServices.GetAsync<List<AuthorWithBooksResponse>>(cashKey, cancellationToken);
-        if (cashedValue is not null)
-        {
-            _logger.LogInformation("data from cach center");
-            return cashedValue;
-        }
+        var authers = await _hybridCache.GetOrCreateAsync(
+                cashKey,
+                async cached =>
+                {
 
-
-        var authors=await _unitOfWork.AuthorRepository.GetAllAsync(includedNavigations:"Books",cancellationToken:cancellationToken);
-        var response=_mapper.Map<List<AuthorWithBooksResponse>>(authors);
-        if(response is null)
-            return AuthorErrors.NotFound;
-
-        await _cacheServices.SetAsync(cashKey, response,cancellationToken);
-        _logger.LogInformation("data from data base");
-        return response;
+                    var authorEntities = await _unitOfWork.AuthorRepository.GetAllAsync(includedNavigations: "Books", cancellationToken: cancellationToken);
+                    return _mapper.Map<List<AuthorWithBooksResponse>>(authorEntities);
+                }
+            );
+        return authers;
     }
     public async Task<OneOf<AuthorResponse, Error>> GetAuthorAsync(int id, CancellationToken cancellationToken = default)
     {
@@ -77,11 +68,10 @@ public class AuthorServices(ApplicationDbContext context,
         var result=await _unitOfWork.AuthorRepository.AddAsync(author,cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
         var response=_mapper.Map<AuthorResponse>(result);
-        await _cacheServices.RemoveAsync("All-Authors", cancellationToken);
-        await _cacheServices.RemoveAsync("All-Authors-Books", cancellationToken);
+        await _hybridCache.RemoveAsync("All-Authors", cancellationToken);
+        await _hybridCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
-
     public async Task<OneOf<AuthorResponse, Error>> UpdateAuthorAsync(int id, AuthorRequest request, CancellationToken cancellationToken = default)
     {
         if(id<=0)
@@ -93,11 +83,10 @@ public class AuthorServices(ApplicationDbContext context,
 
         await _unitOfWork.SaveChanges(cancellationToken);
         var response = _mapper.Map<AuthorResponse>(result);
-        await _cacheServices.RemoveAsync("All-Authors", cancellationToken);
-        await _cacheServices.RemoveAsync("All-Authors-Books", cancellationToken);
+        await _hybridCache.RemoveAsync("All-Authors", cancellationToken);
+        await _hybridCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
-
     public async Task<OneOf<AuthorResponse, Error>> ToggelAuthorAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
@@ -110,8 +99,8 @@ public class AuthorServices(ApplicationDbContext context,
         authorFromDb!.IsDeleted = !authorFromDb.IsDeleted;
         await _unitOfWork.SaveChanges(cancellationToken: cancellationToken);
         var response = _mapper.Map<AuthorResponse>(authorFromDb);
-        await _cacheServices.RemoveAsync("All-Authors", cancellationToken);
-        await _cacheServices.RemoveAsync("All-Authors-Books", cancellationToken);
+        await _hybridCache.RemoveAsync("All-Authors", cancellationToken);
+        await _hybridCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
 }
