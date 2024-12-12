@@ -21,6 +21,8 @@ public class BookServices(ApplicationDbContext context,
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
     private readonly string _filesPath = webHostEnvironment.WebRootPath;
+    private const string cachedKeyAllBooks= "all-books";
+    private const string cachedKeyAllAvailableBooks= "all-available-books";
     public async Task<OneOf<BookResponse, Error>> AddBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default)
     {
         var bookIsExists=await _unitOfWork.BookRepository.IsExits(x=>x.Title== request.Document.FileName, cancellationToken);
@@ -44,26 +46,31 @@ public class BookServices(ApplicationDbContext context,
 
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
         var response = _mapper.Map<BookResponse>(result);
         return response;
     }
     public async Task<OneOf<IEnumerable<BookResponse>, Error>> GetAllBooksAsync( bool? includeNotAvailable = null,CancellationToken cancellationToken = default)
     {
-        IEnumerable<Book> books;
+        IEnumerable<Book> cached;
 
         if (includeNotAvailable == true)
-            books = await _unitOfWork.BookRepository.GetAllAsync(cancellationToken: cancellationToken);
+            cached = await _hybridCache.GetOrCreateAsync(cachedKeyAllBooks,
+                async bookEntities =>
+                     await _unitOfWork.BookRepository.GetAllAsync(cancellationToken: cancellationToken)
+                 );
         else
-        {
-            books = await _unitOfWork.BookRepository.GetAllAsync(
-                predicate: x => x.IsActive,
-                cancellationToken: cancellationToken);
-        }
+            cached = await _hybridCache.GetOrCreateAsync(cachedKeyAllAvailableBooks,
+                    async bookEntities =>
+                         await _unitOfWork.BookRepository.GetAllAsync(x => x.IsAvailable && x.IsActive, cancellationToken: cancellationToken)
+                     );
 
-        if (!books.Any())
+
+        if (!cached.Any())
             return BookErrors.NotFound;
 
-        var response = _mapper.Map<List<BookResponse>>(books);
+        var response = _mapper.Map<List<BookResponse>>(cached);
         return response;
     }
     public async Task<OneOf<BookResponse, Error>> GetBookByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -88,6 +95,8 @@ public class BookServices(ApplicationDbContext context,
 
         bookFromDb=_mapper.Map(request, bookFromDb);
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
         var response=_mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
@@ -100,6 +109,8 @@ public class BookServices(ApplicationDbContext context,
             return BookErrors.NotFound;
         bookFromDb.IsActive=!bookFromDb.IsActive;
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
