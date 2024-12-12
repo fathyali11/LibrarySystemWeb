@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace LibrarySystem.Domain.DTO.Books;
-public record BookRequest(
+public record CreateBookRequest(
     string Description,
     int Quantity,
     decimal PriceForBuy,

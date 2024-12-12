@@ -4,9 +4,9 @@ using LibrarySystem.Domain.DTO.Books;
 using Microsoft.AspNetCore.Http;
 
 namespace LibrarySystem.Domain.FluentValidations.Books;
-public class BookRequestValidator : AbstractValidator<BookRequest>
+public class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
 {
-    public BookRequestValidator()
+    public CreateBookRequestValidator()
     {
 
         RuleFor(x => x.Description)

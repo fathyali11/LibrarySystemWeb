@@ -14,13 +14,14 @@ namespace LibrarySystem.Services.Services.Books;
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
-    HybridCache hybridCache,IWebHostEnvironment webHostEnvironment) : BookRepository(context, mapper), IBookServices
+    HybridCache hybridCache,
+    IWebHostEnvironment webHostEnvironment) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
     private readonly string _filesPath = webHostEnvironment.WebRootPath;
-    public async Task<OneOf<BookResponse, Error>> AddBookAsync(BookRequest request, CancellationToken cancellationToken = default)
+    public async Task<OneOf<BookResponse, Error>> AddBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default)
     {
         var bookIsExists=await _unitOfWork.BookRepository.IsExits(x=>x.Title== request.Document.FileName, cancellationToken);
         if (bookIsExists)
@@ -33,12 +34,13 @@ public class BookServices(ApplicationDbContext context,
         var authorIsExists = await _unitOfWork.AuthorRepository.IsExits(x => x.Id == request.AuthorId, cancellationToken);
         if (!authorIsExists)
             return AuthorErrors.NotFound;
-
+        
         Book book = _mapper.Map<Book>(request);
 
-        await SaveFile(request.Document, $"{_filesPath}/books");
-        await SaveFile(request.Image, $"{_filesPath}/images");
-
+        var bookPath=await SaveFile(request.Document, $"{_filesPath}/books");
+        var imagePath = await SaveFile(request.Image, $"{_filesPath}/images");
+        book.FilePath = $"https://localhost:7157//books/{bookPath}";
+        book.ImagePath = $"https://localhost:7157//images/{imagePath}";
 
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
@@ -75,7 +77,7 @@ public class BookServices(ApplicationDbContext context,
         var response=_mapper.Map<BookResponse>(book);
         return response;
     }
-    public async Task<OneOf<BookResponse, Error>> UpdateBookAsync(int id, BookRequest request, CancellationToken cancellationToken = default)
+    public async Task<OneOf<BookResponse, Error>> UpdateBookAsync(int id, UpdateBookRequest request, CancellationToken cancellationToken = default)
     {
         if(id < 0)
             return BookErrors.NotFound;
@@ -102,11 +104,13 @@ public class BookServices(ApplicationDbContext context,
         return response;
     }
 
-    private async Task SaveFile(IFormFile file,string path)
+    private async Task<string> SaveFile(IFormFile file,string path)
     {
-        var randomfileName = Path.GetRandomFileName();
+        var randomfileName = $"{Path.GetRandomFileName()}{Path.GetExtension(file.FileName)}";
         var fullPath= Path.Combine(path, randomfileName);
         using var stream = File.Create(fullPath);
         await file.CopyToAsync(stream);
+
+        return randomfileName;
     }
 }

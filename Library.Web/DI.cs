@@ -29,6 +29,7 @@ namespace Library.Web
     {
         public static IServiceCollection ServicesInjection(this IServiceCollection services, IConfiguration configuration)
         {
+            
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookServices, BookServices>();
             services.AddScoped<IBookRepository, BookRepository>();
@@ -46,6 +47,7 @@ namespace Library.Web
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
+            
             #pragma warning disable
             services.AddHybridCache();
             #pragma warning restore

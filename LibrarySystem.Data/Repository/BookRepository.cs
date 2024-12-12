@@ -10,7 +10,7 @@ public class BookRepository(ApplicationDbContext context, IMapper mapper) : Gene
 {
     private readonly IMapper _mapper=mapper;
     private readonly ApplicationDbContext _context = context;
-    public async Task<Book?> UpdateAsync(int id, BookRequest request)
+    public async Task<Book?> UpdateAsync(int id, CreateBookRequest request)
     {
         var book=await GetByIdAsync(id);
         if(book == null)

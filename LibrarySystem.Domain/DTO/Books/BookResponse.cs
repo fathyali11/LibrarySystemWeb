@@ -10,5 +10,7 @@ public record BookResponse(
     bool IsActive,
     DateTime PublishedDate,
     int CategoryId,
-    int AuthorId
+    int AuthorId,
+    string FilePath,
+    string ImagePath
     );

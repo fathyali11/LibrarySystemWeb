@@ -20,7 +20,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             error=>error.ToProblem());
     }
     [HttpPost("")]
-    public async Task<IActionResult> Add([FromForm]BookRequest request,CancellationToken cancellationToken)
+    public async Task<IActionResult> Add([FromForm]CreateBookRequest request,CancellationToken cancellationToken)
     {
         var response=await _bookServices.AddBookAsync(request,cancellationToken);
         return response.Match<IActionResult>(
@@ -37,7 +37,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             error => error.ToProblem());
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] BookRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBookRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookAsync(id,request, cancellationToken);
         return response.Match<IActionResult>(

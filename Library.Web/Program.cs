@@ -17,6 +17,7 @@ builder.Services.AddOpenApi();
 builder.Services.ServicesInjection(builder.Configuration);
 
 var app = builder.Build();
+app.MapStaticAssets();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
