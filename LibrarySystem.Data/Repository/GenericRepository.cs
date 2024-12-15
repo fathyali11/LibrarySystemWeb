@@ -52,7 +52,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations, CancellationToken cancellationToken = default)
+    public async Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations=null, CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = _dbSet.AsQueryable();
         if (predicate is not null)

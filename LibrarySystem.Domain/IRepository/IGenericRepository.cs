@@ -10,7 +10,7 @@ public interface IGenericRepository<T> where T : class
          string? searchTerm = null,
          Expression<Func<T, bool>>? searchExpression = null,
          CancellationToken cancellationToken = default);
-    Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations, CancellationToken cancellationToken = default);
+    Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations=null, CancellationToken cancellationToken = default);
     Task<T?> GetByIdAsync(int id);
     Task<bool> IsExits(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default);
     Task<T?> ExitsOrNot(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default);
