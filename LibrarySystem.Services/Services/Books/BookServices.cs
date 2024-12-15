@@ -20,7 +20,8 @@ public class BookServices(ApplicationDbContext context,
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
-    private readonly string _filesPath = webHostEnvironment.WebRootPath;
+    private readonly string _bookPath = $"{webHostEnvironment.WebRootPath}\\books";
+    private readonly string _imagePath = $"{webHostEnvironment.WebRootPath}\\images";
     private const string cachedKeyAllBooks= "all-books";
     private const string cachedKeyAllAvailableBooks= "all-available-books";
     public async Task<OneOf<BookResponse, Error>> AddBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default)
@@ -39,8 +40,8 @@ public class BookServices(ApplicationDbContext context,
         
         Book book = _mapper.Map<Book>(request);
 
-        var bookPath=await SaveFile(request.Document, $"{_filesPath}\\books");
-        var imagePath = await SaveFile(request.Image, $"{_filesPath}\\images");
+        var bookPath=await SaveFile(request.Document, _bookPath);
+        var imagePath = await SaveFile(request.Image, _imagePath);
         book.FilePath = $"https://localhost:7157//books/{bookPath}";
         book.ImagePath = $"https://localhost:7157//images/{imagePath}";
         book.RandomTitle= bookPath;
@@ -116,7 +117,6 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
-
     public async Task<OneOf<BookResponse, Error>> UpdateBookFileAsync(int id, BookFileRequest request, CancellationToken cancellationToken = default)
     {
         if (id < 0)
@@ -125,13 +125,13 @@ public class BookServices(ApplicationDbContext context,
         var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
         if (bookFromDb == null)
             return BookErrors.NotFound;
-        var fullPath = $"{_filesPath}\\books\\{bookFromDb.RandomTitle}";
+        var fullPath = $"{_bookPath}\\{bookFromDb.RandomTitle}";
         var isRemoved = await RemoveFile(fullPath);
         if (!isRemoved)
             return BookErrors.NotFound;
 
         _mapper.Map(request, bookFromDb);
-        var documentPath = await SaveFile(request.Document, $"{_filesPath}\\books");
+        var documentPath = await SaveFile(request.Document, _bookPath);
         bookFromDb.FilePath = $"https://localhost:7157//books/{documentPath}";
         bookFromDb.RandomTitle = documentPath;
         await _unitOfWork.SaveChanges(cancellationToken);
@@ -145,13 +145,13 @@ public class BookServices(ApplicationDbContext context,
         var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
         if(bookFromDb == null)
             return BookErrors.NotFound;
-        var fullPath = $"{_filesPath}\\images\\{bookFromDb.RandomImageName}";
+        var fullPath = $"{_imagePath}\\{bookFromDb.RandomImageName}";
         var isRemoved =await RemoveFile(fullPath);
         if(!isRemoved)
             return BookErrors.NotFound;
 
         _mapper.Map(request, bookFromDb);
-        var imagePath = await SaveFile(request.Image, $"{_filesPath}\\images");
+        var imagePath = await SaveFile(request.Image, _imagePath);
         bookFromDb.ImagePath = $"https://localhost:7157//images/{imagePath}";
         bookFromDb.RandomImageName=imagePath;
         await _unitOfWork.SaveChanges(cancellationToken);
