@@ -1,7 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.DTO.ApplicationUsers;
-using OneOf;
-namespace LibrarySystem.Services.Services.AuthUsers
+﻿namespace LibrarySystem.Services.Services.AuthUsers
 {
     public interface IAuthServices
     {

@@ -1,9 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.DTO.Categories;
-using LibrarySystem.Domain.IRepository;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Categories;
+﻿namespace LibrarySystem.Services.Services.Categories;
 public interface ICategoryServices:ICategoryRepository
 {
     Task<OneOf<IEnumerable<CategoryResponse>,Error>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);

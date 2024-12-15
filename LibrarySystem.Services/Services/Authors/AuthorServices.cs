@@ -1,15 +1,4 @@
-﻿using AutoMapper;
-using LibrarySystem.Data.Data;
-using LibrarySystem.Data.Repository;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.Errors;
-using LibrarySystem.Domain.DTO.Author;
-using LibrarySystem.Domain.Entities;
-using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Logging;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Authors;
+﻿namespace LibrarySystem.Services.Services.Authors;
 public class AuthorServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,

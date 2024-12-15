@@ -1,20 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using AutoMapper;
-using LibrarySystem.Data.Repository;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.Errors;
-using LibrarySystem.Domain.DTO.ApplicationUsers;
-using LibrarySystem.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Tokens
+﻿namespace LibrarySystem.Services.Services.Tokens
 {
     public class TokenServices(IOptions<JwtOptions> options,
         UserManager<ApplicationUser> userManager,

@@ -1,16 +1,4 @@
-﻿using AutoMapper;
-using LibrarySystem.Data.Data;
-using LibrarySystem.Data.Repository;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.Errors;
-using LibrarySystem.Domain.DTO.Books;
-using LibrarySystem.Domain.Entities;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Hybrid;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Books;
+﻿namespace LibrarySystem.Services.Services.Books;
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,

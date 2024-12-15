@@ -1,15 +1,4 @@
-﻿using AutoMapper;
-using LibrarySystem.Data.Data;
-using LibrarySystem.Data.Repository;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.Errors;
-using LibrarySystem.Domain.DTO.Categories;
-using LibrarySystem.Domain.Entities;
-using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Logging;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Categories;
+﻿namespace LibrarySystem.Services.Services.Categories;
 public class CategoryServices(ApplicationDbContext context, 
     IMapper mapper,IUnitOfWork unitOfWork,
     HybridCache hybridCache,

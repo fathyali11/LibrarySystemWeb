@@ -1,9 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.DTO.ApplicationUsers;
-using LibrarySystem.Domain.Entities;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Tokens
+﻿namespace LibrarySystem.Services.Services.Tokens
 {
     public interface ITokenServices
     {

@@ -1,21 +1,4 @@
-﻿using System.Text;
-using AutoMapper;
-using LibrarySystem.Data.Repository;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.ConstValues;
-using LibrarySystem.Domain.Abstractions.Errors;
-using LibrarySystem.Domain.DTO.ApplicationUsers;
-using LibrarySystem.Domain.Entities;
-using LibrarySystem.Services.Services.Emails;
-using LibrarySystem.Services.Services.Tokens;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.AuthUsers
+﻿namespace LibrarySystem.Services.Services.AuthUsers
 {
     public class AuthServices(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,

@@ -1,9 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.DTO.Author;
-using LibrarySystem.Domain.IRepository;
-using OneOf;
-
-namespace LibrarySystem.Services.Services.Authors;
+﻿namespace LibrarySystem.Services.Services.Authors;
 public interface IAuthorServices:IAuthorRepository
 {
     Task<OneOf<IEnumerable<AuthorResponse>,Error>> GetAllAuthorsAsync(CancellationToken cancellationToken=default);

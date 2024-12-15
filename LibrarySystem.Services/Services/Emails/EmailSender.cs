@@ -1,11 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.Options;
-using MimeKit;
-
-namespace LibrarySystem.Services.Services.Emails
+﻿namespace LibrarySystem.Services.Services.Emails
 {
     public class EmailSender(IOptions<EmailOptions> emailOptions) : IEmailSender
     {
