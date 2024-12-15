@@ -116,6 +116,27 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
+
+    public async Task<OneOf<BookResponse, Error>> UpdateBookFileAsync(int id, BookFileRequest request, CancellationToken cancellationToken = default)
+    {
+        if (id < 0)
+            return BookErrors.NotFound;
+
+        var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
+        if (bookFromDb == null)
+            return BookErrors.NotFound;
+        var fullPath = $"{_filesPath}\\books\\{bookFromDb.RandomTitle}";
+        var isRemoved = await RemoveFile(fullPath);
+        if (!isRemoved)
+            return BookErrors.NotFound;
+
+        _mapper.Map(request, bookFromDb);
+        var documentPath = await SaveFile(request.Document, $"{_filesPath}\\books");
+        bookFromDb.FilePath = $"https://localhost:7157//books/{documentPath}";
+        bookFromDb.RandomTitle = documentPath;
+        await _unitOfWork.SaveChanges(cancellationToken);
+        return _mapper.Map<BookResponse>(bookFromDb);
+    }
     public async Task<OneOf<BookResponse, Error>> UpdateBookImageAsync(int id, BookImageRequest request, CancellationToken cancellationToken = default)
     {
         if(id<0)
