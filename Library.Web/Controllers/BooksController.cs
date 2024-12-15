@@ -44,7 +44,14 @@ public class BooksController(IBookServices bookServices) : ControllerBase
              res => Ok(res),
              error => error.ToProblem());
     }
-
+    [HttpPut("update-image-{id}")]
+    public async Task<IActionResult> UpdateImage([FromRoute] int id, [FromForm] BookImageRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _bookServices.UpdateBookImageAsync(id, request, cancellationToken);
+        return response.Match<IActionResult>(
+             res => Ok(res),
+             error => error.ToProblem());
+    }
     [HttpPut("toggel-status-{id}")]
     public async Task<IActionResult> AddToggel([FromRoute]int id,CancellationToken cancellationToken)
     {

@@ -39,10 +39,12 @@ public class BookServices(ApplicationDbContext context,
         
         Book book = _mapper.Map<Book>(request);
 
-        var bookPath=await SaveFile(request.Document, $"{_filesPath}/books");
-        var imagePath = await SaveFile(request.Image, $"{_filesPath}/images");
+        var bookPath=await SaveFile(request.Document, $"{_filesPath}\\books");
+        var imagePath = await SaveFile(request.Image, $"{_filesPath}\\images");
         book.FilePath = $"https://localhost:7157//books/{bookPath}";
         book.ImagePath = $"https://localhost:7157//images/{imagePath}";
+        book.RandomTitle= bookPath;
+        book.RandomImageName=imagePath;
 
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
@@ -114,6 +116,27 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
+    public async Task<OneOf<BookResponse, Error>> UpdateBookImageAsync(int id, BookImageRequest request, CancellationToken cancellationToken = default)
+    {
+        if(id<0)
+            return BookErrors.NotFound;
+
+        var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
+        if(bookFromDb == null)
+            return BookErrors.NotFound;
+        var fullPath = $"{_filesPath}\\images\\{bookFromDb.RandomImageName}";
+        var isRemoved =await RemoveFile(fullPath);
+        if(!isRemoved)
+            return BookErrors.NotFound;
+
+        _mapper.Map(request, bookFromDb);
+        var imagePath = await SaveFile(request.Image, $"{_filesPath}\\images");
+        bookFromDb.ImagePath = $"https://localhost:7157//images/{imagePath}";
+        bookFromDb.RandomImageName=imagePath;
+        await _unitOfWork.SaveChanges(cancellationToken);
+        return _mapper.Map<BookResponse>(bookFromDb);
+    }
+
 
     private async Task<string> SaveFile(IFormFile file,string path)
     {
@@ -123,5 +146,22 @@ public class BookServices(ApplicationDbContext context,
         await file.CopyToAsync(stream);
 
         return randomfileName;
+    }
+
+    private async Task<bool> RemoveFile(string path)
+    {
+        try
+        {
+            if(File.Exists(path))
+            {
+                await Task.Run(() => File.Delete(path)); 
+                return true;
+            }
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

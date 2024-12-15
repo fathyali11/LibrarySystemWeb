@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using LibrarySystem.Domain.Abstractions.ConstValues;
 using LibrarySystem.Domain.DTO.Books;
-using Microsoft.AspNetCore.Http;
+using LibrarySystem.Domain.FluentValidations.GeneralValiations;
+
 
 namespace LibrarySystem.Domain.FluentValidations.Books;
 public class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
@@ -28,41 +28,10 @@ public class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
             .GreaterThan(0).WithMessage("Author ID must be a positive integer.");
 
         RuleFor(x => x.Document)
-            .NotEmpty()
-            .Must(HasValidateDocumentSize).WithMessage($"File size must not exceed {FileSettings.MaxFileSizeInMB} MB.")
-            .Must(HasValidateDocumentType).WithMessage($"File type must be {FileSettings.AllowedDocumentExtensions}")
-            .When(x => x.Document is not null);
+            .SetValidator(new DocumentValidator());
 
         RuleFor(x => x.Image)
-           .NotEmpty()
-           .Must(HasValidateImageSize).WithMessage($"Image size must not exceed {FileSettings.MaxImageSizeInMB} MB.")
-           .Must(HasValidateImageType).WithMessage($"Image type must be {FileSettings.AllowedImageExtensions}")
-           .When(x => x.Image is not null);
-
-    }
-    private bool HasValidateImageSize(IFormFile file)
-        => file.Length <= FileSettings.MaxImageSizeInByte;
-    private bool HasValidateDocumentSize(IFormFile file)
-        => file.Length <= FileSettings.MaxFileSizeInByte;
-
-    private bool HasValidateDocumentType(IFormFile file)
-        => HasValidateType(file, FileSettings.AllowedDocumentSignatures);
-
-    private bool HasValidateImageType(IFormFile file)
-        => HasValidateType(file, FileSettings.AllowedImageSignatures);
-    
-    private bool HasValidateType(IFormFile file,List<string> signatures)
-    {
-        var binaryReader = new BinaryReader(file.OpenReadStream());
-        var bytes = binaryReader.ReadBytes(2);
-
-        var fileInHexaDecimal = BitConverter.ToString(bytes);
-
-        foreach (var item in signatures)
-            if (string.Equals(item, fileInHexaDecimal, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-        return false;
+           .SetValidator(new ImageValidator());
 
     }
 }
