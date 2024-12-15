@@ -135,6 +135,8 @@ public class BookServices(ApplicationDbContext context,
         bookFromDb.FilePath = $"https://localhost:7157//books/{documentPath}";
         bookFromDb.RandomTitle = documentPath;
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
         return _mapper.Map<BookResponse>(bookFromDb);
     }
     public async Task<OneOf<BookResponse, Error>> UpdateBookImageAsync(int id, BookImageRequest request, CancellationToken cancellationToken = default)
@@ -155,6 +157,8 @@ public class BookServices(ApplicationDbContext context,
         bookFromDb.ImagePath = $"https://localhost:7157//images/{imagePath}";
         bookFromDb.RandomImageName=imagePath;
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
         return _mapper.Map<BookResponse>(bookFromDb);
     }
 
