@@ -15,17 +15,10 @@ public class BookMapping:Profile
             .ForMember(dest => dest.PriceForBorrow, option => option.MapFrom(src => src.PriceForBorrow))
             .ForMember(dest => dest.CategoryId, option => option.MapFrom(src => src.CategoryId))
             .ForMember(dest => dest.AuthorId, option => option.MapFrom(src => src.AuthorId))
-            .ForMember(dest => dest.IsAvailable, option => option.Ignore())
-            .ForMember(dest => dest.PublishedDate, option => option.Ignore())
-            .ForMember(dest => dest.Id, option => option.Ignore())
-            .ForMember(dest=>dest.Author, option => option.Ignore())
-            .ForMember(dest=>dest.Category, option => option.Ignore())
             .ForMember(dest=>dest.Title, option => option.MapFrom(src=>src.Document.FileName))
-            //.ForMember(dest=>dest.RandomTitle, option => option.MapFrom(src=>Path.GetRandomFileName()))
             .ForMember(dest=>dest.FileContentType, option => option.MapFrom(src=>src.Document.ContentType))
             .ForMember(dest=>dest.FileExtension, option => option.MapFrom(src=> Path.GetExtension(src.Document.FileName)))
             .ForMember(dest => dest.ImageName, option => option.MapFrom(src => src.Image.FileName))
-            //.ForMember(dest => dest.RandomImageName, option => option.MapFrom(src => Path.GetRandomFileName()))
             .ForMember(dest => dest.ImageContentType, option => option.MapFrom(src => src.Image.ContentType))
             .ForMember(dest => dest.ImageExtension, option => option.MapFrom(src => Path.GetExtension(src.Image.FileName)))
 
@@ -33,7 +26,6 @@ public class BookMapping:Profile
 
         CreateMap<BookImageRequest, Book>()
             .ForMember(dest => dest.ImageName, option => option.MapFrom(src => src.Image.FileName))
-            //.ForMember(dest => dest.RandomImageName, option => option.MapFrom(src => Path.GetRandomFileName()))
             .ForMember(dest => dest.ImageContentType, option => option.MapFrom(src => src.Image.ContentType))
             .ForMember(dest => dest.ImageExtension, option => option.MapFrom(src => Path.GetExtension(src.Image.FileName)))
             .ReverseMap();
@@ -41,7 +33,6 @@ public class BookMapping:Profile
 
         CreateMap<BookFileRequest, Book>()
             .ForMember(dest => dest.Title, option => option.MapFrom(src => src.Document.FileName))
-            //.ForMember(dest => dest.RandomTitle, option => option.MapFrom(src => Path.GetRandomFileName()))
             .ForMember(dest => dest.FileContentType, option => option.MapFrom(src => src.Document.ContentType))
             .ForMember(dest => dest.FileExtension, option => option.MapFrom(src => Path.GetExtension(src.Document.FileName)))
             .ReverseMap();
