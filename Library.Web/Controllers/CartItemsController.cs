@@ -1,8 +1,6 @@
-﻿using System.Security.Claims;
-using LibrarySystem.Domain.Abstractions;
+﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.CartItems;
 using LibrarySystem.Services.Services.CartItems;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers;
@@ -57,7 +55,7 @@ public class CartItemsController(ICartItemServices cartItemServices) : Controlle
 
         var result = await _cartItemServices.RemoveAsync(userId!, id, cancellationToken);
         return result.Match<IActionResult>(
-            response => Ok(),
+            response => NoContent(),
             error => error.ToProblem()
             );
     }
