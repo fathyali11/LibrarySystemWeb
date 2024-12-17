@@ -7,8 +7,9 @@ public class CartMappings:Profile
 {
     public CartMappings()
     {
-        CreateMap<Cart, CartReponse>()
+        CreateMap<Cart, CartResponse>()
             .ForMember(dest => dest.Id, option => option.MapFrom(src => src.Id))
+            .ForMember(dest => dest.TotalPrice, option => option.MapFrom(src => src.TotalAmount))
             .ForMember(dest => dest.CartItems, option => option.MapFrom(src => src.CartItems))
             .ReverseMap();
     }

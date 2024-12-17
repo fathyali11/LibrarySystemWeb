@@ -23,6 +23,7 @@ using LibrarySystem.Services.Services.Tokens;
 
 using LibrarySystem.Services.Services.Cashing;
 using LibrarySystem.Services.Services.CartItems;
+using LibrarySystem.Services.Services.Carts;
 
 namespace Library.Web
 {
@@ -46,6 +47,7 @@ namespace Library.Web
             services.AddScoped<IOrderRepository, OrderRepository>();
            // services.AddScoped<IOrderItemServices, OrderItemServices>();
            services.AddScoped<ICartRepository,CartRepository>();
+           services.AddScoped<ICartServices, CartServices>();
            services.AddScoped<ICartItemRepository, CartItemRepository>();
            services.AddScoped<ICartItemServices, CartItemServices>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();

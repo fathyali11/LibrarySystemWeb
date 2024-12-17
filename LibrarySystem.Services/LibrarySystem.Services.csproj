@@ -18,8 +18,4 @@
     <ProjectReference Include="..\LibrarySystem.Data\LibrarySystem.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Carts\" />
-  </ItemGroup>
-
 </Project>
