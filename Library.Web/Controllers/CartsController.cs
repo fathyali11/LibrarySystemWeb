@@ -19,4 +19,13 @@ public class CartsController(ICartServices cartServices) : ControllerBase
             error=>error.ToProblem()
             );
     }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Clear(int id, CancellationToken cancellationToken)
+    {
+        var result = await _cartServices.ClearCartAsync(id, cancellationToken);
+        return result.Match<IActionResult>(
+            response => NoContent(),
+            error => error.ToProblem()
+            );
+    }
 }
