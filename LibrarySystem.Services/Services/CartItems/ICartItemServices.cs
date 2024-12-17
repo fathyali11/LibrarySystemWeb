@@ -6,6 +6,7 @@ public interface ICartItemServices:ICartItemRepository
     Task<OneOf<bool,Error>> AddOrderToCartAsync(string userId,CartItemRequest request,CancellationToken cancellationToken=default);
     Task<OneOf<bool,Error>> PlusAsync(string userId,int id,CancellationToken cancellationToken=default);
     Task<OneOf<bool,Error>> MinusAsync(string userId,int id,CancellationToken cancellationToken=default);
+    Task<OneOf<bool,Error>> RemoveAsync(string userId,int id,CancellationToken cancellationToken=default);
     
 
 }

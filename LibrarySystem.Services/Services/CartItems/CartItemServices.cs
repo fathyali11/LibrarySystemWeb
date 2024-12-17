@@ -74,9 +74,6 @@ public class CartItemServices(ApplicationDbContext context,
         if (cartItemFromDb is null)
             return OrderErrors.NotFound;
 
-
-
-
         cartItemFromDb.Book.Quantity += 1;
         cartItemFromDb.Quantity--;
 
@@ -84,6 +81,22 @@ public class CartItemServices(ApplicationDbContext context,
         await _unitOfWork.SaveChanges(cancellationToken);
         return true;
     }
+    public async Task<OneOf<bool, Error>> RemoveAsync(string userId, int id, CancellationToken cancellationToken = default)
+    {
+        var cartItemFromDb = await _unitOfWork.CartItemRepository
+            .GetWithBookAndCartAsync(id, cancellationToken);
+        if (cartItemFromDb is null)
+            return OrderErrors.NotFound;
 
+
+        cartItemFromDb.Book.Quantity += cartItemFromDb.Quantity;
+        
+        cartItemFromDb.Cart.TotalAmount -= (cartItemFromDb.Price*cartItemFromDb.Quantity);
+
+        _unitOfWork.CartItemRepository.Delete(cartItemFromDb);
+
+        await _unitOfWork.SaveChanges(cancellationToken);
+        return true;
+    }
 
 }
