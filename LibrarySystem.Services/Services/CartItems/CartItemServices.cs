@@ -47,4 +47,27 @@ public class CartItemServices(ApplicationDbContext context,
 
         return true;
     }
+
+    public async Task<OneOf<bool, Error>> PlusAsync(string userId, int id, CancellationToken cancellationToken = default)
+    {
+        var cartItemFromDb = await _unitOfWork.CartItemRepository
+            .GetWithBookAndCartAsync(id,cancellationToken);
+        if(cartItemFromDb is null)
+            return OrderErrors.NotFound;
+
+
+        
+        if(cartItemFromDb.Book.Quantity <= 0)
+            return OrderErrors.NotEnoughQuantity;
+
+        cartItemFromDb.Book.Quantity -= 1;
+        cartItemFromDb.Quantity++;
+
+        cartItemFromDb.Cart.TotalAmount += (cartItemFromDb.Price);
+        await _unitOfWork.SaveChanges(cancellationToken);
+        return true;
+    }
+
+
+
 }

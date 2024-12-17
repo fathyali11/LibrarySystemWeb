@@ -24,4 +24,17 @@ public class CartItemsController(ICartItemServices cartItemServices) : Controlle
             error=>error.ToProblem()
             );
     }
+
+    [HttpPut("plus-{id}")]
+    public async Task<IActionResult> Plus([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        //var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = "cc127b55-2a31-468e-8e6b-daa58e5dca66";
+
+        var result = await _cartItemServices.PlusAsync(userId!, id, cancellationToken);
+        return result.Match<IActionResult>(
+            response => Created(),
+            error => error.ToProblem()
+            );
+    }
 }
