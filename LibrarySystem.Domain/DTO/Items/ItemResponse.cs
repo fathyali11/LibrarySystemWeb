@@ -1,5 +1,5 @@
-﻿namespace LibrarySystem.Domain.DTO.CartItems;
-public record CartItemResponse
+﻿namespace LibrarySystem.Domain.DTO.Items;
+public record ItemResponse
 {
     public int Id { get; init; }
     public string Name { get; init; } = string.Empty;
@@ -9,9 +9,9 @@ public record CartItemResponse
     public string Type { get; init; } = string.Empty;
     public string ImageUrl { get; init; } = string.Empty;
 
-    public CartItemResponse() { }
+    public ItemResponse() { }
 
-    public CartItemResponse(int id, string name, decimal price, int quantity, decimal totalPrice, string type, string imageUrl)
+    public ItemResponse(int id, string name, decimal price, int quantity, decimal totalPrice, string type, string imageUrl)
     {
         Id = id;
         Name = name;

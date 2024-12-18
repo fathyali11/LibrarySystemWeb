@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LibrarySystem.Domain.DTO.CartItems;
+using LibrarySystem.Domain.DTO.Items;
 using LibrarySystem.Domain.Entities;
 
 namespace LibrarySystem.Domain.Mappings;
@@ -13,7 +14,7 @@ public class CartItemMappings:Profile
             .ForMember(dest => dest.Quantity, option => option.MapFrom(src => src.Quantity))
             .ReverseMap();
 
-        CreateMap<CartItem, CartItemResponse>()
+        CreateMap<CartItem, ItemResponse>()
             .ForMember(dest => dest.Id, option => option.MapFrom(src => src.Id))
             .ForMember(dest => dest.Type, option => option.MapFrom(src => src.OrderType))
             .ForMember(dest => dest.Quantity, option => option.MapFrom(src => src.Quantity))
