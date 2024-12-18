@@ -10,8 +10,6 @@ public class BookServices(ApplicationDbContext context,
     private readonly IMapper _mapper=mapper;
     private readonly string _bookPath = $"{webHostEnvironment.WebRootPath}\\books";
     private readonly string _imagePath = $"{webHostEnvironment.WebRootPath}\\images";
-    private const string cachedKeyAllBooks= "all-books";
-    private const string cachedKeyAllAvailableBooks= "all-available-books";
     public async Task<OneOf<BookResponse, Error>> AddBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default)
     {
         var bookIsExists=await _unitOfWork.BookRepository.IsExits(x=>x.Title== request.Document.FileName, cancellationToken);
@@ -37,8 +35,8 @@ public class BookServices(ApplicationDbContext context,
 
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         var response = _mapper.Map<BookResponse>(result);
         return response;
     }
@@ -47,12 +45,12 @@ public class BookServices(ApplicationDbContext context,
         IEnumerable<Book> cached;
 
         if (includeNotAvailable == true)
-            cached = await _hybridCache.GetOrCreateAsync(cachedKeyAllBooks,
+            cached = await _hybridCache.GetOrCreateAsync(GeneralConsts.AllBooksCachedKey,
                 async bookEntities =>
                      await _unitOfWork.BookRepository.GetAllAsync(cancellationToken: cancellationToken)
                  );
         else
-            cached = await _hybridCache.GetOrCreateAsync(cachedKeyAllAvailableBooks,
+            cached = await _hybridCache.GetOrCreateAsync(GeneralConsts.AllAvailableBooksCachedKey,
                     async bookEntities =>
                          await _unitOfWork.BookRepository.GetAllAsync(x => x.IsAvailable && x.IsActive, cancellationToken: cancellationToken)
                      );
@@ -86,8 +84,8 @@ public class BookServices(ApplicationDbContext context,
 
         bookFromDb=_mapper.Map(request, bookFromDb);
         await _unitOfWork.SaveChanges(cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         var response=_mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
@@ -100,8 +98,8 @@ public class BookServices(ApplicationDbContext context,
             return BookErrors.NotFound;
         bookFromDb.IsActive=!bookFromDb.IsActive;
         await _unitOfWork.SaveChanges(cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
@@ -123,8 +121,8 @@ public class BookServices(ApplicationDbContext context,
         bookFromDb.FilePath = $"https://localhost:7157//books/{documentPath}";
         bookFromDb.RandomTitle = documentPath;
         await _unitOfWork.SaveChanges(cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return _mapper.Map<BookResponse>(bookFromDb);
     }
     public async Task<OneOf<BookResponse, Error>> UpdateBookImageAsync(int id, BookImageRequest request, CancellationToken cancellationToken = default)
@@ -145,8 +143,8 @@ public class BookServices(ApplicationDbContext context,
         bookFromDb.ImagePath = $"https://localhost:7157//images/{imagePath}";
         bookFromDb.RandomImageName=imagePath;
         await _unitOfWork.SaveChanges(cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllBooks, cancellationToken);
-        await _hybridCache.RemoveAsync(cachedKeyAllAvailableBooks, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return _mapper.Map<BookResponse>(bookFromDb);
     }
 

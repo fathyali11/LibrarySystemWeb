@@ -3,11 +3,12 @@
 namespace LibrarySystem.Services.Services.CartItems;
 public class CartItemServices(ApplicationDbContext context,
     IUnitOfWork unitOfWork,
-    IMapper mapper) : CartItemRepository(context), ICartItemServices
+    IMapper mapper,
+    HybridCache hybridCache) : CartItemRepository(context), ICartItemServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly IMapper _mapper = mapper;
-
+    private readonly HybridCache _hybridCache=hybridCache;
     public async Task<OneOf<bool,Error>> AddOrderToCartAsync(string userId,CartItemRequest request, CancellationToken cancellationToken = default)
     {
         var cartFromDb = await _unitOfWork.CartRepository.GetByAsync(x => x.UserId == userId, cancellationToken: cancellationToken);
@@ -44,10 +45,11 @@ public class CartItemServices(ApplicationDbContext context,
         cart.TotalAmount += (price * request.Quantity);
 
         await _unitOfWork.SaveChanges(cancellationToken);
-
+        await _hybridCache.RemoveAsync($"{GeneralConsts.CartCachedKey}{cart.Id}");
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
-
     public async Task<OneOf<bool, Error>> PlusAsync(string userId, int id, CancellationToken cancellationToken = default)
     {
         var cartItemFromDb = await _unitOfWork.CartItemRepository
@@ -65,6 +67,9 @@ public class CartItemServices(ApplicationDbContext context,
 
         cartItemFromDb.Cart.TotalAmount += (cartItemFromDb.Price);
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync($"{GeneralConsts.CartCachedKey}{cartItemFromDb.CartId}");
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
     public async Task<OneOf<bool, Error>> MinusAsync(string userId, int id, CancellationToken cancellationToken = default)
@@ -79,6 +84,9 @@ public class CartItemServices(ApplicationDbContext context,
 
         cartItemFromDb.Cart.TotalAmount -= (cartItemFromDb.Price);
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync($"{GeneralConsts.CartCachedKey}{cartItemFromDb.CartId}");
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
     public async Task<OneOf<bool, Error>> RemoveAsync(string userId, int id, CancellationToken cancellationToken = default)
@@ -96,6 +104,9 @@ public class CartItemServices(ApplicationDbContext context,
         _unitOfWork.CartItemRepository.Delete(cartItemFromDb);
 
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync($"{GeneralConsts.CartCachedKey}{cartItemFromDb.CartId}");
+        await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+        await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
 
