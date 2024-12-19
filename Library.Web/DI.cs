@@ -24,6 +24,7 @@ using LibrarySystem.Services.Services.Cashing;
 using LibrarySystem.Services.Services.CartItems;
 using LibrarySystem.Services.Services.Carts;
 using LibrarySystem.Services.Services.Orders;
+using Hangfire;
 
 namespace Library.Web
 {
@@ -64,7 +65,8 @@ namespace Library.Web
                 .ValidatorsInjection()
                 .MappingsInjection()
                 .EmailInjection(configuration)
-                .ExceptionHandlerInjection();
+                .ExceptionHandlerInjection()
+                .HangfireInjection(configuration);
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
@@ -123,7 +125,6 @@ namespace Library.Web
                 .AddFluentValidationClientsideAdapters();
             return services;
         }
-
         private static IServiceCollection EmailInjection(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<EmailOptions>()
@@ -138,6 +139,19 @@ namespace Library.Web
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
             return services;
+        }
+        private static IServiceCollection HangfireInjection(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHangfire(config => config
+                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                 .UseSimpleAssemblyNameTypeSerializer()
+                 .UseRecommendedSerializerSettings()
+                 .UseSqlServerStorage(configuration.GetConnectionString("JobsConnection")));
+
+            services.AddHangfireServer();
+
+            services.AddMvc();
+            return services;    
         }
 
     }

@@ -10,6 +10,10 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.17" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.17" />
+    <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="7.0.1" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.17" />
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
@@ -21,9 +25,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.0.0-preview.9.24556.5" />
     <PackageReference Include="OneOf" Version="3.0.271" />
-    <PackageReference Include="Scalar.AspNetCore" Version="1.2.50" />
+    <PackageReference Include="Scalar.AspNetCore" Version="1.2.64" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>

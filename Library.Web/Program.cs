@@ -1,3 +1,5 @@
+using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using Library.Web;
 using Scalar.AspNetCore;
 using Serilog;
@@ -18,6 +20,17 @@ builder.Services.ServicesInjection(builder.Configuration);
 
 var app = builder.Build();
 app.MapStaticAssets();
+app.UseHangfireDashboard("/jobs", new DashboardOptions
+{
+    Authorization = new[]
+    {
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User="admin",
+            Pass="admin"
+        }
+    }
+});
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
