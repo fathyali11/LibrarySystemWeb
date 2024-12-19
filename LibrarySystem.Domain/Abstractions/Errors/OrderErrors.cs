@@ -6,6 +6,7 @@ namespace LibrarySystem.Domain.Abstractions.Errors
     {
         public static readonly Error NotFound = new("Order.NotFound", "This Order is not found", StatusCodes.Status400BadRequest);
         public static readonly Error NotEnoughQuantity = new("Order.LargeQuantity", "This Order quantity greater than quantity of this book! please decrease it", StatusCodes.Status400BadRequest);
+        public static readonly Error NoElementsFound = new("Order.HasNoElement", "This Order has zero element", StatusCodes.Status400BadRequest);
 
 
 
