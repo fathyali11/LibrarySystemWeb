@@ -25,6 +25,7 @@ using LibrarySystem.Services.Services.CartItems;
 using LibrarySystem.Services.Services.Carts;
 using LibrarySystem.Services.Services.Orders;
 using Hangfire;
+using LibrarySystem.Services.Services.Notifications;
 
 namespace Library.Web
 {
@@ -54,6 +55,7 @@ namespace Library.Web
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
+            services.AddScoped<IBorrowedBookNotificationServices, BorrowedBookNotificationServices>();
             
             #pragma warning disable
             services.AddHybridCache();

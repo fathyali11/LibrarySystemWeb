@@ -1,6 +1,7 @@
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
 using Library.Web;
+using LibrarySystem.Services.Services.Notifications;
 using Scalar.AspNetCore;
 using Serilog;
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,22 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddOpenApi();
 builder.Services.ServicesInjection(builder.Configuration);
 
+
+
 var app = builder.Build();
+
+using(var scope=app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var notificationService = services.GetRequiredService<IBorrowedBookNotificationServices>();
+    var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+
+    // Add or update the recurring job
+    recurringJobManager.AddOrUpdate(
+        "SendNotificationToBorrower",
+        () => notificationService.SendNotificationToBorrower(),
+        Cron.Daily);
+}
 app.MapStaticAssets();
 app.UseHangfireDashboard("/jobs", new DashboardOptions
 {

@@ -168,7 +168,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
 
             var keyValues = new Dictionary<string, string>()
             {
-                {"ConfirmationLink",confirmationLink}
+                {"{ConfirmationLink}",confirmationLink}
             };
             var emailBody = EmailHelper.PrepareBodyTemplate(PathsValues.TemplatesPaths, "EmailTemplate.html", keyValues);
 
@@ -189,7 +189,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
 
             var keyValues = new Dictionary<string, string>()
             {
-                {"resetLink",resetLink}
+                {"{resetLink}",resetLink}
             };
             var emailBody = EmailHelper.PrepareBodyTemplate(PathsValues.TemplatesPaths, "ResetPasswordTemplate.html", keyValues);
 

@@ -8,7 +8,7 @@
             string body=File.ReadAllText(fullPath);
 
             foreach(var key in data.Keys) 
-                body.Replace(key, data[key]);
+                body=body.Replace(key, data[key]);
 
             return body ;
 
