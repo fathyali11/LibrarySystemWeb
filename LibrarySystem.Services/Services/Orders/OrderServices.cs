@@ -15,7 +15,10 @@ namespace LibrarySystem.Services.Services.Orders
         {
             var cartFromDb= await _unitOfWork.CartRepository.GetCartWithItems(cartId, true,cancellationToken);
             var order = _mapper.Map<Order>(cartFromDb);
-            
+
+            if (!cartFromDb!.CartItems.Any())
+                return OrderErrors.NoElementsFound;
+
             foreach(var item in order.OrderItems)
             {
                 if(string.Equals(item.OrderType , OrderTypes.Borrow,StringComparison.OrdinalIgnoreCase)) 
