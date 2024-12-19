@@ -8,14 +8,17 @@ public class CartRepository(ApplicationDbContext context) : GenericRepository<Ca
 {
     private readonly ApplicationDbContext _context=context;
 
-    public async Task<Cart?> GetCartWithItems(int id, CancellationToken cancellationToken = default)
+    public async Task<Cart?> GetCartWithItems(int id, bool includeUser = false, CancellationToken cancellationToken = default)
     {
-        var cart = await _context.Carts
-            .Where(x=>x.Id == id)
-            .Include(x=>x.CartItems)
-            .ThenInclude(x=>x.Book)
-            .SingleOrDefaultAsync(cancellationToken);
+        var query = _context.Carts
+            .Where(c => c.Id == id);
+        if (includeUser )
+            query=query.Include(c => c.User);
 
-        return cart;
+        query=query.Include(x=>x.CartItems)
+            .ThenInclude(x=>x.Book);
+            
+
+        return await query.SingleOrDefaultAsync(cancellationToken);
     }
 }

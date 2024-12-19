@@ -17,14 +17,14 @@ public class CartServices(ApplicationDbContext context,
         cached = await _hybridCache.GetOrCreateAsync($"{GeneralConsts.CartCachedKey}{id}",
             async cartEntity =>
             {
-                var cart = await _unitOfWork.CartRepository.GetCartWithItems(id, cancellationToken);
+                var cart = await _unitOfWork.CartRepository.GetCartWithItems(id,false, cancellationToken);
                 return _mapper.Map<CartResponse>(cart);
             });
         return cached;
     }
     public async Task<OneOf<bool, Error>> ClearCartAsync(int id, CancellationToken cancellationToken = default)
     {
-        var cartFromDb = await _unitOfWork.CartRepository.GetCartWithItems(id, cancellationToken);
+        var cartFromDb = await _unitOfWork.CartRepository.GetCartWithItems(id, false,cancellationToken);
         if (cartFromDb is null)
             return CartErrors.NotFound;
 

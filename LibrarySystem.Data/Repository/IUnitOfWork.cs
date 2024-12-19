@@ -1,6 +1,4 @@
-﻿
-
-using LibrarySystem.Domain.IRepository;
+﻿using LibrarySystem.Domain.IRepository;
 
 namespace LibrarySystem.Data.Repository;
 public interface IUnitOfWork

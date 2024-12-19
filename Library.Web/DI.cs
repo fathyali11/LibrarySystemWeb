@@ -20,10 +20,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using LibrarySystem.Services.Services.AccountUsers;
 using LibrarySystem.Services.Services.Tokens;
-
 using LibrarySystem.Services.Services.Cashing;
 using LibrarySystem.Services.Services.CartItems;
 using LibrarySystem.Services.Services.Carts;
+using LibrarySystem.Services.Services.Orders;
 
 namespace Library.Web
 {
@@ -43,13 +43,13 @@ namespace Library.Web
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAccountUserServices, AccountUserServices>();
             services.AddScoped<ITokenServices, TokenServices>();
-            //services.AddScoped<IOrderServices, OrderServices>();
+            services.AddScoped<IOrderServices, OrderServices>();
             services.AddScoped<IOrderRepository, OrderRepository>();
-           // services.AddScoped<IOrderItemServices, OrderItemServices>();
-           services.AddScoped<ICartRepository,CartRepository>();
-           services.AddScoped<ICartServices, CartServices>();
-           services.AddScoped<ICartItemRepository, CartItemRepository>();
-           services.AddScoped<ICartItemServices, CartItemServices>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            services.AddScoped<ICartRepository,CartRepository>();
+            services.AddScoped<ICartServices, CartServices>();
+            services.AddScoped<ICartItemRepository, CartItemRepository>();
+            services.AddScoped<ICartItemServices, CartItemServices>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();

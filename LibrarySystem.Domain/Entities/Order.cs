@@ -1,11 +1,13 @@
-﻿namespace LibrarySystem.Domain.Entities;
+﻿using LibrarySystem.Domain.Abstractions.ConstValues;
+
+namespace LibrarySystem.Domain.Entities;
 public class Order
 {
     public int Id { get; set; }
     public string UserId { get; set; }=string.Empty;
     public DateTime CreatedAt { get; set; }=DateTime.UtcNow;
     public decimal TotalAmount { get; set; }
-    public string Status { get; set; } = string.Empty;
+    public string Status { get; set; } = OrderStatuss.Pending;
 
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
