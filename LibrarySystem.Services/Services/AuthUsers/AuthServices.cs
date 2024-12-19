@@ -1,4 +1,6 @@
-﻿namespace LibrarySystem.Services.Services.AuthUsers
+﻿using Hangfire;
+
+namespace LibrarySystem.Services.Services.AuthUsers
 {
     public class AuthServices(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -172,7 +174,8 @@
 
 
             _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
-            await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody);
+            BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody));
+            //await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody);
             _logger.LogInformation("email was sent");
         }
 
@@ -192,7 +195,8 @@
 
 
             _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
-            await _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody);
+            BackgroundJob.Enqueue(()=> _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody));
+            //await _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody);
             _logger.LogInformation("email was sent");
         }
     }
