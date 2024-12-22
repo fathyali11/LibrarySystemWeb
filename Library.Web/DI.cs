@@ -26,6 +26,7 @@ using LibrarySystem.Services.Services.Carts;
 using LibrarySystem.Services.Services.Orders;
 using Hangfire;
 using LibrarySystem.Services.Services.Notifications;
+using LibrarySystem.Services.Services.Payments;
 
 namespace Library.Web
 {
@@ -56,6 +57,7 @@ namespace Library.Web
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
             services.AddScoped<IBorrowedBookNotificationServices, BorrowedBookNotificationServices>();
+            services.AddScoped<IPaymentServices, PaymentServices>();
             
             #pragma warning disable
             services.AddHybridCache();
@@ -68,7 +70,8 @@ namespace Library.Web
                 .MappingsInjection()
                 .EmailInjection(configuration)
                 .ExceptionHandlerInjection()
-                .HangfireInjection(configuration);
+                .HangfireInjection(configuration)
+                .StripeInjection(configuration);
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
@@ -155,6 +158,13 @@ namespace Library.Web
             services.AddMvc();
             return services;    
         }
-
+        private static IServiceCollection StripeInjection(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<StripeSettings>()
+                .Bind(configuration.GetSection(nameof(StripeSettings)))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            return services;
+        }
     }
 }

@@ -20,4 +20,8 @@
     <Folder Include="FluentValidations\Orders\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="DTO\Payments\PaymentOrderRequest.cs" />
+  </ItemGroup>
+
 </Project>

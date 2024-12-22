@@ -1,9 +1,12 @@
+using System.Configuration;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
 using Library.Web;
+using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Services.Services.Notifications;
 using Scalar.AspNetCore;
 using Serilog;
+using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -35,6 +38,7 @@ using(var scope=app.Services.CreateScope())
         () => notificationService.SendNotificationToBorrower(),
         Cron.Daily);
 }
+app.UseStaticFiles();
 app.MapStaticAssets();
 app.UseHangfireDashboard("/jobs", new DashboardOptions
 {
@@ -59,4 +63,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
+StripeConfiguration.ApiKey = app.Configuration[$"{nameof(StripeSettings)}:SecretKey"];
 app.Run();

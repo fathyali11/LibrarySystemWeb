@@ -1,4 +1,5 @@
 ﻿using LibrarySystem.Data.Data;
+using LibrarySystem.Domain.Abstractions.ConstValues;
 using LibrarySystem.Domain.Entities;
 using LibrarySystem.Domain.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,20 @@ namespace LibrarySystem.Data.Repository
                 .ThenInclude(b => b.Book)
                 .ToListAsync(cancellationToken);
             return orders.SingleOrDefault()!;
+        }
+        public async Task<bool> UpdateStatusAsync(int orderId)
+        {
+            var res= await _context.Orders
+                .Where(x=>x.Id== orderId)
+                .ExecuteUpdateAsync(x=>x.SetProperty(pro=>pro.Status,OrderStatuss.Completed));
+            return res > 0;
+        }
+        public async Task SetPaymentIdAndPaymentIntentId(int orderId, string paymentIntentId, string sessionId)
+        {
+            await _context.Orders
+                .Where(x => x.Id == orderId)
+                .ExecuteUpdateAsync(x=>x.SetProperty(pro=>pro.sessionId, sessionId)
+                    .SetProperty(pro => pro.PaymentIntentId, paymentIntentId));
         }
     }
 }
