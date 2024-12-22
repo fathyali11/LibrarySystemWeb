@@ -21,4 +21,10 @@ public class CartRepository(ApplicationDbContext context) : GenericRepository<Ca
 
         return await query.SingleOrDefaultAsync(cancellationToken);
     }
+    public async Task RemoveCompletedAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        await _context.Carts
+            .Where(x => x.UserId == userId)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
 }

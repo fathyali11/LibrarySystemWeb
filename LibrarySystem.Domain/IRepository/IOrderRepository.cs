@@ -8,6 +8,7 @@ namespace LibrarySystem.Domain.IRepository
         Task<Order> GetByIdWithBooksAsync(string userId, CancellationToken cancellationToken = default);
         Task<bool> UpdateStatusAsync(int orderId);
         Task SetPaymentIdAndPaymentIntentId(int orderId, string paymentIntentId, string sessionId);
+        Task<List<Order>> GetOrdersByStatusAsync(CancellationToken cancellationToken = default);
     }
 }
  

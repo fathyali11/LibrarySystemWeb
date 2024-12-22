@@ -29,13 +29,19 @@ var app = builder.Build();
 using(var scope=app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var notificationService = services.GetRequiredService<IBorrowedBookNotificationServices>();
+    var BorrowedBookNotificationService = services.GetRequiredService<IBorrowedBookNotificationServices>();
     var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
 
     // Add or update the recurring job
     recurringJobManager.AddOrUpdate(
         "SendNotificationToBorrower",
-        () => notificationService.SendNotificationToBorrower(),
+        () => BorrowedBookNotificationService.SendNotificationToBorrower(),
+        Cron.Daily);
+
+    var cartNotificationService = services.GetRequiredService<ICartNotificationServices>();
+    recurringJobManager.AddOrUpdate(
+        "RemoveCompleted",
+        () => cartNotificationService.RemoveCompletedAsync(),
         Cron.Daily);
 }
 app.UseStaticFiles();

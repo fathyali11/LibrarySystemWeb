@@ -57,6 +57,7 @@ namespace Library.Web
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
             services.AddScoped<IBorrowedBookNotificationServices, BorrowedBookNotificationServices>();
+            services.AddScoped<ICartNotificationServices, CartNotificationServices>();
             services.AddScoped<IPaymentServices, PaymentServices>();
             
             #pragma warning disable

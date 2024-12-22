@@ -43,5 +43,12 @@ namespace LibrarySystem.Data.Repository
                 .ExecuteUpdateAsync(x=>x.SetProperty(pro=>pro.sessionId, sessionId)
                     .SetProperty(pro => pro.PaymentIntentId, paymentIntentId));
         }
+        public async Task<List<Order>> GetOrdersByStatusAsync(CancellationToken cancellationToken = default)
+        {
+            var orders = await _context.Orders
+                .Where(x => x.Status == OrderStatuss.Completed&&x.PaymentStatus==PaymentStatuss.paid)
+                .ToListAsync(cancellationToken);
+            return orders;
+        }
     }
 }
