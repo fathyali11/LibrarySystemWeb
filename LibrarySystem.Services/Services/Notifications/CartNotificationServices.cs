@@ -8,6 +8,7 @@ public class CartNotificationServices(IUnitOfWork unitOfWork) : ICartNotificatio
         foreach (var order in orders)
         {
             await _unitOfWork.CartRepository.RemoveCompletedAsync(order.UserId, CancellationToken.None);
+
         }
         await _unitOfWork.SaveChanges(CancellationToken.None);
     }

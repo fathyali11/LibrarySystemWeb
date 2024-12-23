@@ -9,6 +9,7 @@ public class Order
     public decimal TotalAmount { get; set; }
     public string Status { get; set; } = OrderStatuss.Pending;
     public string PaymentStatus { get; set; } = PaymentStatuss.Pending;
+    public int CartId { get; set; } 
 
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
