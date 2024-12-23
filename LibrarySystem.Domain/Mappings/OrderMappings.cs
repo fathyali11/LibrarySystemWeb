@@ -10,6 +10,7 @@ namespace LibrarySystem.Domain.Mappings
         {
             CreateMap<Cart, Order>()
                 .ForMember(dest => dest.Id, option => option.Ignore())
+                .ForMember(dest => dest.CartId, option => option.MapFrom(src=>src.Id))
                 .ForMember(dest => dest.UserId, option => option.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.TotalAmount, option => option.MapFrom(src => src.TotalAmount))
                 .ForMember(dest => dest.FirstName, option => option.MapFrom(src => src.User.FirstName))

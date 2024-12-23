@@ -16,23 +16,20 @@ public class BorrowedBookNotificationServices(IUnitOfWork unitOfWork,
 
         foreach (var borrowedBook in borrowedBooks)
         {
-            var user = borrowedBook.User;
-            var bookTitle = borrowedBook.Book.Title;
-            var dueDate = borrowedBook.DueDate;
-
-            await SendNotificationEmail(user, bookTitle, dueDate);
+            await SendNotificationEmail(borrowedBook.FirstName,
+                borrowedBook.LastName,borrowedBook.Email, borrowedBook.BookTitle, borrowedBook.DueDate);
         }
     }
-    private async Task SendNotificationEmail(ApplicationUser user, string bookTitle, DateTime dueDate)
+    private async Task SendNotificationEmail(string firstName,string lastName,string email, string bookTitle, DateTime dueDate)
     {
         var keyValues = new Dictionary<string, string>()
         {
-            {"{UserName}", user.FirstName + " " + user.LastName},
+            {"{UserName}", firstName + " " + lastName},
             {"{BookTitle}", bookTitle},
             {"{DueDate}", dueDate.ToString("MMMM dd, yyyy")},
             {"{Library Contact Information}", _options.SenderEmail }
         };
         var emailBody = EmailHelper.PrepareBodyTemplate(PathsValues.TemplatesPaths, "BorrowBookTemplate.html", keyValues);
-        await _emailSender.SendEmailAsync(user.Email!, "Borrowed Book Notification", emailBody);
+        await _emailSender.SendEmailAsync(email!, "Borrowed Book Notification", emailBody);
     }
 }

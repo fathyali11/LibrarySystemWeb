@@ -38,11 +38,11 @@ using(var scope=app.Services.CreateScope())
         () => BorrowedBookNotificationService.SendNotificationToBorrower(),
         Cron.Daily);
 
-    var cartNotificationService = services.GetRequiredService<ICartNotificationServices>();
-    recurringJobManager.AddOrUpdate(
-        "RemoveCompleted",
-        () => cartNotificationService.RemoveCompletedAsync(),
-        Cron.Daily);
+    //var cartNotificationService = services.GetRequiredService<ICartNotificationServices>();
+    //recurringJobManager.AddOrUpdate(
+    //    "RemoveCompleted",
+    //    () => cartNotificationService.RemoveCompletedAsync(),
+    //    Cron.Daily);
 }
 app.UseStaticFiles();
 app.MapStaticAssets();
