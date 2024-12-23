@@ -1,11 +1,13 @@
 ﻿using LibrarySystem.Domain.DTO.Payments;
+using Microsoft.Extensions.Caching.Hybrid;
 using Stripe;
 using Stripe.Checkout;
 namespace LibrarySystem.Services.Services.Payments
 {
-    public class PaymentServices(IUnitOfWork unitOfWork) : IPaymentServices
+    public class PaymentServices(IUnitOfWork unitOfWork,HybridCache hybridCache) : IPaymentServices
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly HybridCache _hybridCache = hybridCache;
         public async Task<SessionResponse> CreateCheckoutSessionAsync(PaymentOrderRequest request, CancellationToken cancellationToken = default)
         {
             var options = new SessionCreateOptions
@@ -44,6 +46,11 @@ namespace LibrarySystem.Services.Services.Payments
             if (order is null)
                 return OrderErrors.NotFound;
 
+            await _unitOfWork.CartRepository.RemoveCompletedAsync(order.UserId, CancellationToken.None);
+            await _hybridCache.RemoveAsync($"{GeneralConsts.CartCachedKey}{order.CartId}");
+            await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
+            await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
+
             var service = new SessionService();
             var session = await service.GetAsync(order.sessionId,cancellationToken:cancellationToken);
             if (session.PaymentStatus == PaymentStatuss.paid)
@@ -54,6 +61,7 @@ namespace LibrarySystem.Services.Services.Payments
                 await _unitOfWork.SaveChanges(cancellationToken);
                 return true;
             }
+            
             return PaymentErrors.NotPaid;
         }
         public async Task<OneOf<bool, Error>> RefundPaymentStatus(int orderId,CancellationToken cancellationToken=default)
