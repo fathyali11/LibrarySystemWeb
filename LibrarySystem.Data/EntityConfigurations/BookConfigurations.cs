@@ -67,5 +67,10 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
                 .WithOne(r => r.Book)
                 .HasForeignKey(b => b.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(b => b.BorrowedBooks)
+                .WithOne(bb => bb.Book)
+                .HasForeignKey(b => b.BookId)
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }

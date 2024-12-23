@@ -33,4 +33,5 @@ public class Book
     public Category Category { get; set; } = default!;
     public Author Author { get; set; } = default!;
     public ICollection<Review> ?Reviews { get; set; }
+    public ICollection<BorrowedBook> ?BorrowedBooks { get; set; }
 }
