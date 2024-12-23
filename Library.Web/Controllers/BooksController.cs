@@ -1,11 +1,13 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.Books;
 using LibrarySystem.Services.Services.Books;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class BooksController(IBookServices bookServices) : ControllerBase
 {
     private readonly IBookServices _bookServices=bookServices;

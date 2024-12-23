@@ -1,11 +1,13 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.Categories;
 using LibrarySystem.Services.Services.Categories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CategoriesController(ICategoryServices categoryServices) : ControllerBase
 {
     private readonly ICategoryServices _categoryServices=categoryServices;

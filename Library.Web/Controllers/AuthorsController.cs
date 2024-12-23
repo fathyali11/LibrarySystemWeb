@@ -2,10 +2,12 @@
 using LibrarySystem.Services.Services.Authors;
 using Microsoft.AspNetCore.Mvc;
 using LibrarySystem.Domain.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class AuthorsController(IAuthorServices authorServices) : ControllerBase
 {
     private readonly IAuthorServices _authorServices = authorServices;

@@ -1,11 +1,13 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Services.Services.Carts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CartsController(ICartServices cartServices) : ControllerBase
 {
     private readonly ICartServices _cartServices=cartServices;

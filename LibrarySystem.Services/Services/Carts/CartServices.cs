@@ -1,6 +1,4 @@
 ﻿using LibrarySystem.Domain.DTO.Carts;
-using LibrarySystem.Domain.Entities;
-
 namespace LibrarySystem.Services.Services.Carts;
 public class CartServices(ApplicationDbContext context,
     IUnitOfWork unitOfWork,

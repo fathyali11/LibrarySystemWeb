@@ -2,12 +2,14 @@
 using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.DTO.Payments;
 using LibrarySystem.Services.Services.Payments;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class PaymentsController(IPaymentServices paymentServices) : ControllerBase
 {
     private readonly IPaymentServices _paymentServices = paymentServices;
