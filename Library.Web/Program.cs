@@ -37,12 +37,6 @@ using(var scope=app.Services.CreateScope())
         "SendNotificationToBorrower",
         () => BorrowedBookNotificationService.SendNotificationToBorrower(),
         Cron.Daily);
-
-    //var cartNotificationService = services.GetRequiredService<ICartNotificationServices>();
-    //recurringJobManager.AddOrUpdate(
-    //    "RemoveCompleted",
-    //    () => cartNotificationService.RemoveCompletedAsync(),
-    //    Cron.Daily);
 }
 app.UseStaticFiles();
 app.MapStaticAssets();
