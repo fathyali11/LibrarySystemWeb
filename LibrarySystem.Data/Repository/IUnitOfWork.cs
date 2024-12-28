@@ -12,5 +12,6 @@ public interface IUnitOfWork
     IBorrowedBookRepository BorrowedBookRepository { get; }
     ICartItemRepository CartItemRepository { get; }
     ICartRepository CartRepository { get; }
+    IFineRepository FineRepository { get; }
     Task SaveChanges(CancellationToken cancellationToken = default);
 }

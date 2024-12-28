@@ -3,6 +3,8 @@ using Hangfire;
 using HangfireBasicAuthenticationFilter;
 using Library.Web;
 using LibrarySystem.Domain.Abstractions;
+using LibrarySystem.Domain.IRepository;
+using LibrarySystem.Services.Services.Fines;
 using LibrarySystem.Services.Services.Notifications;
 using Scalar.AspNetCore;
 using Serilog;
@@ -30,13 +32,23 @@ using(var scope=app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var BorrowedBookNotificationService = services.GetRequiredService<IBorrowedBookNotificationServices>();
+    var fineNoteficationServices = services.GetRequiredService<IFineNotificationServices>();
     var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
 
     // Add or update the recurring job
     recurringJobManager.AddOrUpdate(
-        "SendNotificationToBorrower",
-        () => BorrowedBookNotificationService.SendNotificationToBorrower(),
+        "AddFine",
+        () => fineNoteficationServices.AddFine(),
         Cron.Daily);
+    recurringJobManager.AddOrUpdate(
+        "SendNotificationToBorrower",
+        () => BorrowedBookNotificationService.SendFineNotificationToBorrower(),
+        Cron.Daily);
+    recurringJobManager.AddOrUpdate(
+        "SendReminderNotificationToBorrower",
+        () => BorrowedBookNotificationService.SendReminderNotificationToBorrower(),
+        Cron.Daily);
+
 }
 app.UseStaticFiles();
 app.MapStaticAssets();

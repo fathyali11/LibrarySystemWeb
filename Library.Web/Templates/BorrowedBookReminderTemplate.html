@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Library Book Borrowing Notification</title>
+    <title>Library Book Return Reminder</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,21 +37,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Library Book Borrowing Notification</h1>
+            <h1>Library Book Return Reminder</h1>
         </div>
         <div class="content">
             <p>Dear {UserName},</p>
-            <p>We hope you are enjoying the book you borrowed from our library. Here are the details of your borrowed book:</p>
+            <p>This is a friendly reminder that the book you borrowed from our library is due for return tomorrow. Here are the details of your borrowed book:</p>
             <ul>
                 <li><strong>Book Title:</strong> {BookTitle}</li>
                 <li><strong>Due Date:</strong> {DueDate}</li>
             </ul>
-            <p>Please note that you have already incurred a fine for late return of a previous book. The details are as follows:</p>
-            <ul>
-                <li><strong>Fine Amount:</strong> {FineAmount}</li>
-                <li><strong>Total Fine Amount:</strong> {TotalFineAmount}</li>
-            </ul>
-            <p>Please make sure to return the current book by the due date to avoid additional late fees.</p>
+            <p>Please make sure to return the book by the due date to avoid any late fees.</p>
             <p>If you have any questions or need assistance, feel free to contact us.</p>
             <p>Thank you for using our library services!</p>
         </div>

@@ -16,6 +16,7 @@ public class UnitOfWork(ApplicationDbContext context,IMapper mapper) : IUnitOfWo
     private readonly IBorrowedBookRepository? _borrowedBookRepository;
     private readonly ICartItemRepository? _cartItemRepository;
     private readonly ICartRepository? _cartRepository;
+    private readonly IFineRepository? _fineRepository;
 
 
     public IBookRepository BookRepository =>
@@ -43,6 +44,9 @@ public class UnitOfWork(ApplicationDbContext context,IMapper mapper) : IUnitOfWo
 
     public ICartRepository CartRepository =>
         _cartRepository ?? new CartRepository(_context);
+
+    public IFineRepository FineRepository =>
+        _fineRepository ?? new FineRepository(_context);
     public async Task SaveChanges(CancellationToken cancellationToken=default)
     {
         await _context.SaveChangesAsync(cancellationToken);

@@ -1,5 +1,6 @@
 ﻿namespace LibrarySystem.Domain.DTO.BorrowBooks;
-public record BorrowBookNotificationResponse(
+public record BorrowBookReminderNotificationResponse(
+    int Id,
     string FirstName,
     string LastName,
     string Email,
