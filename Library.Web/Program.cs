@@ -52,17 +52,8 @@ using(var scope=app.Services.CreateScope())
 }
 app.UseStaticFiles();
 app.MapStaticAssets();
-app.UseHangfireDashboard("/jobs", new DashboardOptions
-{
-    Authorization = new[]
-    {
-        new HangfireCustomBasicAuthenticationFilter
-        {
-            User="admin",
-            Pass="admin"
-        }
-    }
-});
+app.UseHangfireDashboard("/jobs");
+
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
