@@ -66,5 +66,16 @@ namespace LibrarySystem.Data.Repository
                 .Where(x=>x.UserId == userId)
                 .ExecuteDeleteAsync(cancellationToken);
         }
+
+        public async Task<List<UserBorrowBookForFine>> GetAllBooksAndUser(Expression<Func<BorrowedBook, bool>> predicate)
+        {
+            IQueryable<BorrowedBook> query =_context.BorrowedBooks.Where(predicate);
+
+            var result= await query
+                .Select(x=>new UserBorrowBookForFine(x.UserId,x.Id))
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
     }
 }

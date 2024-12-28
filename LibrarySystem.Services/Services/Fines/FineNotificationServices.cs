@@ -8,16 +8,17 @@ public class FineNotificationServices(ApplicationDbContext context,IUnitOfWork u
     public async Task AddFine()
     {
         var borrowedBooks = await _unitOfWork.BorrowedBookRepository
-            .GetAllAsync(x => x.DueDate < DateTime.Now);
+            .GetAllBooksAndUser(x => x.DueDate < DateTime.Now);
+
         foreach (var borrowedBook in borrowedBooks)
         {
             var fineFromDb=await _unitOfWork.FineRepository
-                .ExitsOrNot(x => x.UserId == borrowedBook.UserId && x.BorrowBookId == borrowedBook.Id);
+                .ExitsOrNot(x => x.UserId == borrowedBook.UserId && x.BorrowBookId == borrowedBook.BorrowedBookId);
             Fine fine = fineFromDb ??
                new Fine
                {
                    UserId = borrowedBook.UserId,
-                   BorrowBookId = borrowedBook.Id
+                   BorrowBookId = borrowedBook.BorrowedBookId
                };
             if(fineFromDb is null)
                 await _unitOfWork.FineRepository.AddAsync(fine);
