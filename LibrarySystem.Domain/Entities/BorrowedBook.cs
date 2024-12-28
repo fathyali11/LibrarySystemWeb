@@ -9,8 +9,10 @@ public class BorrowedBook
     public bool IsReturned=>ReturnDate.HasValue;
     public string UserId { get; set; } = string.Empty;
     public int BookId { get; set; }
+    public int ?FineId { get; set; }
     public ApplicationUser User { get; set; } = default!;
     // Navigation properties
     public Book Book { get; set; }= default!;
-    
+    public Fine? Fine { get; set; }
+
 }

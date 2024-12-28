@@ -29,5 +29,7 @@ public class BorrowBookConfigurations : IEntityTypeConfiguration<BorrowedBook>
            .IsRequired() 
            .OnDelete(DeleteBehavior.Restrict);
 
+        
+
     }
 }

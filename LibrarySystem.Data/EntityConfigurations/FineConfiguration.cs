@@ -19,6 +19,11 @@ namespace LibrarySystem.Data.EntityConfigurations
                 .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(b=> b.BorrowedBook)
+                .WithOne(bb => bb.Fine)
+                .HasForeignKey<Fine>(f => f.BorrowBookId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

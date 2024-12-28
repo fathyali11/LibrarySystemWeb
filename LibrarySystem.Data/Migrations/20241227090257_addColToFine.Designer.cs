@@ -4,6 +4,7 @@ using LibrarySystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibrarySystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241227090257_addColToFine")]
+    partial class addColToFine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,9 +252,6 @@ namespace LibrarySystem.Data.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FineId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("ReturnDate")
                         .HasColumnType("datetime2");
 
@@ -370,6 +370,9 @@ namespace LibrarySystem.Data.Migrations
                     b.Property<int>("BorrowBookId")
                         .HasColumnType("int");
 
+                    b.Property<int>("BorrowedBookId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -385,8 +388,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BorrowBookId")
-                        .IsUnique();
+                    b.HasIndex("BorrowedBookId");
 
                     b.HasIndex("UserId");
 
@@ -809,9 +811,9 @@ namespace LibrarySystem.Data.Migrations
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Fine", b =>
                 {
                     b.HasOne("LibrarySystem.Domain.Entities.BorrowedBook", "BorrowedBook")
-                        .WithOne("Fine")
-                        .HasForeignKey("LibrarySystem.Domain.Entities.Fine", "BorrowBookId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey("BorrowedBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LibrarySystem.Domain.Entities.ApplicationUser", "User")
@@ -967,11 +969,6 @@ namespace LibrarySystem.Data.Migrations
                     b.Navigation("BorrowedBooks");
 
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("LibrarySystem.Domain.Entities.BorrowedBook", b =>
-                {
-                    b.Navigation("Fine");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Cart", b =>
