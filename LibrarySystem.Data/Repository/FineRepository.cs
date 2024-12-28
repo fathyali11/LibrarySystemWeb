@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using LibrarySystem.Data.Data;
 using LibrarySystem.Domain.DTO.Fines;
 using LibrarySystem.Domain.Entities;
@@ -9,26 +10,29 @@ namespace LibrarySystem.Data.Repository;
 public class FineRepository(ApplicationDbContext context): GenericRepository<Fine>(context),IFineRepository
 {
     private readonly ApplicationDbContext _context = context;
-    public async Task<IEnumerable<FineResponse>> GetAllWithUserAndBookAsync(Expression<Func<Fine,bool>> predicate)
+    public async Task<IEnumerable<FineResponse>> GetAllWithUserAndBookAsync(Expression<Func<Fine, bool>> predicate)
     {
-        return await _context.Fines
+        var query = _context.Fines
             .Where(predicate)
             .Include(x => x.User)
             .AsSplitQuery()
             .Include(x => x.BorrowedBook)
             .ThenInclude(x => x.Book)
-            .AsSplitQuery()
+            .AsSplitQuery();
+
+        var result = await query.GroupBy(key => key.UserId)
             .Select(x => new FineResponse(
-                x.User.FirstName,
-                x.User.LastName,
-                x.User.Email!,
-                x.BorrowedBook.Book.Title,
-                x.BorrowedBook.DueDate,
-                x.Amount,
-                x.TotalAmount
+                x.FirstOrDefault()!.User.FirstName,
+                x.FirstOrDefault()!.User.LastName,
+                x.FirstOrDefault()!.User.Email!,
+                x.Where(f => f.UserId == x.Key).Select(f => f.BorrowedBook.Book.Title).ToList(),
+                x.FirstOrDefault()!.BorrowedBook.DueDate,
+                x.FirstOrDefault()!.Amount,
+                x.Sum(x => x.TotalAmount)
             ))
             .AsNoTracking()
             .ToListAsync();
-
+        return result;
     }
+
 }

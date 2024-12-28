@@ -16,7 +16,7 @@ public class BorrowedBookNotificationServices(IUnitOfWork unitOfWork,
         foreach (var fine in fines)
         {
             await SendFineNotificationEmail(fine.FirstName, fine.LastName, fine.Email,
-                fine.BookTitle, fine.DueAt, fine.Amount, fine.TotalAmount);
+                fine.BooksTitle, fine.DueAt, fine.Amount, fine.TotalAmount);
         }
     }
     public async Task SendReminderNotificationToBorrower()
@@ -31,13 +31,15 @@ public class BorrowedBookNotificationServices(IUnitOfWork unitOfWork,
                 borrowedBook.LastName, borrowedBook.Email, borrowedBook.BookTitle, borrowedBook.DueDate);
         }
     }
+
+
     private async Task SendFineNotificationEmail(string firstName,string lastName,string email
-        , string bookTitle, DateTime dueDate,decimal fineAmount,decimal totalFineAmount)
+        , List<string> booksTitle, DateTime dueDate,decimal fineAmount,decimal totalFineAmount)
     {
         var keyValues = new Dictionary<string, string>()
     {
         {"{UserName}", firstName + " " + lastName},
-        {"{BookTitle}", bookTitle},
+        {"{BookTitle}", string.Join(',',booksTitle.Select(x=>x))},
         {"{DueDate}", dueDate.ToString("MMMM dd, yyyy")},
         {"{FineAmount}", fineAmount.ToString("C")},
         {"{TotalFineAmount}", totalFineAmount.ToString("C")},

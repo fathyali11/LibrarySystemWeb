@@ -3,7 +3,7 @@ public record FineResponse(
     string FirstName,
     string LastName,
     string Email,
-    string BookTitle,
+    List<string> BooksTitle,
     DateTime DueAt,
     decimal Amount,
     decimal TotalAmount
