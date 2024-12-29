@@ -23,7 +23,7 @@ public class BorrowedBookNotificationServices(IUnitOfWork unitOfWork,
     {
         var tomorrow = DateTime.Now.AddDays(1).Date;
         var borrowedBooks = await _unitOfWork.BorrowedBookRepository
-            .GetAllWithUserAndBook(x => x.DueDate.Date <tomorrow&& x.ReturnDate == null);
+            .GetAllWithUserAndBook(x => x.DueDate.Date ==tomorrow&& x.ReturnDate == null);
 
         foreach (var borrowedBook in borrowedBooks)
         {
