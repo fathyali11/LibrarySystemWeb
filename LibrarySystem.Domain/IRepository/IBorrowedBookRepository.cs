@@ -10,5 +10,7 @@ namespace LibrarySystem.Domain.IRepository
         Task<List<BorrowBookFineNotificationResponse>> GetAllWithUserAndBookForFine(Expression<Func<BorrowedBook, bool>> predicate);
         Task RemoveAsync(string userId, CancellationToken cancellationToken = default);
         Task <List<UserBorrowBookForFine>> GetAllBooksAndUser(Expression<Func<BorrowedBook, bool>> predicate);
+        Task<int> ReturningAndGetBookId(int borrowedBookId, CancellationToken cancellationToken = default);
+        Task<List<borrowedBookResponse>> GetAllWithUserAndBookForDisplay(CancellationToken cancellationToken = default);
     }
 }

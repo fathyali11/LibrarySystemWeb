@@ -35,7 +35,7 @@ using(var scope=app.Services.CreateScope())
     var fineNoteficationServices = services.GetRequiredService<IFineNotificationServices>();
     var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
 
-    // Add or update the recurring job
+    
     recurringJobManager.AddOrUpdate(
         "AddFine",
         () => fineNoteficationServices.AddFine(),

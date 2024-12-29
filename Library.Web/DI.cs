@@ -28,6 +28,7 @@ using Hangfire;
 using LibrarySystem.Services.Services.Notifications;
 using LibrarySystem.Services.Services.Payments;
 using LibrarySystem.Services.Services.Fines;
+using LibrarySystem.Services.Services.BorrowedBooks;
 
 namespace Library.Web
 {
@@ -58,6 +59,7 @@ namespace Library.Web
             services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
             services.AddScoped<ICacheServices,CashServices>();
             services.AddScoped<IBorrowedBookNotificationServices, BorrowedBookNotificationServices>();
+            services.AddScoped<IBorrowedBookServices, BorrowedBookServices>();
             services.AddScoped<IPaymentServices, PaymentServices>();
             services.AddScoped<IFineRepository, FineRepository>();
             services.AddScoped<IFineNotificationServices, FineNotificationServices>();

@@ -6,4 +6,5 @@ namespace LibrarySystem.Domain.IRepository;
 public interface IFineRepository:IGenericRepository<Fine>
 {
     Task<IEnumerable<FineResponse>> GetAllWithUserAndBookAsync(Expression<Func<Fine, bool>> predicate);
+    Task PayingOne(string userId,int borrowedBookId, CancellationToken cancellationToken = default);
 }

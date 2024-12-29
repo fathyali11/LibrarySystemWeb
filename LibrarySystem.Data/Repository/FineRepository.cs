@@ -34,5 +34,11 @@ public class FineRepository(ApplicationDbContext context): GenericRepository<Fin
             .ToListAsync();
         return result;
     }
+    public async Task PayingOne(string userId, int borrowedBookId, CancellationToken cancellationToken = default)
+    {
+        await _context.Fines
+            .Where(x=>x.UserId == userId && x.BorrowBookId == borrowedBookId)
+            .ExecuteUpdateAsync(x => x.SetProperty(f => f.IsPaid,true), cancellationToken);
+    }
 
 }
