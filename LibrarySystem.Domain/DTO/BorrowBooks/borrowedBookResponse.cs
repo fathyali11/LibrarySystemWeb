@@ -4,5 +4,6 @@ public record borrowedBookResponse(
     string Title,
     int BookId,
     string UserName,
+    DateTime ?ReturnDate,
     DateTime DueDate
 );

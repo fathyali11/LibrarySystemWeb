@@ -20,7 +20,8 @@ public class FineNotificationServices(ApplicationDbContext context,IUnitOfWork u
                    UserId = borrowedBook.UserId,
                    BorrowBookId = borrowedBook.BorrowedBookId
                };
-            if(fineFromDb is null)
+            await _unitOfWork.BorrowedBookRepository.AddToFines(borrowedBook.BorrowedBookId,fine.Id);
+            if (fineFromDb is null)
                 await _unitOfWork.FineRepository.AddAsync(fine);
             
             fine.TotalAmount += fine.Amount;

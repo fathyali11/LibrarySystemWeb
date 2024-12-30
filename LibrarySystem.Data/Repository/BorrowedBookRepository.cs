@@ -104,12 +104,19 @@ namespace LibrarySystem.Data.Repository
                     x.Book.Title,
                     x.BookId,
                     x.User.UserName!,
+                    x.ReturnDate.Value,
                     x.DueDate
                     ))
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             return result;
+        }
+        public async Task AddToFines(int id,int fineId, CancellationToken cancellationToken = default)
+        {
+            await _context.BorrowedBooks
+                .Where(x => x.Id == id)
+                .ExecuteUpdateAsync(x => x.SetProperty(x => x.FineId, fineId), cancellationToken);
         }
     }
 }

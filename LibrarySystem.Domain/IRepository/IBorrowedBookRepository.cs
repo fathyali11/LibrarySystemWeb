@@ -12,5 +12,6 @@ namespace LibrarySystem.Domain.IRepository
         Task <List<UserBorrowBookForFine>> GetAllBooksAndUser(Expression<Func<BorrowedBook, bool>> predicate);
         Task<int> ReturningAndGetBookId(int borrowedBookId, CancellationToken cancellationToken = default);
         Task<List<borrowedBookResponse>> GetAllWithUserAndBookForDisplay(CancellationToken cancellationToken = default);
+        Task AddToFines(int id, int fineId, CancellationToken cancellationToken = default);
     }
 }
