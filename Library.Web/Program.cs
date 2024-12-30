@@ -1,11 +1,16 @@
 using System.Configuration;
+using APIWeaver;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
 using Library.Web;
+using Library.Web.ApiDocumentation;
 using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.IRepository;
 using LibrarySystem.Services.Services.Fines;
 using LibrarySystem.Services.Services.Notifications;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using Serilog;
 using Stripe;
@@ -21,7 +26,11 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 // cash data 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi( options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
+
 builder.Services.ServicesInjection(builder.Configuration);
 
 
@@ -60,7 +69,11 @@ app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(option =>
+    {
+        option.Title = "Library System API";
+        option.Theme = ScalarTheme.Mars;
+    });
 }
 app.UseHttpsRedirection();
 app.UseAuthorization();
