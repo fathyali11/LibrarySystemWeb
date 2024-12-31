@@ -25,6 +25,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             error=>error.ToProblem());
     }
     [HttpPost("")]
+    [HasPermission(SellerPermissions.CreateBook)]
     public async Task<IActionResult> Add([FromForm]CreateBookRequest request,CancellationToken cancellationToken)
     {
         var response=await _bookServices.AddBookAsync(request,cancellationToken);
@@ -34,6 +35,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             );
     }
     [HttpGet("{id}")]
+    [HasPermission(MemberPermissions.GetBooks)]
     public async Task<IActionResult> Get([FromRoute]int id,CancellationToken cancellationToken)
     {
         var response = await _bookServices.GetBookByIdAsync(id, cancellationToken);
@@ -42,6 +44,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             error => error.ToProblem());
     }
     [HttpPut("{id}")]
+    [HasPermission(SellerPermissions.UpdateBook)]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBookRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookAsync(id,request, cancellationToken);
@@ -50,6 +53,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
              error => error.ToProblem());
     }
     [HttpPut("update-image-{id}")]
+    [HasPermission(SellerPermissions.UpdateBook)]
     public async Task<IActionResult> UpdateImage([FromRoute] int id, [FromForm] BookImageRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookImageAsync(id, request, cancellationToken);
@@ -58,6 +62,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
              error => error.ToProblem());
     }
     [HttpPut("update-document-{id}")]
+    [HasPermission(SellerPermissions.UpdateBook)]
     public async Task<IActionResult> UpdateDocument([FromRoute] int id, [FromForm] BookFileRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookFileAsync(id, request, cancellationToken);
@@ -66,6 +71,7 @@ public class BooksController(IBookServices bookServices) : ControllerBase
              error => error.ToProblem());
     }
     [HttpPut("toggel-status-{id}")]
+    [HasPermission(SellerPermissions.UpdateBook)]
     public async Task<IActionResult> AddToggel([FromRoute]int id,CancellationToken cancellationToken)
     {
         var response = await _bookServices.ToggleBookAsync(id,cancellationToken);

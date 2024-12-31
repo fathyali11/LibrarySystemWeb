@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using LibrarySystem.Domain.Abstractions;
+using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 using LibrarySystem.Domain.DTO.CartItems;
+using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.CartItems;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class CartItemsController(ICartItemServices cartItemServices) : ControllerBase
 {
     private readonly ICartItemServices _cartItemServices = cartItemServices;
 
     [HttpPost("")]
+    [HasPermission(MemberPermissions.OperationOnCart)]
     public async Task<IActionResult> Add([FromBody] CartItemRequest request,CancellationToken cancellationToken)
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -25,6 +27,7 @@ public class CartItemsController(ICartItemServices cartItemServices) : Controlle
     }
 
     [HttpPut("plus-{id}")]
+    [HasPermission(MemberPermissions.OperationOnCart)]
     public async Task<IActionResult> Plus([FromRoute] int id, CancellationToken cancellationToken)
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -35,6 +38,7 @@ public class CartItemsController(ICartItemServices cartItemServices) : Controlle
             );
     }
     [HttpPut("minus-{id}")]
+    [HasPermission(MemberPermissions.OperationOnCart)]
     public async Task<IActionResult> Minus([FromRoute] int id, CancellationToken cancellationToken)
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -45,6 +49,7 @@ public class CartItemsController(ICartItemServices cartItemServices) : Controlle
             );
     }
     [HttpDelete("{id}")]
+    [HasPermission(MemberPermissions.OperationOnCart)]
     public async Task<IActionResult> Remove([FromRoute] int id, CancellationToken cancellationToken)
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);

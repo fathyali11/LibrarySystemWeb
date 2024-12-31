@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using LibrarySystem.Domain.Abstractions;
+using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
+using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,12 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class OrdersController(IOrderServices orderServices) : ControllerBase
 {
     private readonly IOrderServices _orderServices = orderServices;
 
     [HttpPost("{cartId}")]
+    [HasPermission(MemberPermissions.CreateOrder)]
     public async Task<IActionResult> Add([FromRoute] int cartId, CancellationToken cancellationToken)
     {
         var result = await _orderServices.MakeOrderAsync(cartId, cancellationToken);
@@ -23,6 +25,7 @@ public class OrdersController(IOrderServices orderServices) : ControllerBase
             );
     }
     [HttpGet("")]
+    [HasPermission(MemberPermissions.GetOrders)]
     public async Task<IActionResult> Get( CancellationToken cancellationToken)
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -34,6 +37,7 @@ public class OrdersController(IOrderServices orderServices) : ControllerBase
             );
     }
     [HttpDelete("{id}")]
+    [HasPermission(MemberPermissions.CancelOrder)]
     public async Task<IActionResult> Cancel([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _orderServices.CancelOrderAsync(id, cancellationToken);
