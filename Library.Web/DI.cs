@@ -29,6 +29,8 @@ using LibrarySystem.Services.Services.Notifications;
 using LibrarySystem.Services.Services.Payments;
 using LibrarySystem.Services.Services.Fines;
 using LibrarySystem.Services.Services.BorrowedBooks;
+using LibrarySystem.Services.CustomAuthorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library.Web
 {
@@ -63,9 +65,17 @@ namespace Library.Web
             services.AddScoped<IPaymentServices, PaymentServices>();
             services.AddScoped<IFineRepository, FineRepository>();
             services.AddScoped<IFineNotificationServices, FineNotificationServices>();
+            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, ApplicationAuthorizationPolicyProvider>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
-            
-            #pragma warning disable
+
+
+
+
+
+
+#pragma warning disable
             services.AddHybridCache();
             #pragma warning restore
 

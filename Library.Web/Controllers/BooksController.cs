@@ -1,5 +1,7 @@
 ﻿using LibrarySystem.Domain.Abstractions;
+using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 using LibrarySystem.Domain.DTO.Books;
+using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Books;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,12 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+
 public class BooksController(IBookServices bookServices) : ControllerBase
 {
     private readonly IBookServices _bookServices=bookServices;
-
+    
     [HttpGet("include-{include}")]
+    [HasPermission(MemberPermissions.GetBooks)]
     public async Task<IActionResult> GetAll([FromRoute]bool include,CancellationToken cancellationToken)
     {
         

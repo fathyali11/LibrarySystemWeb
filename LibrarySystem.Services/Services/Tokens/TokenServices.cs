@@ -32,7 +32,7 @@
 
         }
 
-        public (string token, DateTime expiresOn) GenerateToken(ApplicationUser user)
+        public (string token, DateTime expiresOn) GenerateToken(ApplicationUser user,IEnumerable<string>roles,IEnumerable<string>permissions)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -44,7 +44,9 @@
                  new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                  new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
                  new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                 new Claim(nameof(roles),JsonSerializer.Serialize(roles),JsonClaimValueTypes.JsonArray),
+                 new Claim(nameof(permissions),JsonSerializer.Serialize(permissions),JsonClaimValueTypes.JsonArray),
             };
 
 
@@ -98,7 +100,10 @@
         {
             var response = _mapper.Map<AuthResponse>(user);
 
-            var tokenCreation = GenerateToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var permissions = await _unitOfWork.RoleRepository.GetPermissions(roles);
+
+            var tokenCreation = GenerateToken(user, roles, permissions);
             response.Token = tokenCreation.token;
             response.ExpiresOn = tokenCreation.expiresOn;
 

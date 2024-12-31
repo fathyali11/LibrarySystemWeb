@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 
 namespace LibrarySystem.Services.Services.AuthUsers
 {
@@ -9,7 +10,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
         ILogger<AuthServices> logger,
         IEmailSender emailSender,
         IHttpContextAccessor httpContextAccessor,
-        ITokenServices tokenServices) :IAuthServices
+        ITokenServices tokenServices,
+        RoleManager<ApplicationRole> roleManager) :IAuthServices
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IMapper _mapper = mapper;
@@ -19,8 +21,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly ITokenServices _tokenServices = tokenServices;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
 
-        
         public async Task<OneOf<bool, Error>> RegisterAsync(RegistersRequest request, CancellationToken cancellationToken = default)
         {
             var userIsExists = await _unitOfWork.UserRepository.IsExistAsync(request.UserName, request.Email);
@@ -84,6 +86,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
                 return new Error(error.Code, error.Description, StatusCodes.Status400BadRequest);
             }
             _logger.LogInformation("email confirmed");
+            await _userManager.AddToRoleAsync(user,MemberRole.Name);
             await _unitOfWork.SaveChanges(cancellationToken);
             return true;
 
@@ -139,8 +142,11 @@ namespace LibrarySystem.Services.Services.AuthUsers
         private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
         {
             var response = _mapper.Map<AuthResponse>(user);
+            var roles= await _userManager.GetRolesAsync(user);
+            var permissions = await _unitOfWork.RoleRepository.GetPermissions(roles);
 
-            var tokenCreation = _tokenServices.GenerateToken(user);
+
+            var tokenCreation = _tokenServices.GenerateToken(user,roles,permissions);
             response.Token = tokenCreation.token;
             response.ExpiresOn = tokenCreation.expiresOn;
 
