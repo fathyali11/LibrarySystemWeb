@@ -4,6 +4,7 @@ using LibrarySystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibrarySystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241230235206_seedDataIntoUsers")]
+    partial class seedDataIntoUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,19 +57,19 @@ namespace LibrarySystem.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512",
-                            ConcurrencyStamp = "a35b1f95-30e6-4672-a3ce-e79528a4ccb8",
+                            Id = "dfb4eac8-3660-42ed-a013-2696776840d7",
+                            ConcurrencyStamp = "d22530c5-5dec-4343-b16a-907ef4106029",
                             IsMember = false,
-                            Name = "Seller",
-                            NormalizedName = "SELLER"
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = "aeeb9374-30dd-4e80-9feb-000783afe3bc",
                             ConcurrencyStamp = "882a39d8-f900-4b8f-860a-664d03fc929d",
                             IsMember = false,
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
                         },
                         new
                         {
@@ -177,7 +180,7 @@ namespace LibrarySystem.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "FATHY.ALI8ALI@GMAIL.COM",
                             NormalizedUserName = "MANAGER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPklm/Ltfr+4YA6KCMrEy5jzHaBjk8O36UZjV2UMVTO+leHN8pBEMVJrNAOsZ+868g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPk8Tp9pPMRjvVZsECPtKrAXV/6xr0RUk/hrgb24NM8WcUEXdyNeLPOj9cRbeZAWuQ==",
                             PhoneNumber = "01009927286",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "c5461f60-2df9-4235-a040-0ffcfb579c41",
@@ -198,7 +201,7 @@ namespace LibrarySystem.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "MAN.8MAN010099@GMAIL.COM",
                             NormalizedUserName = "SELLER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOyLux7x01syagTROReU+2NIqlp5qX4NgEBtMuDAo+MNSepIsQ1VLxYZ0YzAeWL+Zw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECp0CblxCfS3TWQasHMR4h/y5EzJBzByOUrsqA/AHQQJq6flZwscPgG5ibpjOuu/5g==",
                             PhoneNumber = "01556788707",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "94288f43-d8d2-4f7a-ba4d-d6893b2ad1fe",
