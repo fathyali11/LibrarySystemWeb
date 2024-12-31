@@ -10,60 +10,60 @@ public static class ManagerPermissions
     public static string Type { get; } ="permissions";
 
     // Book Permissions
-    public static string GetBooks    = "books:get";
-    public static string CreateBook  = "books:create";
-    public static string UpdateBook  = "books:update";
-    public static string DeleteBook  = "books:delete";
+    public const string GetBooks    = "books:get";
+    public const string CreateBook  = "books:create";
+    public const string UpdateBook  = "books:update";
+    public const string DeleteBook  = "books:delete";
 
     // fines permissions
-    public static string GetFines    = "fines:get";
-    public static string CreateFine  = "fines:create";
-    public static string UpdateFine  = "fines:update";
-    public static string DeleteFine  = "fines:delete";
+    public const string GetFines    = "fines:get";
+    public const string CreateFine  = "fines:create";
+    public const string UpdateFine  = "fines:update";
+    public const string DeleteFine  = "fines:delete";
 
     // Borrowed Books Permissions
-    public static string GetBorrowedBooks     = "borrowedBooks:get";
-    public static string CreateBorrowedBooks  = "borrowedBooks:create";
-    public static string ReturnBorrowedBooks  = "borrowedBooks:return";
-    public static string DeleteBorrowedBooks  = "borrowedBooks:delete";
+    public const string GetBorrowedBooks     = "borrowedBooks:get";
+    public const string CreateBorrowedBooks  = "borrowedBooks:create";
+    public const string ReturnBorrowedBooks  = "borrowedBooks:return";
+    public const string DeleteBorrowedBooks  = "borrowedBooks:delete";
     // Category Permissions
-    public static string GetCategories  = "categories:get";
-    public static string CreateCategory = "categories:create";
-    public static string UpdateCategory = "categories:update";
-    public static string DeleteCategory = "categories:delete";
+    public const string GetCategories  = "categories:get";
+    public const string CreateCategory = "categories:create";
+    public const string UpdateCategory = "categories:update";
+    public const string DeleteCategory = "categories:delete";
 
     // Author Permissions
-    public static string GetAuthors    = "authors:get";
-    public static string CreateAuthor  = "authors:create";
-    public static string UpdateAuthor  = "authors:update";
-    public static string DeleteAuthor  = "authors:delete";
+    public const string GetAuthors    = "authors:get";
+    public const string CreateAuthor  = "authors:create";
+    public const string UpdateAuthor  = "authors:update";
+    public const string DeleteAuthor  = "authors:delete";
 
     // Cart Permissions
-    public static string GetCarts      = "carts:get";
-    public static string AddToCart    = "carts:add";
-    public static string RemoveFromCart  = "carts:remove";
+    public const string GetCarts      = "carts:get";
+    public const string AddToCart    = "carts:add";
+    public const string RemoveFromCart  = "carts:remove";
 
     // Order Permissions
-    public static string GetOrders = "orders:get";
-    public static string CreateOrder  = "orders:create";
-    public static string UpdateOrder  = "orders:update";
-    public static string DeleteOrder  = "orders:delete";
+    public const string GetOrders = "orders:get";
+    public const string CreateOrder  = "orders:create";
+    public const string UpdateOrder  = "orders:update";
+    public const string DeleteOrder  = "orders:delete";
 
     // Payment Permissions
-    public static string GetPayments = "payments:get";
-    public static string CreatePayment = "payments:create";
-    public static string UpdatePayment = "payments:update";
-    public static string DeletePayment = "payments:delete";
+    public const string GetPayments = "payments:get";
+    public const string CreatePayment = "payments:create";
+    public const string UpdatePayment = "payments:update";
+    public const string DeletePayment = "payments:delete";
     // User Permissions
-    public static string GetUser = "users:get";
-    public static string CreateUser = "users:create";
-    public static string UpdateUser = "users:update";
-    public static string DeleteUser = "users:delete";
+    public const string GetUser = "users:get";
+    public const string CreateUser = "users:create";
+    public const string UpdateUser = "users:update";
+    public const string DeleteUser = "users:delete";
     // Role Permissions
-    public static string GetRoles = "roles:get";
-    public static string CreateRole = "roles:create";
-    public static string UpdateRole = "roles:update";
-    public static string DeleteRole = "roles:delete";
+    public const string GetRoles = "roles:get";
+    public const string CreateRole = "roles:create";
+    public const string UpdateRole = "roles:update";
+    public const string DeleteRole = "roles:delete";
 
     public static IEnumerable<string?> AllPermissions =>
         typeof(ManagerPermissions).GetFields()
