@@ -10,7 +10,7 @@ public class UserServices(IUnitOfWork unitOfWork,
     private readonly IMapper _mapper = mapper;
     public async Task<OneOf<UserResponse, Error>> CreateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken = default)
     {
-        var roleIsExist = await _roleManager.Roles.AnyAsync(x => string.Equals(x.Name, request.Role));
+        var roleIsExist = await _roleManager.Roles.AnyAsync(x => x.Name!.ToLower() == request.Role.ToLower());
         if(!roleIsExist)
             return RoleErrors.NotExist;
 
@@ -37,7 +37,7 @@ public class UserServices(IUnitOfWork unitOfWork,
         if (user is null)
             return UserErrors.NotFound;
 
-        var roleIsExist = await _roleManager.Roles.AnyAsync(x => string.Equals(x.Name, request.Role));
+        var roleIsExist = await _roleManager.Roles.AnyAsync(x => x.Name!.ToLower() == request.Role.ToLower());
         if (!roleIsExist)
             return RoleErrors.NotExist;
 
@@ -95,6 +95,32 @@ public class UserServices(IUnitOfWork unitOfWork,
             .ExecuteUpdateAsync(x => x.SetProperty(p => p.IsActive, !result.isActive));
         await _unitOfWork.SaveChanges(cancellationToken);
         return true;
+    }
+    public async Task<OneOf<bool,Error>> ChangeRoleOfUserAsync(string userId,ChangeUserRoleRequest request,CancellationToken cancellationToken=default)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return UserErrors.NotFound;
+
+        var roleIsExist = await _roleManager.Roles.AnyAsync(x => x.Name!.ToLower() == request.Role.ToLower());
+        if (!roleIsExist)
+            return RoleErrors.NotExist;
+
+        var userOldRole = await _userManager.GetRolesAsync(user);
+        if (string.Equals(request.Role, userOldRole.First(),StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        var roleRemoveResult = await _userManager.RemoveFromRoleAsync(user, userOldRole.First());
+        if (!roleRemoveResult.Succeeded)
+            return new Error(roleRemoveResult.Errors.First().Code, roleRemoveResult.Errors.First().Description, StatusCodes.Status400BadRequest);
+
+        var roleCreateResult = await _userManager.AddToRoleAsync(user, request.Role);
+        if (!roleCreateResult.Succeeded)
+            return new Error(roleCreateResult.Errors.First().Code, roleCreateResult.Errors.First().Description, StatusCodes.Status400BadRequest);
+
+        await _unitOfWork.SaveChanges(cancellationToken);
+        return true;
+
     }
 }
 

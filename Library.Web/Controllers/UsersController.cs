@@ -62,4 +62,15 @@ public class UsersController(IUserServices userServices) : ControllerBase
         );
     }
 
+    [HttpPut("{userId}/role")]
+    [HasPermission(ManagerPermissions.UpdateUser)]
+    public async Task<IActionResult> ChangeRole(string userId, ChangeUserRoleRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _userServices.ChangeRoleOfUserAsync(userId, request, cancellationToken);
+        return result.Match<IActionResult>(
+            _ => Ok(),
+            error => error.ToProblem()
+        );
+    }
+
 }

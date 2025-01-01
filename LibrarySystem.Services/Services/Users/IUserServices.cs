@@ -6,4 +6,6 @@ public interface IUserServices
     Task<OneOf<UserResponse, Error>> GetUserByAsync(string userId, CancellationToken cancellationToken = default);
     Task<OneOf<List<UserResponse>, Error>> GetAllUsersAsync(CancellationToken cancellationToken = default);
     Task<OneOf<bool, Error>> ChangeUserActivationAsync(string userId, CancellationToken cancellationToken = default);
+    Task<OneOf<bool, Error>> ChangeRoleOfUserAsync(string userId, ChangeUserRoleRequest request, CancellationToken cancellationToken = default);
+
 }
