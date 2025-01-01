@@ -104,20 +104,23 @@
             var permissions = await _unitOfWork.RoleRepository.GetPermissions(roles);
 
             var tokenCreation = GenerateToken(user, roles, permissions);
-            response.Token = tokenCreation.token;
-            response.ExpiresOn = tokenCreation.expiresOn;
-
-
             var refreshTokenCreation = GenerateRefreshToken();
-            response.RefreshToken = refreshTokenCreation.refreshToken;
-            response.RefreshTokenExpiration = refreshTokenCreation.expiresOn;
-
             user.RefreshTokens.Add(new RefreshToken
             {
                 Token = refreshTokenCreation.refreshToken,
                 ExpiresOn = refreshTokenCreation.expiresOn
             });
+            response.Token = tokenCreation.token;
+            response.ExpiresOn = tokenCreation.expiresOn;
+
+
+            
+            response.RefreshToken = refreshTokenCreation.refreshToken;
+            response.RefreshTokenExpiration = refreshTokenCreation.expiresOn;
+
+            
             await _unitOfWork.SaveChanges();
+
             return response;
         }
 

@@ -31,6 +31,8 @@ using LibrarySystem.Services.Services.Fines;
 using LibrarySystem.Services.Services.BorrowedBooks;
 using LibrarySystem.Services.CustomAuthorization;
 using Microsoft.AspNetCore.Authorization;
+using LibrarySystem.Services.Services.Users;
+using LibrarySystem.Services.Services.Roles;
 
 namespace Library.Web
 {
@@ -68,6 +70,8 @@ namespace Library.Web
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, ApplicationAuthorizationPolicyProvider>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserServices, UserServices>();
+
 
 
 
