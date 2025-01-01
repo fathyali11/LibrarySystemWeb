@@ -14,6 +14,7 @@ namespace LibrarySystem.Domain.Mappings
                 .ForMember(dest => dest.Address, option => option.MapFrom(src => src.Address))
                 .ForMember(dest => dest.Email, option => option.MapFrom(src => src.Email))
                 .ForMember(dest => dest.UserName, option => option.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.PhoneNumber, option => option.MapFrom(src => src.PhoneNumber))
                 .ReverseMap();
 
             CreateMap<ApplicationUser, AuthResponse>()
@@ -22,6 +23,7 @@ namespace LibrarySystem.Domain.Mappings
                 .ForMember(dest => dest.Address, option => option.MapFrom(src => src.Address))
                 .ForMember(dest => dest.Email, option => option.MapFrom(src => src.Email))
                 .ForMember(dest => dest.UserName, option => option.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.PhoneNumber, option => option.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.Id, option => option.MapFrom(src => src.Id))
                 .ReverseMap();
 

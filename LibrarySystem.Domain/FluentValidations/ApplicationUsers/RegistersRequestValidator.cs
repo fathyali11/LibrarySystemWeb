@@ -27,6 +27,12 @@ namespace LibrarySystem.Domain.FluentValidations.ApplicationUsers
             RuleFor(x => x.Address)
                 .MaximumLength(250).WithMessage("Address must not exceed 250 characters.");
 
+            RuleFor(x => x.PhoneNumber)
+                .MaximumLength(11)
+                .MaximumLength(11)
+                .WithMessage("Phone must not must be 11 digit.")
+                .Must(IsValidPhoneNumber).WithMessage("Phone must be digits only and start with 01.");
+
             RuleFor(x => x.Password)
                .NotEmpty().WithMessage("Password is required.")
                .MinimumLength(8).WithMessage("Password must be at least 8 characters.")
@@ -38,6 +44,13 @@ namespace LibrarySystem.Domain.FluentValidations.ApplicationUsers
         }
         private bool IsGmailAddress(string email)=>
              email.EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase);
+        private bool IsValidPhoneNumber(string phone)
+        {
+            var containsCharacters = phone.Any(char.IsLetter);
+            if (containsCharacters)
+                return false;
+            return phone.StartsWith("01");
+        }
         
     }
 }
