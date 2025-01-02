@@ -50,6 +50,9 @@ namespace LibrarySystem.Services.Services.AuthUsers
             if (user is null)
                 return UserErrors.InValid;
 
+            if(!user.IsActive)
+                return UserErrors.IsLocked;
+
             var result=await _signInManager.PasswordSignInAsync(user, request.Password,false,false);
             if (!result.Succeeded)
             {
@@ -139,6 +142,7 @@ namespace LibrarySystem.Services.Services.AuthUsers
             }
             return true;
         }
+
         private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
         {
             var response = _mapper.Map<AuthResponse>(user);
