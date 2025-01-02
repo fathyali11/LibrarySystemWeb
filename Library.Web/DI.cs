@@ -70,6 +70,7 @@ namespace Library.Web
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, ApplicationAuthorizationPolicyProvider>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IRoleServices, RoleServices>();
             services.AddScoped<IUserServices, UserServices>();
 
 
