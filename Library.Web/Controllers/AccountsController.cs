@@ -13,6 +13,9 @@ namespace Library.Web.Controllers
     {
         private readonly IAccountUserServices _accountUserServices = accountUserServices;
         [HttpPut("update")]
+        [EndpointDescription("Update user profile")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(AccountUserRequest request,CancellationToken cancellationToken)
         {
             var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -24,6 +27,9 @@ namespace Library.Web.Controllers
         }
 
         [HttpGet("profile")]
+        [EndpointDescription("Get user profile")]
+        [ProducesResponseType(typeof(AccountUserResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -35,6 +41,9 @@ namespace Library.Web.Controllers
         }
 
         [HttpPost("change-password")]
+        [EndpointDescription("Change user password")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
         {
             var result = await _accountUserServices.ChangePasswordAsync(request, cancellationToken);

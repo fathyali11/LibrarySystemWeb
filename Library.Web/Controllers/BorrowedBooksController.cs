@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
+using LibrarySystem.Domain.DTO.BorrowBooks;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.BorrowedBooks;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +31,9 @@ public class BorrowedBooksController(IBorrowedBookServices borrowedBookServices)
     }
     [HttpGet("")]
     [HasPermission(SellerPermissions.GetBorrowedBooks)]
+    [EndpointDescription("Get all borrowed books")]
+    [ProducesResponseType(typeof(IEnumerable<borrowedBookResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllBorrowedBooksAsync(CancellationToken cancellationToken = default)
     {
         var result = await _borrowedBookServices.GetAllBorrowedBooksAsync(cancellationToken);

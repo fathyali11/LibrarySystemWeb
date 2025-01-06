@@ -16,6 +16,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     
     [HttpGet("include-{include}")]
     [HasPermission(MemberPermissions.GetBooks)]
+    [EndpointDescription("Get all books")]
+    [ProducesResponseType(typeof(IEnumerable<BookResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll([FromRoute]bool include,CancellationToken cancellationToken)
     {
         
@@ -26,6 +29,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     }
     [HttpPost("")]
     [HasPermission(SellerPermissions.CreateBook)]
+    [EndpointDescription("Add new book")]
+    [ProducesResponseType(typeof(BookResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Add([FromForm]CreateBookRequest request,CancellationToken cancellationToken)
     {
         var response=await _bookServices.AddBookAsync(request,cancellationToken);
@@ -36,6 +42,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     }
     [HttpGet("{id}")]
     [HasPermission(MemberPermissions.GetBooks)]
+    [EndpointDescription("Get book by id")]
+    [ProducesResponseType(typeof(BookResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Get([FromRoute]int id,CancellationToken cancellationToken)
     {
         var response = await _bookServices.GetBookByIdAsync(id, cancellationToken);
@@ -45,6 +54,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     }
     [HttpPut("{id}")]
     [HasPermission(SellerPermissions.UpdateBook)]
+    [EndpointDescription("Update book")]
+    [ProducesResponseType(typeof(BookResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBookRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookAsync(id,request, cancellationToken);
@@ -54,6 +66,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     }
     [HttpPut("update-image-{id}")]
     [HasPermission(SellerPermissions.UpdateBook)]
+    [EndpointDescription("Update book image")]
+    [ProducesResponseType(typeof(BookResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateImage([FromRoute] int id, [FromForm] BookImageRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookImageAsync(id, request, cancellationToken);
@@ -63,6 +78,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     }
     [HttpPut("update-document-{id}")]
     [HasPermission(SellerPermissions.UpdateBook)]
+    [EndpointDescription("Update book document")]
+    [ProducesResponseType(typeof(BookResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateDocument([FromRoute] int id, [FromForm] BookFileRequest request, CancellationToken cancellationToken)
     {
         var response = await _bookServices.UpdateBookFileAsync(id, request, cancellationToken);
@@ -72,6 +90,9 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     }
     [HttpPut("toggel-status-{id}")]
     [HasPermission(SellerPermissions.UpdateBook)]
+    [EndpointDescription("Toggel book status")]
+    [ProducesResponseType(typeof(BookResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddToggel([FromRoute]int id,CancellationToken cancellationToken)
     {
         var response = await _bookServices.ToggleBookAsync(id,cancellationToken);

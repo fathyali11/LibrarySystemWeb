@@ -16,6 +16,9 @@ namespace Library.Web.Controllers
         private readonly ITokenServices _tokenServices = tokenServices;
 
         [HttpPost("register")]
+        [EndpointDescription("Register new user")]
+        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(RegistersRequest request,CancellationToken cancellationToken)
         {
             var result = await _authServices.RegisterAsync(request, cancellationToken);
@@ -26,6 +29,9 @@ namespace Library.Web.Controllers
 
         }
         [HttpPost("login")]
+        [EndpointDescription("Login user")]
+        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginsRequest request, CancellationToken cancellationToken)
         {
             var result = await _authServices.LoginAsync(request, cancellationToken);
@@ -36,6 +42,9 @@ namespace Library.Web.Controllers
 
         }
         [HttpPost("refresh-token")]
+        [EndpointDescription("Refresh token")]
+        [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
         {
             var result = await _tokenServices.RefreshTokenAsync(request, cancellationToken);
@@ -47,6 +56,9 @@ namespace Library.Web.Controllers
         }
 
         [HttpPut("confirm-email")]
+        [EndpointDescription("Confirm email")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request, CancellationToken cancellationToken)
         {
             var result = await _authServices.ConfirmEmailAsync(request, cancellationToken);
@@ -58,6 +70,9 @@ namespace Library.Web.Controllers
         }
 
         [HttpPut("resend-confirm-email")]
+        [EndpointDescription("Resend confirm email")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ResendConfirmEmail(ResendConfirmEmailRequest request, CancellationToken cancellationToken)
         {
             var result = await _authServices.ResendConfirmEmailAsync(request, cancellationToken);
@@ -69,6 +84,9 @@ namespace Library.Web.Controllers
         }
 
         [HttpPost("forget-password")]
+        [EndpointDescription("Forget password")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ForgetPassword(ForgetPasswordRequest request, CancellationToken cancellationToken)
         {
             var result=await _authServices.ForgetPasswordAsync(request,cancellationToken);
@@ -79,6 +97,9 @@ namespace Library.Web.Controllers
         }
 
         [HttpPost("reset-password")]
+        [EndpointDescription("Reset password")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request, CancellationToken cancellationToken)
         {
             var result = await _authServices.ResetPasswordAsync(request, cancellationToken);

@@ -16,6 +16,9 @@ public class PaymentsController(IPaymentServices paymentServices) : ControllerBa
     private readonly IPaymentServices _paymentServices = paymentServices;
     [HttpPost("create-checkout")]
     [HasPermission(MemberPermissions.CreatePayment)]
+    [EndpointDescription("Create checkout")]
+    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateCheckout([FromBody] PaymentOrderRequest request,CancellationToken cancellationToken)
     {
         var sessionId = await _paymentServices.CreateCheckoutSessionAsync(request,cancellationToken);
@@ -23,6 +26,10 @@ public class PaymentsController(IPaymentServices paymentServices) : ControllerBa
     }
     [HttpPut("confirm-order-{orderId}")]
     [HasPermission(ManagerPermissions.UpdatePayment)]
+    [EndpointDescription("Confirm order")]
+    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+
     public async Task<IActionResult> ConfirmOrder([FromRoute] int orderId,CancellationToken cancellationToken)
     {
         var result = await _paymentServices.ConfirmOrderPaymentStatus( orderId,cancellationToken);
@@ -33,6 +40,9 @@ public class PaymentsController(IPaymentServices paymentServices) : ControllerBa
     }
     [HttpPost("refund-order-{orderId}")]
     [HasPermission(ManagerPermissions.DeletePayment)]
+    [EndpointDescription("Refund order")]
+    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RefundOrder([FromRoute] int orderId,CancellationToken cancellationToken)
     {
         var result = await _paymentServices.RefundPaymentStatus(orderId,cancellationToken);
