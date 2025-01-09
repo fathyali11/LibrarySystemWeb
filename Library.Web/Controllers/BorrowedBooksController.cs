@@ -7,18 +7,16 @@ using LibrarySystem.Services.Services.BorrowedBooks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[EnableRateLimiting("token")]
 public class BorrowedBooksController(IBorrowedBookServices borrowedBookServices) : ControllerBase
 {
     private readonly IBorrowedBookServices _borrowedBookServices = borrowedBookServices;
     [HttpPut("return{borrowedBookId}")]
-    [EndpointDescription("Return a borrowed book")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [EndpointSummary("this endpoint take id and return this book")]
     [HasPermission(MemberPermissions.ReturnBorrowedBooks)]
     public async Task<IActionResult> ReturnBookAsync(int borrowedBookId, CancellationToken cancellationToken = default)
     {
@@ -31,9 +29,6 @@ public class BorrowedBooksController(IBorrowedBookServices borrowedBookServices)
     }
     [HttpGet("")]
     [HasPermission(SellerPermissions.GetBorrowedBooks)]
-    [EndpointDescription("Get all borrowed books")]
-    [ProducesResponseType(typeof(IEnumerable<borrowedBookResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllBorrowedBooksAsync(CancellationToken cancellationToken = default)
     {
         var result = await _borrowedBookServices.GetAllBorrowedBooksAsync(cancellationToken);

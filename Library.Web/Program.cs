@@ -1,16 +1,7 @@
-using System.Configuration;
-using APIWeaver;
 using Hangfire;
-using HangfireBasicAuthenticationFilter;
 using Library.Web;
 using Library.Web.ApiDocumentation;
 using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.IRepository;
-using LibrarySystem.Services.Services.Fines;
-using LibrarySystem.Services.Services.Notifications;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using Serilog;
 using Stripe;
@@ -78,6 +69,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.UseRateLimiter();
 
 StripeConfiguration.ApiKey = app.Configuration[$"{nameof(StripeSettings)}:SecretKey"];
 app.Run();

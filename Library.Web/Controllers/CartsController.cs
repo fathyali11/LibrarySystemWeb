@@ -6,19 +6,18 @@ using LibrarySystem.Services.Services.Carts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[EnableRateLimiting("token")]
 public class CartsController(ICartServices cartServices) : ControllerBase
 {
     private readonly ICartServices _cartServices=cartServices;
 
     [HttpGet("{id}")]
     [HasPermission(MemberPermissions.GetCarts)]
-    [EndpointDescription("Get cart by id")]
-    [ProducesResponseType(typeof(CartResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult>  Get(int id,CancellationToken cancellationToken)
     {
         var result=await _cartServices.GetCartAsync(id,cancellationToken);
@@ -29,9 +28,6 @@ public class CartsController(ICartServices cartServices) : ControllerBase
     }
     [HttpPut("{id}")]
     [HasPermission(MemberPermissions.ClearCarts)]
-    [EndpointDescription("Clear cart")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Clear(int id, CancellationToken cancellationToken)
     {
         var result = await _cartServices.ClearCartAsync(id, cancellationToken);

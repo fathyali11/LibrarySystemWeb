@@ -33,6 +33,9 @@ using LibrarySystem.Services.CustomAuthorization;
 using Microsoft.AspNetCore.Authorization;
 using LibrarySystem.Services.Services.Users;
 using LibrarySystem.Services.Services.Roles;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+using System.Security.Claims;
 
 namespace Library.Web
 {
@@ -92,7 +95,8 @@ namespace Library.Web
                 .EmailInjection(configuration)
                 .ExceptionHandlerInjection()
                 .HangfireInjection(configuration)
-                .StripeInjection(configuration);
+                .StripeInjection(configuration)
+                .RateLimitingInjection();
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
@@ -185,6 +189,39 @@ namespace Library.Web
                 .Bind(configuration.GetSection(nameof(StripeSettings)))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+            return services;
+        }
+        private static IServiceCollection RateLimitingInjection(this IServiceCollection services)
+        {
+            services.AddRateLimiter(rateLimiterOptions =>
+            {
+                rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                rateLimiterOptions.AddPolicy
+                ("IdLimiter", HttpContent =>
+                     RateLimitPartition.GetFixedWindowLimiter
+                         (
+                             partitionKey: HttpContent.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                             factory: _ => new FixedWindowRateLimiterOptions
+                             {
+                                 Window = TimeSpan.FromSeconds(60),
+                                 PermitLimit = 5
+                             }
+                         )
+                );
+
+                
+                
+                rateLimiterOptions.AddTokenBucketLimiter("token", tokenOptions =>
+                {
+                    tokenOptions.TokenLimit = 2;
+                    tokenOptions.QueueLimit = 1;
+                    tokenOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    tokenOptions.ReplenishmentPeriod = TimeSpan.FromSeconds(30);
+                    tokenOptions.TokensPerPeriod = 2;
+                    tokenOptions.AutoReplenishment = true;
+                });
+            });
             return services;
         }
     }

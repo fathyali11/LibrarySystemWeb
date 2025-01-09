@@ -4,18 +4,17 @@ using LibrarySystem.Domain.DTO.ApplicationUsers;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Users;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[EnableRateLimiting("token")]
 public class UsersController(IUserServices userServices) : ControllerBase
 {
     private readonly IUserServices _userServices= userServices;
     [HttpPost("")]
     [HasPermission(ManagerPermissions.CreateUser)]
-    [EndpointDescription("Add new user")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Add(CreateOrUpdateUserRequest request,CancellationToken cancellationToken)
     {
         var result = await _userServices.CreateUserAsync(request,cancellationToken);
@@ -26,9 +25,6 @@ public class UsersController(IUserServices userServices) : ControllerBase
     }
     [HttpPut("{userId}")]
     [HasPermission(ManagerPermissions.UpdateUser)]
-    [EndpointDescription("Update user")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(string userId, CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
     {
         var result = await _userServices.UpdateUserAsync(userId, request, cancellationToken);
@@ -39,9 +35,6 @@ public class UsersController(IUserServices userServices) : ControllerBase
     }
     [HttpGet("{userId}")]
     [HasPermission(ManagerPermissions.GetUser)]
-    [EndpointDescription("Get user by id")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Get(string userId, CancellationToken cancellationToken)
     {
         var result = await _userServices.GetUserByAsync(userId, cancellationToken);
@@ -52,9 +45,6 @@ public class UsersController(IUserServices userServices) : ControllerBase
     }
     [HttpGet("")]
     [HasPermission(ManagerPermissions.GetUser)]
-    [EndpointDescription("Get all users")]
-    [ProducesResponseType(typeof(IEnumerable<UserResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await _userServices.GetAllUsersAsync(cancellationToken);
@@ -65,9 +55,6 @@ public class UsersController(IUserServices userServices) : ControllerBase
     }
     [HttpPut("{userId}/activation")]
     [HasPermission(ManagerPermissions.UpdateUser)]
-    [EndpointDescription("Change user activation")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ChangeActivation(string userId, CancellationToken cancellationToken)
     {
         var result = await _userServices.ChangeUserActivationAsync(userId, cancellationToken);
@@ -79,9 +66,6 @@ public class UsersController(IUserServices userServices) : ControllerBase
 
     [HttpPut("{userId}/role")]
     [HasPermission(ManagerPermissions.UpdateUser)]
-    [EndpointDescription("Change user role")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ChangeRole(string userId, ChangeUserRoleRequest request, CancellationToken cancellationToken)
     {
         var result = await _userServices.ChangeRoleOfUserAsync(userId, request, cancellationToken);
