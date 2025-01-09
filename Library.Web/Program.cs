@@ -21,6 +21,8 @@ builder.Services.AddOpenApi( options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.ServicesInjection(builder.Configuration);
 
@@ -60,6 +62,8 @@ app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapScalarApiReference(option =>
     {
         option.Title = "Library System API";
