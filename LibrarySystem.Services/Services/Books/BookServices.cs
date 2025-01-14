@@ -1,4 +1,5 @@
 ﻿namespace LibrarySystem.Services.Services.Books;
+/// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/BookServices'/>
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
@@ -10,6 +11,11 @@ public class BookServices(ApplicationDbContext context,
     private readonly IMapper _mapper=mapper;
     private readonly string _bookPath = $"{webHostEnvironment.WebRootPath}\\books";
     private readonly string _imagePath = $"{webHostEnvironment.WebRootPath}\\images";
+
+
+
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/AddBookAsync'/>
+    
     public async Task<OneOf<BookResponse, Error>> AddBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default)
     {
         var bookIsExists=await _unitOfWork.BookRepository.IsExits(x=>x.Title== request.Document.FileName, cancellationToken);
@@ -40,6 +46,7 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<BookResponse>(result);
         return response;
     }
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/GetAllBooksAsync'/>
     public async Task<OneOf<IEnumerable<BookResponse>, Error>> GetAllBooksAsync( bool? includeNotAvailable = null,CancellationToken cancellationToken = default)
     {
         IEnumerable<Book> cached;
@@ -62,6 +69,7 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<List<BookResponse>>(cached);
         return response;
     }
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/GetBookByIdAsync'/>
     public async Task<OneOf<BookResponse, Error>> GetBookByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if(id<0)
@@ -73,6 +81,7 @@ public class BookServices(ApplicationDbContext context,
         var response=_mapper.Map<BookResponse>(book);
         return response;
     }
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/UpdateBookAsync'/>
     public async Task<OneOf<BookResponse, Error>> UpdateBookAsync(int id, UpdateBookRequest request, CancellationToken cancellationToken = default)
     {
         if(id < 0)
@@ -89,6 +98,7 @@ public class BookServices(ApplicationDbContext context,
         var response=_mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/ToggleBookAsync'/>
     public async Task<OneOf<BookResponse, Error>> ToggleBookAsync(int id, CancellationToken cancellationToken = default)
     {
         if(id < 0)
@@ -103,6 +113,7 @@ public class BookServices(ApplicationDbContext context,
         var response = _mapper.Map<BookResponse>(bookFromDb);
         return response;
     }
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/UpdateBookFileAsync'/>
     public async Task<OneOf<BookResponse, Error>> UpdateBookFileAsync(int id, BookFileRequest request, CancellationToken cancellationToken = default)
     {
         if (id < 0)
@@ -125,6 +136,7 @@ public class BookServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return _mapper.Map<BookResponse>(bookFromDb);
     }
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/UpdateBookImageAsync'/>
     public async Task<OneOf<BookResponse, Error>> UpdateBookImageAsync(int id, BookImageRequest request, CancellationToken cancellationToken = default)
     {
         if(id<0)
@@ -148,7 +160,7 @@ public class BookServices(ApplicationDbContext context,
         return _mapper.Map<BookResponse>(bookFromDb);
     }
 
-
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/SaveFile'/>
     private async Task<string> SaveFile(IFormFile file,string path)
     {
         var randomfileName = $"{Path.GetRandomFileName()}{Path.GetExtension(file.FileName)}";
@@ -158,7 +170,7 @@ public class BookServices(ApplicationDbContext context,
 
         return randomfileName;
     }
-
+    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/RemoveFile'/>
     private async Task<bool> RemoveFile(string path)
     {
         try

@@ -1,0 +1,376 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="iBookServices">
+		<IBookServices>
+			<summary>
+				This class for book services
+			</summary>
+		</IBookServices>
+		<AddBookAsync>
+			<summary>
+				Adds a new book to the library.
+			</summary>
+			<param name="request">The request containing the book details including document and image files.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the added book's response or an error.</returns>
+		</AddBookAsync>
+		<GetAllBooksAsync>
+			<summary>
+				Retrieves all books from the library, optionally including unavailable books.
+			</summary>
+			<param name="includeNotAvailable">A flag indicating whether to include unavailable books in the result. If null, it defaults to only available books.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of book responses or an error.</returns>
+		</GetAllBooksAsync>
+		<GetBookByIdAsync>
+			<summary>
+				Retrieves a book by its unique identifier.
+			</summary>
+			<param name="id">The unique identifier of the book to retrieve.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the book's response or an error.</returns>
+		</GetBookByIdAsync>
+
+		<UpdateBookAsync>
+			<summary>
+				Updates an existing book's information.
+			</summary>
+			<param name="id">The unique identifier of the book to update.</param>
+			<param name="request">The request containing the updated details for the book.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated book's response or an error.</returns>
+		</UpdateBookAsync>
+
+		<ToggleBookAsync>
+			<summary>
+				Toggles the active status of a book (active/inactive).
+			</summary>
+			<param name="id">The unique identifier of the book to toggle.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the toggled book's response or an error.</returns>
+		</ToggleBookAsync>
+
+		<UpdateBookFileAsync>
+			<summary>
+				Updates the book file (e.g., the document) associated with a book.
+			</summary>
+			<param name="id">The unique identifier of the book whose file is to be updated.</param>
+			<param name="request">The request containing the new book file.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated book's response or an error.</returns>
+		</UpdateBookFileAsync>
+
+		<UpdateBookImageAsync>
+			<summary>
+				Updates the image associated with a book.
+			</summary>
+			<param name="id">The unique identifier of the book whose image is to be updated.</param>
+			<param name="request">The request containing the new image file.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated book's response or an error.</returns>
+		</UpdateBookImageAsync>
+
+	</members>
+	<members name="bookServices">
+		<BookServices>
+			<summary>
+				This class is an implementation of <c>IBookServices</c>.
+			</summary>
+		</BookServices>
+		<AddBookAsync>
+			<summary>
+				Adds a new book to the library.
+			</summary>
+			<param name="request">
+				The request containing the book details, including document and image files.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result that contains either the added book's response or an error.
+			</returns>
+			<remarks>
+				<para>This method performs the following steps:</para>
+				<list type="number">
+					<item>Checks if a book with the same title already exists.</item>
+					<item>Verifies the existence of the specified category and author.</item>
+					<item>
+						Maps the request to a <c>Book</c> entity.
+					</item>
+					<item>Saves the document and image files and sets their paths in the entity.</item>
+					<item>Adds the book to the database and commits the transaction.</item>
+					<item>Clears the relevant cache to ensure consistency in subsequent queries.</item>
+				</list>
+			</remarks>
+		</AddBookAsync>
+		<GetAllBooksAsync>
+			<summary>
+				Retrieves all books, optionally including those that are not available.
+			</summary>
+			<param name="includeNotAvailable">
+				A boolean value indicating whether to include books that are not available.
+				If <c>true</c>, all books will be included; if <c>false</c>, only available and active books will be returned.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result that contains either a list of book responses or an error.
+			</returns>
+			<remarks>
+				<para>
+					This method fetches books from the cache or the database. The behavior is determined by the <paramref name="includeNotAvailable"/> parameter:
+				</para>
+				<list type="bullet">
+					<item>
+						<term>includeNotAvailable = true</term>
+						<description>Fetches all books, regardless of their availability.</description>
+					</item>
+					<item>
+						<term>includeNotAvailable = false</term>
+						<description>Fetches only books that are available and active.</description>
+					</item>
+				</list>
+				<para>
+					If the cache does not contain the data, it queries the database and caches the results for future use.
+				</para>
+			</remarks>
+			<example>
+				<code>
+					var books = await bookService.GetAllBooksAsync(true, cancellationToken);
+					if (books.Match(result => result.Any(), _ => false))
+					{
+					Console.WriteLine($"Total books found: {books.AsT0.Count()}");
+					}
+				</code>
+			</example>
+			<error>
+				<term>BookErrors.NotFound</term>
+				<description>Returned when no books are found in the cache or database.</description>
+			</error>
+		</GetAllBooksAsync>
+		<GetBookByIdAsync>
+			<summary>
+				Retrieves a book by its unique identifier.
+			</summary>
+			<param name="id">
+				The unique identifier of the book to be retrieved. Must be a non-negative integer.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result that contains either the book's response if found, or an error indicating the book was not found.
+			</returns>
+			<remarks>
+				<para>
+					This method checks if the provided <paramref name="id"/> is valid and fetches the corresponding book from the database.
+					If the book does not exist, an error is returned.
+				</para>
+				<para>
+					The book data is mapped to a response object using the mapper before being returned.
+				</para>
+			</remarks>
+			<example>
+				<code>
+					var result = await bookService.GetBookByIdAsync(1, cancellationToken);
+					result.Switch(
+					book => Console.WriteLine($"Book found: {book.Title}"),
+					error => Console.WriteLine("Book not found.")
+					);
+				</code>
+			</example>
+			<error>
+				<term>BookErrors.NotFound</term>
+				<description>Returned when the book with the given ID is not found or if the ID is invalid (negative).</description>
+			</error>
+		</GetBookByIdAsync>
+		<UpdateBookAsync>
+			<summary>
+				Updates an existing book's details in the database.
+			</summary>
+			<param name="id">
+				The unique identifier of the book to be updated. Must be a non-negative integer.
+			</param>
+			<param name="request">
+				The request containing the updated book details.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result that contains either the updated book's response or an error indicating the book was not found.
+			</returns>
+			<remarks>
+				<para>
+					This method retrieves the book from the database using its <paramref name="id"/>.
+					If the book is found, its details are updated using the data from <paramref name="request"/>.
+				</para>
+				<para>
+					The cache is invalidated to reflect the changes in subsequent queries.
+				</para>
+			</remarks>
+			<example>
+				<code>
+					var result = await bookService.UpdateBookAsync(1, updateRequest, cancellationToken);
+					result.Switch(
+					book => Console.WriteLine($"Book updated: {book.Title}"),
+					error => Console.WriteLine("Book not found.")
+					);
+				</code>
+			</example>
+			<error>
+				<term>BookErrors.NotFound</term>
+				<description>Returned when the book with the given ID is not found or if the ID is invalid (negative).</description>
+			</error>
+		</UpdateBookAsync>
+		<ToggleBookAsync>
+			<summary>
+				Toggles the active status of a book.
+			</summary>
+			<param name="id">
+				The unique identifier of the book to toggle. Must be a non-negative integer.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result that contains either the toggled book's response or an error indicating the book was not found.
+			</returns>
+			<remarks>
+				<para>
+					This method retrieves the book by its <paramref name="id"/> and toggles its <c>IsActive</c> status.
+					If the book is found, the status is flipped and changes are saved to the database.
+				</para>
+				<para>
+					The cache is invalidated to reflect the updated book status.
+				</para>
+			</remarks>
+			<example>
+				<code>
+					var result = await bookService.ToggleBookAsync(1, cancellationToken);
+					result.Switch(
+					book => Console.WriteLine($"Book status updated: {book.IsActive}"),
+					error => Console.WriteLine("Book not found.")
+					);
+				</code>
+			</example>
+			<error>
+				<term>BookErrors.NotFound</term>
+				<description>Returned when the book with the given ID is not found or if the ID is invalid (negative).</description>
+			</error>
+		</ToggleBookAsync>
+		<UpdateBookFileAsync>
+			<summary>
+				Updates the document file associated with a book.
+			</summary>
+			<param name="id">
+				The unique identifier of the book to update. Must be a non-negative integer.
+			</param>
+			<param name="request">
+				The request containing the new document file.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result containing either the updated book's response or an error indicating the book was not found.
+			</returns>
+			<remarks>
+				This method removes the existing document file, saves the new one, and updates the book's details in the database.
+				The cache is invalidated to ensure the latest data is available.
+			</remarks>
+			<example>
+				<code>
+					var result = await bookService.UpdateBookFileAsync(1, bookFileRequest, cancellationToken);
+					result.Switch(
+					book => Console.WriteLine($"Book document updated: {book.FilePath}"),
+					error => Console.WriteLine("Book not found.")
+					);
+				</code>
+			</example>
+		</UpdateBookFileAsync>
+		<UpdateBookImageAsync>
+			<summary>
+				Updates the image file associated with a book.
+			</summary>
+			<param name="id">
+				The unique identifier of the book to update. Must be a non-negative integer.
+			</param>
+			<param name="request">
+				The request containing the new image file.
+			</param>
+			<param name="cancellationToken">
+				The token used to propagate cancellation requests.
+			</param>
+			<returns>
+				A result containing either the updated book's response or an error indicating the book was not found.
+			</returns>
+			<remarks>
+				This method removes the existing image file, saves the new one, and updates the book's details in the database.
+				The cache is invalidated to ensure the latest data is available.
+			</remarks>
+			<example>
+				<code>
+					var result = await bookService.UpdateBookImageAsync(1, bookImageRequest, cancellationToken);
+					result.Switch(
+					book => Console.WriteLine($"Book image updated: {book.ImagePath}"),
+					error => Console.WriteLine("Book not found.")
+					);
+				</code>
+			</example>
+		</UpdateBookImageAsync>
+		<SaveFile>
+			<summary>
+				Saves an uploaded file to the specified directory.
+			</summary>
+			<param name="file">
+				The file to save.
+			</param>
+			<param name="path">
+				The directory path where the file will be saved.
+			</param>
+			<returns>
+				The randomly generated name of the saved file.
+			</returns>
+			<remarks>
+				This method generates a random filename and saves the file in the specified path.
+			</remarks>
+			<example>
+				<code>
+					var fileName = await SaveFile(formFile, "C:\\Books");
+					Console.WriteLine($"File saved with name: {fileName}");
+				</code>
+			</example>
+		</SaveFile>
+		<RemoveFile>
+			<summary>
+				Deletes a file from the specified path if it exists.
+			</summary>
+			<param name="path">
+				The full path of the file to be removed.
+			</param>
+			<returns>
+				A boolean indicating whether the file was successfully removed.
+			</returns>
+			<remarks>
+				If the file exists at the specified path, it is deleted. Any exceptions during the deletion process are caught and handled.
+			</remarks>
+			<example>
+				<code>
+					var isRemoved = await RemoveFile("C:\\Books\\example.pdf");
+					Console.WriteLine(isRemoved ? "File removed successfully" : "File removal failed");
+				</code>
+			</example>
+		</RemoveFile>
+	</members>
+</docs>
+
+
+
+
+
+
+
+

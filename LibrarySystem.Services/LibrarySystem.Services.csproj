@@ -4,6 +4,9 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +18,7 @@
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.0.0-preview.9.24556.5" />
     <PackageReference Include="OneOf" Version="3.0.271" />
-    <PackageReference Include="Stripe.net" Version="47.2.0" />
+    <PackageReference Include="Stripe.net" Version="47.3.0-beta.1" />
   </ItemGroup>
 
   <ItemGroup>
