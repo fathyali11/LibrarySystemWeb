@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="iCategoryServices">
+		<ICategoryServices>
+			<summary>
+				Defines the contract for the category services, inheriting from ICategoryRepository.
+			</summary>
+			<task>
+				Task that retrieves all categories from the repository.
+			</task>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of category responses or an error.</returns>
+		</ICategoryServices>
+
+		<GetAllCategoriesAsync>
+			<summary>
+				Retrieves all categories from the repository.
+			</summary>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of categories' responses or an error.</returns>
+		</GetAllCategoriesAsync>
+
+		<GetAllCategoriesWithBooksAsync>
+			<summary>
+				Retrieves all categories with their associated books from the repository.
+			</summary>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of categories with books or an error.</returns>
+		</GetAllCategoriesWithBooksAsync>
+
+		<GetCategoryByIdAsync>
+			<summary>
+				Retrieves a single category by its ID.
+			</summary>
+			<param name="id">The ID of the category to retrieve.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the category response or an error if the category is not found.</returns>
+		</GetCategoryByIdAsync>
+
+		<AddCategoryAsync>
+			<summary>
+				Adds a new category to the repository.
+			</summary>
+			<param name="request">The request containing the details of the category to add.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the added category's response or an error.</returns>
+		</AddCategoryAsync>
+
+		<UpdateCategoryAsync>
+			<summary>
+				Updates an existing category's details in the repository.
+			</summary>
+			<param name="id">The ID of the category to update.</param>
+			<param name="request">The request containing the updated details of the category.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated category's response or an error if the category is not found.</returns>
+		</UpdateCategoryAsync>
+
+		<ToggelCategoryAsync>
+			<summary>
+				Toggles the deletion status of a category (marks as deleted or restores).
+			</summary>
+			<param name="id">The ID of the category to toggle.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated category's response or an error if the category is not found.</returns>
+		</ToggelCategoryAsync>
+	</members>
+
+	<members name="categoryServices">
+		<CategoryServices>
+			<summary>
+				Implements the ICategoryServices interface, providing methods to manage categories.
+			</summary>
+			<task>
+				Task that retrieves all categories from the repository.
+			</task>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of category responses or an error.</returns>
+		</CategoryServices>
+
+		<GetAllCategoriesAsync>
+			<summary>
+				Asynchronously retrieves all categories.
+				If categories are available in the cache, they will be retrieved from there.
+				Otherwise, the data is fetched from the database and cached for subsequent calls.
+			</summary>
+			<param name="cancellationToken">A token used to cancel the operation.</param>
+			<returns>
+				A task containing a result, either a list of categories or an error if the operation fails.
+			</returns>
+		</GetAllCategoriesAsync>
+
+		<GetAllCategoriesWithBooksAsync>
+			<summary>
+				Asynchronously retrieves all categories with their associated books.
+				If the data is already cached, it will be returned from the cache; otherwise, it is fetched from the database and cached.
+			</summary>
+			<param name="cancellationToken">A token used to cancel the operation.</param>
+			<returns>
+				A task containing a result, either a list of categories with books or an error if the operation fails.
+			</returns>
+		</GetAllCategoriesWithBooksAsync>
+
+		<GetCategoryByIdAsync>
+			<summary>
+				Retrieves a category by its unique ID.
+				Returns an error if the category does not exist or if the provided ID is invalid (negative).
+			</summary>
+			<param name="id">The unique identifier of the category.</param>
+			<param name="cancellationToken">A token used to cancel the operation.</param>
+			<returns>
+				A task containing the category details or an error if not found.
+			</returns>
+		</GetCategoryByIdAsync>
+
+		<AddCategoryAsync>
+			<summary>
+				Adds a new category to the system.
+				Clears the cache after the addition to ensure the data is consistent.
+			</summary>
+			<param name="request">The details of the category to add.</param>
+			<param name="cancellationToken">A token used to cancel the operation.</param>
+			<returns>
+				A task containing the response of the newly added category or an error if the operation fails.
+			</returns>
+		</AddCategoryAsync>
+
+		<UpdateCategoryAsync>
+			<summary>
+				Updates an existing category's details based on the provided ID.
+				It checks if a category with the same name already exists, and if so, returns an error.
+				Clears the cache after the update.
+			</summary>
+			<param name="id">The ID of the category to update.</param>
+			<param name="request">The updated category details.</param>
+			<param name="cancellationToken">A token used to cancel the operation.</param>
+			<returns>
+				A task containing the updated category response or an error if the category is not found or validation fails.
+			</returns>
+		</UpdateCategoryAsync>
+
+		<ToggelCategoryAsync>
+			<summary>
+				Toggles the "deleted" status of a category (marking it as deleted or restoring it).
+				Clears the cache after the toggle operation.
+			</summary>
+			<param name="id">The ID of the category to toggle.</param>
+			<param name="cancellationToken">A token used to cancel the operation.</param>
+			<returns>
+				A task containing the updated category response or an error if the category is not found.
+			</returns>
+		</ToggelCategoryAsync>
+	</members>
+</docs>
+

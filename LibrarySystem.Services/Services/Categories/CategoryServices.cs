@@ -1,4 +1,5 @@
 ﻿namespace LibrarySystem.Services.Services.Categories;
+/// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/CategoryServices'/>
 public class CategoryServices(ApplicationDbContext context, 
     IMapper mapper,IUnitOfWork unitOfWork,
     HybridCache hybridCache,
@@ -23,6 +24,7 @@ public class CategoryServices(ApplicationDbContext context,
 
         return categories;
     }
+    /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/GetAllCategoriesWithBooksAsync'/>
     public async Task<OneOf<IEnumerable<CategoryWithBooksResponse>, Error>> GetAllCategoriesWithBooksAsync(CancellationToken cancellationToken = default)
     {
         const string cachKey = "All-Categories-Books";
@@ -36,6 +38,7 @@ public class CategoryServices(ApplicationDbContext context,
             );
         return categories;
     }
+    /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/GetCategoryByIdAsync'/>
     public async Task<OneOf<CategoryResponse, Error>> GetCategoryByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id < 0)
@@ -48,6 +51,7 @@ public class CategoryServices(ApplicationDbContext context,
         var response=_mapper.Map<CategoryResponse>(category);
         return response is not null ? response : CategoryErrors.NotFound;
     }
+    /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/AddCategoryAsync'/>
     public async Task<OneOf<CategoryResponse, Error>> AddCategoryAsync(CategoryRequest request, CancellationToken cancellationToken = default)
     {
         var category=_mapper.Map<Category>(request);
@@ -58,6 +62,7 @@ public class CategoryServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync("All-Categories-Books", cancellationToken);
         return response is not null ? response : CategoryErrors.NotFound;
     }
+    /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/UpdateCategoryAsync'/>
     public async Task<OneOf<CategoryResponse, Error>> UpdateCategoryAsync(int id, CategoryRequest request, CancellationToken cancellationToken = default)
     {
         if(id < 0)
@@ -73,6 +78,7 @@ public class CategoryServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync("All-Categories-Books", cancellationToken);
         return response is not null ? response : CategoryErrors.NotFound;
     }
+    /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/ToggelCategoryAsync'/>
     public async Task<OneOf<CategoryResponse, Error>> ToggelCategoryAsync(int id, CancellationToken cancellationToken = default)
     {
         if(id < 0)
@@ -86,6 +92,4 @@ public class CategoryServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync("All-Categories-Books", cancellationToken);
         return response is not null ? response : CategoryErrors.NotFound;
     }
-
-
 }
