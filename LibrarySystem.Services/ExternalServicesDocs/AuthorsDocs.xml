@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="iAuthorServices">
+		<IAuthorServices>
+			<summary>
+				This interface for author services
+			</summary>
+		</IAuthorServices>
+		<GetAllAuthorsAsync>
+			<summary>
+				Retrieves all authors from the repository.
+			</summary>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of authors' responses or an error.</returns>
+		</GetAllAuthorsAsync>
+
+		<GetAllAuthorsWithBooksAsync>
+			<summary>
+				Retrieves all authors along with their associated books.
+			</summary>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of authors with their books' responses or an error.</returns>
+		</GetAllAuthorsWithBooksAsync>
+
+		<GetAuthorAsync>
+			<summary>
+				Retrieves a specific author by their unique identifier.
+			</summary>
+			<param name="id">The unique identifier of the author to retrieve.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the author's response or an error.</returns>
+		</GetAuthorAsync>
+
+		<AddAuthorAsync>
+			<summary>
+				Adds a new author to the system.
+			</summary>
+			<param name="request">The request containing the details of the author to add.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the added author's response or an error.</returns>
+		</AddAuthorAsync>
+
+		<UpdateAuthorAsync>
+			<summary>
+				Updates an existing author's details.
+			</summary>
+			<param name="id">The unique identifier of the author to update.</param>
+			<param name="request">The request containing the updated details of the author.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated author's response or an error.</returns>
+		</UpdateAuthorAsync>
+
+		<ToggelAuthorAsync>
+			<summary>
+				Toggles the active status of an author (active/inactive).
+			</summary>
+			<param name="id">The unique identifier of the author to toggle.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the toggled author's response or an error.</returns>
+		</ToggelAuthorAsync>
+	</members>
+
+
+	<members name="authorServices">
+		<AuthorServices>
+			<summary>
+				This class is an implementation for <c>IAuthorServices</c>
+			</summary>
+		</AuthorServices>
+		<GetAllAuthorsAsync>
+			<summary>
+				Retrieves all authors from the repository.
+			</summary>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of authors' responses or an error.</returns>
+		</GetAllAuthorsAsync>
+
+		<GetAllAuthorsWithBooksAsync>
+			<summary>
+				Retrieves all authors with their associated books from the repository.
+			</summary>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either a list of authors with their books or an error.</returns>
+		</GetAllAuthorsWithBooksAsync>
+
+		<GetAuthorAsync>
+			<summary>
+				Retrieves a single author by their ID.
+			</summary>
+			<param name="id">The ID of the author to retrieve.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the author's response or an error if the author is not found.</returns>
+		</GetAuthorAsync>
+
+		<AddAuthorAsync>
+			<summary>
+				Adds a new author to the repository.
+			</summary>
+			<param name="request">The request containing the details of the author to add.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the added author's response or an error.</returns>
+		</AddAuthorAsync>
+
+		<UpdateAuthorAsync>
+			<summary>
+				Updates an existing author's details in the repository.
+			</summary>
+			<param name="id">The ID of the author to update.</param>
+			<param name="request">The request containing the updated details of the author.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated author's response or an error if the author is not found.</returns>
+		</UpdateAuthorAsync>
+
+		<ToggelAuthorAsync>
+			<summary>
+				Toggles the deletion status of an author (marks as deleted or restores).
+			</summary>
+			<param name="id">The ID of the author to toggle.</param>
+			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
+			<returns>A result that contains either the updated author's response or an error if the author is not found.</returns>
+		</ToggelAuthorAsync>
+	</members>
+
+</docs>

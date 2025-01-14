@@ -1,4 +1,6 @@
 ﻿namespace LibrarySystem.Services.Services.Authors;
+/// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/AuthorServices'/>
+
 public class AuthorServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
@@ -10,6 +12,7 @@ public class AuthorServices(ApplicationDbContext context,
     private readonly HybridCache _hybridCache=hybridCache;
     private readonly ILogger<AuthorServices> _logger = logger;
     private readonly IMapper _mapper=mapper;
+    /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/GetAllAuthorsAsync'/>
     public async Task<OneOf<IEnumerable<AuthorResponse>, Error>> GetAllAuthorsAsync(CancellationToken cancellationToken = default)
     {
         const string cashKey = "All-Authors";
@@ -24,6 +27,7 @@ public class AuthorServices(ApplicationDbContext context,
             );
         return authers;
     }
+    /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/GetAllAuthorsWithBooksAsync'/>
     public async Task<OneOf<IEnumerable<AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(CancellationToken cancellationToken = default)
     {
         
@@ -39,6 +43,7 @@ public class AuthorServices(ApplicationDbContext context,
             );
         return authers;
     }
+    /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/GetAuthorAsync'/>
     public async Task<OneOf<AuthorResponse, Error>> GetAuthorAsync(int id, CancellationToken cancellationToken = default)
     {
         if(id<=0)
@@ -51,6 +56,7 @@ public class AuthorServices(ApplicationDbContext context,
         var response = _mapper.Map<AuthorResponse>(author);
         return response is not null ? response : AuthorErrors.NotFound;
     }
+    /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/AddAuthorAsync'/>
     public async Task<OneOf<AuthorResponse, Error>> AddAuthorAsync(AuthorRequest request, CancellationToken cancellationToken = default)
     {
         var author=_mapper.Map<Author>(request);
@@ -61,6 +67,7 @@ public class AuthorServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
+    /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/UpdateAuthorAsync'/>
     public async Task<OneOf<AuthorResponse, Error>> UpdateAuthorAsync(int id, AuthorRequest request, CancellationToken cancellationToken = default)
     {
         if(id<=0)
@@ -76,6 +83,7 @@ public class AuthorServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync("All-Authors-Books", cancellationToken);
         return response is not null ? response : AuthorErrors.NotFound;
     }
+    /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/ToggelAuthorAsync'/>
     public async Task<OneOf<AuthorResponse, Error>> ToggelAuthorAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
