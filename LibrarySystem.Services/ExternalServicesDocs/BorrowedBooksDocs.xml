@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="borrowedBookServices">
+		<BorrowedBookServices>
+			<summary>
+				Provides services for managing borrowed books, including returning books and retrieving borrowed book details.
+			</summary>
+		</BorrowedBookServices>
+
+		<ReturnBookAsync>
+			<summary>
+				Handles the return of a borrowed book asynchronously.
+			</summary>
+			<param name="userId">The ID of the user returning the book.</param>
+			<param name="borrowedBookId">The ID of the borrowed book being returned.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the book is successfully returned, or an <see cref="Error"/> if an error occurs.
+			</returns>
+			<remarks>
+				This method verifies the existence of the borrowed book and performs operations to mark it as returned.
+				It updates the database and invalidates relevant cached data for books.
+			</remarks>
+		</ReturnBookAsync>
+
+		<GetAllBorrowedBooksAsync>
+			<summary>
+				Retrieves a list of all borrowed books asynchronously.
+			</summary>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns a <see cref="List{T}"/> of <see cref="borrowedBookResponse"/> containing borrowed book details.
+			</returns>
+			<remarks>
+				This method fetches all borrowed books, including user and book information, for display purposes.
+			</remarks>
+		</GetAllBorrowedBooksAsync>
+
+	</members>
+</docs>
