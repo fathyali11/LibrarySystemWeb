@@ -1,10 +1,8 @@
 ﻿namespace LibrarySystem.Services.Services.Categories;
 /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/ICategoryServices'/>
-
 public interface ICategoryServices:ICategoryRepository
 {
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/GetAllCategoriesAsync'/>
-
     Task<OneOf<IEnumerable<CategoryResponse>,Error>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/GetAllCategoriesWithBooksAsync'/>
     Task<OneOf<IEnumerable<CategoryWithBooksResponse>,Error>> GetAllCategoriesWithBooksAsync(CancellationToken cancellationToken=default);

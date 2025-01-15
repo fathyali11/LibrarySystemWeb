@@ -5,11 +5,6 @@
 			<summary>
 				Defines the contract for the category services, inheriting from ICategoryRepository.
 			</summary>
-			<task>
-				Task that retrieves all categories from the repository.
-			</task>
-			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
-			<returns>A result that contains either a list of category responses or an error.</returns>
 		</ICategoryServices>
 
 		<GetAllCategoriesAsync>
@@ -71,11 +66,6 @@
 			<summary>
 				Implements the ICategoryServices interface, providing methods to manage categories.
 			</summary>
-			<task>
-				Task that retrieves all categories from the repository.
-			</task>
-			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
-			<returns>A result that contains either a list of category responses or an error.</returns>
 		</CategoryServices>
 
 		<GetAllCategoriesAsync>
