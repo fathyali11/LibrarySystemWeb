@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="orderServices">
+		<OrderServices>
+			<summary>
+				Provides services for managing orders, including placing, retrieving, and canceling orders.
+			</summary>
+		</OrderServices>
+
+		<MakeOrderAsync>
+			<summary>
+				Creates an order based on the items in the specified cart. Handles borrowed book processing and updates order details.
+			</summary>
+			<param name="cartId">The ID of the cart to convert into an order.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="OrderResponse"/> containing the created order details or <see cref="Error"/> there is an error
+			</returns>
+			</MakeOrderAsync>
+
+		<GetOrderAsync>
+			<summary>
+				Retrieves the order associated with a specific user.
+			</summary>
+			<param name="userId">The ID of the user whose order is to be retrieved.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="OrderResponse"/> containing the created order details or <see cref="Error"/> there is an error
+			</returns>
+		</GetOrderAsync>
+
+		<CancelOrderAsync>
+			<summary>
+				Cancels an existing order and removes its associated data, including borrowed books and order items.
+			</summary>
+			<param name="id">The ID of the order to cancel.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="OrderResponse"/> containing the created order details or <see cref="Error"/> there is an error
+			</returns>
+		</CancelOrderAsync>
+
+		<HandleBorrowedBookAsync>
+			<summary>
+				Processes a borrowed book for an order by creating a new borrowed book record.
+			</summary>
+			<param name="bookId">The ID of the book to be borrowed.</param>
+			<param name="userId">The ID of the user borrowing the book.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="OrderResponse"/> containing the created order details or <see cref="Error"/> there is an error
+			</returns>
+		</HandleBorrowedBookAsync>
+	</members>
+</docs>
+

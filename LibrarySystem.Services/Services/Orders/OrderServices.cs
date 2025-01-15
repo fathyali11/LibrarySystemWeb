@@ -2,6 +2,8 @@
 
 namespace LibrarySystem.Services.Services.Orders
 {
+    /// <include file='ExternalServicesDocs\OrderServices.xml' path='/docs/members[@name="orderServices"]/OrderServices'/>
+
     public class OrderServices(IUnitOfWork unitOfWork,
         IMapper mapper,
         HybridCache hybridCache) : IOrderServices
@@ -10,7 +12,7 @@ namespace LibrarySystem.Services.Services.Orders
         private readonly IMapper _mapper=mapper;
         private readonly HybridCache _hybridCache = hybridCache;
         private readonly string _orderCachKey = "order-";
-
+        /// <include file='ExternalServicesDocs\OrderServices.xml' path='/docs/members[@name="orderServices"]/MakeOrderAsync'/>
         public async Task<OneOf<OrderResponse, Error>> MakeOrderAsync(int cartId, CancellationToken cancellationToken = default)
         {
             var cartFromDb= await _unitOfWork.CartRepository.GetCartWithItems(cartId, true,cancellationToken);
@@ -32,6 +34,7 @@ namespace LibrarySystem.Services.Services.Orders
             var response =_mapper.Map<OrderResponse>(order);
             return response;
         }
+        /// <include file='ExternalServicesDocs\OrderServices.xml' path='/docs/members[@name="orderServices"]/GetOrderAsync'/>
         public async Task<OneOf<OrderResponse, Error>> GetOrderAsync(string userId,CancellationToken cancellationToken = default)
         {
             OrderResponse cached ;
@@ -47,6 +50,7 @@ namespace LibrarySystem.Services.Services.Orders
 
             return cached;
         }
+        /// <include file='ExternalServicesDocs\OrderServices.xml' path='/docs/members[@name="orderServices"]/CancelOrderAsync'/>
         public async Task<OneOf<bool, Error>> CancelOrderAsync(int id,CancellationToken cancellationToken = default)
         {
             var orderFromDb = await _unitOfWork.OrderRepository.GetByAsync(x=>x.Id==id,"OrderItems",cancellationToken);
@@ -61,7 +65,7 @@ namespace LibrarySystem.Services.Services.Orders
             return true;
         }
 
-
+        /// <include file='ExternalServicesDocs\OrderServices.xml' path='/docs/members[@name="orderServices"]/HandleBorrowedBookAsync'/>
         private async Task HandleBorrowedBookAsync(int bookId,string userId,CancellationToken cancellationToken)
         {
             var borrowBook = new BorrowedBook
