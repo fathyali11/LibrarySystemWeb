@@ -1,29 +1,29 @@
 ﻿using Hangfire;
 using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 
-namespace LibrarySystem.Services.Services.AuthUsers
+namespace LibrarySystem.Services.Services.AuthUsers;
+/// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/AuthServices'/>
+public class AuthServices(UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager,
+    IMapper mapper,
+    IUnitOfWork unitOfWork,
+    ILogger<AuthServices> logger,
+    IEmailSender emailSender,
+    IHttpContextAccessor httpContextAccessor,
+    ITokenServices tokenServices,
+    RoleManager<ApplicationRole> roleManager) :IAuthServices
 {
-    public class AuthServices(UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IMapper mapper,
-        IUnitOfWork unitOfWork,
-        ILogger<AuthServices> logger,
-        IEmailSender emailSender,
-        IHttpContextAccessor httpContextAccessor,
-        ITokenServices tokenServices,
-        RoleManager<ApplicationRole> roleManager) :IAuthServices
-    {
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly IMapper _mapper = mapper;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly ILogger<AuthServices> _logger = logger;
-        private readonly IEmailSender _emailSender = emailSender;
-        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        private readonly ITokenServices _tokenServices = tokenServices;
-        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
-
-        public async Task<OneOf<bool, Error>> RegisterAsync(RegistersRequest request, CancellationToken cancellationToken = default)
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IMapper _mapper = mapper;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly ILogger<AuthServices> _logger = logger;
+    private readonly IEmailSender _emailSender = emailSender;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly ITokenServices _tokenServices = tokenServices;
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/RegisterAsync'/>
+    public async Task<OneOf<bool, Error>> RegisterAsync(RegistersRequest request, CancellationToken cancellationToken = default)
         {
             var userIsExists = await _unitOfWork.UserRepository.IsExistAsync(request.UserName, request.Email);
             if (userIsExists)
@@ -43,8 +43,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             await SendConfirmEmail(user);
             return true;
         }
-
-        public async Task<OneOf<AuthResponse, Error>> LoginAsync(LoginsRequest request, CancellationToken cancellationToken = default)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/LoginAsync'/>
+    public async Task<OneOf<AuthResponse, Error>> LoginAsync(LoginsRequest request, CancellationToken cancellationToken = default)
         {
             var user=await _userManager.FindByEmailAsync(request.Email);
             if (user is null)
@@ -71,8 +71,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             }
             return await GenerateResponse(user);
         }
-
-        public async Task<OneOf<bool,Error>> ConfirmEmailAsync(ConfirmEmailRequest request,CancellationToken cancellationToken = default)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/ConfirmEmailAsync'/>
+    public async Task<OneOf<bool,Error>> ConfirmEmailAsync(ConfirmEmailRequest request,CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
             if(user is null)
@@ -94,8 +94,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             return true;
 
         }
-
-        public async Task<OneOf<bool,Error>> ResendConfirmEmailAsync(ResendConfirmEmailRequest request,CancellationToken cancellationToken=default)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/ResendConfirmEmailAsync'/>
+    public async Task<OneOf<bool,Error>> ResendConfirmEmailAsync(ResendConfirmEmailRequest request,CancellationToken cancellationToken=default)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if( user is null) 
@@ -105,8 +105,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             return true;
 
         }
-
-        public async Task<OneOf<bool, Error>> ForgetPasswordAsync(ForgetPasswordRequest request, CancellationToken cancellationToken = default)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/ForgetPasswordAsync'/>
+    public async Task<OneOf<bool, Error>> ForgetPasswordAsync(ForgetPasswordRequest request, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if(user is null)
@@ -119,8 +119,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
 
             return true;
         }
-
-        public async Task<OneOf<bool, Error>> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/ResetPasswordAsync'/>
+    public async Task<OneOf<bool, Error>> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user is null)
@@ -142,8 +142,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             }
             return true;
         }
-
-        private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/GenerateResponse'/>
+    private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
         {
             var response = _mapper.Map<AuthResponse>(user);
             var roles= await _userManager.GetRolesAsync(user);
@@ -167,8 +167,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             await _unitOfWork.SaveChanges();
             return response;
         }
-
-        private async Task SendConfirmEmail(ApplicationUser user)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/SendConfirmEmail'/>
+    private async Task SendConfirmEmail(ApplicationUser user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
@@ -188,8 +188,8 @@ namespace LibrarySystem.Services.Services.AuthUsers
             //await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody);
             _logger.LogInformation("email was sent");
         }
-
-        private async Task SendResetPassword(ApplicationUser user)
+    /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/SendResetPassword'/>
+    private async Task SendResetPassword(ApplicationUser user)
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
@@ -209,5 +209,4 @@ namespace LibrarySystem.Services.Services.AuthUsers
             //await _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody);
             _logger.LogInformation("email was sent");
         }
-    }
 }

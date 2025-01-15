@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="authServices">
+		<AuthServices>
+			<summary>
+				This class is an implementation for <c>IAuthServices</c> 
+			</summary>
+		</AuthServices>
+		<RegisterAsync>
+			<summary>
+				Registers a new user asynchronously.
+
+			</summary>
+			<param name="request">The request object containing user registration details.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the registration is successful, or an <see cref="Error"/> if any error occurs during the process.
+
+			</returns>
+			<remarks>
+				This method checks for the existence of a user with the given username or email.
+				It also validates that the provided email address is a Gmail account.
+				If the user creation fails, the first error returned by the identity framework is mapped and returned.
+				A confirmation email is sent upon successful registration.
+
+			</remarks>
+		</RegisterAsync>
+		<LoginAsync>
+			<summary>
+				Authenticates a user asynchronously and generates an authentication response upon successful login.
+			</summary>
+			<param name="request">The login request object containing the user's email and password.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="AuthResponse"/> if the login is successful, or an <see cref="Error"/> if any error occurs during the process.
+			</returns>
+			<remarks>
+				This method performs the following steps:
+				1. Finds the user by email.
+				2. Checks if the user is active.
+				3. Attempts to sign the user in using their password.
+				4. Revokes any existing active refresh tokens.
+				5. Generates and returns an authentication response upon successful login.
+			</remarks>
+		</LoginAsync>
+		<ConfirmEmailAsync>
+			<summary>
+				Confirms the email of a user asynchronously using the provided token.
+			</summary>
+			<param name="request">The request object containing the user ID and confirmation token.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the email confirmation is successful, or an <see cref="Error"/> if any error occurs during the process.
+			</returns>
+			<remarks>
+				This method validates the user and decodes the confirmation token.
+				If the email is already confirmed, it returns an error indicating the same.
+				On successful confirmation, the user is assigned a role and changes are saved to the database.
+			</remarks>
+		</ConfirmEmailAsync>
+		<ResendConfirmEmailAsync>
+			<summary>
+				Resends the email confirmation link to the user's email address asynchronously.
+			</summary>
+			<param name="request">The request object containing the user's email.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the email is successfully sent, or an <see cref="Error"/> if the user is not found.
+			</returns>
+			<remarks>
+				This method validates if the user exists and then sends a confirmation email to their registered email address.
+			</remarks>
+		</ResendConfirmEmailAsync>
+		<ForgetPasswordAsync>
+			<summary>
+				Sends a password reset email to the user asynchronously.
+			</summary>
+			<param name="request">The request object containing the user's email.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the email is successfully sent or the user does not exist, or an <see cref="Error"/> if the user's email is not confirmed.
+			</returns>
+			<remarks>
+				This method checks if the user exists and their email is confirmed.
+				If valid, it sends a password reset email to the user's registered email address.
+			</remarks>
+		</ForgetPasswordAsync>
+		<ResetPasswordAsync>
+			<summary>
+				Resets the password for a user asynchronously using the provided reset token.
+			</summary>
+			<param name="request">The request object containing the user ID, reset token, and new password.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the password reset is successful or the user is not found, or an <see cref="Error"/> if any error occurs during the process.
+			</returns>
+			<remarks>
+				This method decodes the reset token and attempts to reset the user's password.
+				If the token format is invalid, an appropriate error is returned.
+				Errors encountered during the password reset process are mapped and returned.
+			</remarks>
+		</ResetPasswordAsync>
+		<GenerateResponse>
+			<summary>
+				Generates an authentication response for a user asynchronously.
+			</summary>
+			<param name="user">The user for whom the authentication response is being generated.</param>
+			<returns>
+				A <see cref="Task"/> that returns an <see cref="AuthResponse"/> containing the authentication token, refresh token, and their expiration details.
+			</returns>
+			<remarks>
+				This method retrieves the user's roles and permissions, generates an authentication token and refresh token,
+				and updates the user's refresh token list in the database.
+			</remarks>
+		</GenerateResponse>
+		<SendConfirmEmail>
+			<summary>
+				Sends an email confirmation link to the user asynchronously.
+			</summary>
+			<param name="user">The user to whom the confirmation email will be sent.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+			</returns>
+			<remarks>
+				This method generates an email confirmation token, encodes it, and creates a confirmation link.
+				It prepares the email body using a template and sends the email using a background job.
+			</remarks>
+		</SendConfirmEmail>
+		<SendResetPassword>
+			<summary>
+				Sends a password reset link to the user asynchronously.
+			</summary>
+			<param name="user">The user to whom the password reset email will be sent.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+			</returns>
+			<remarks>
+				This method generates a password reset token, encodes it, and creates a reset link.
+				It prepares the email body using a template and sends the email using a background job.
+			</remarks>
+		</SendResetPassword>
+
+	</members>
+</docs>
+
