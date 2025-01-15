@@ -1,6 +1,7 @@
 ﻿using LibrarySystem.Domain.DTO.CartItems;
 
 namespace LibrarySystem.Services.Services.CartItems;
+/// <include file='ExternalServicesDocs\CartItemDocs.xml' path='/docs/members[@name="cartItemServices"]/CartItemServices'/>
 public class CartItemServices(ApplicationDbContext context,
     IUnitOfWork unitOfWork,
     IMapper mapper,
@@ -9,6 +10,7 @@ public class CartItemServices(ApplicationDbContext context,
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly HybridCache _hybridCache=hybridCache;
+    /// <include file='ExternalServicesDocs\CartItemDocs.xml' path='/docs/members[@name="cartItemServices"]/AddOrderToCartAsync'/>
     public async Task<OneOf<bool,Error>> AddOrderToCartAsync(string userId,CartItemRequest request, CancellationToken cancellationToken = default)
     {
         var cartFromDb = await _unitOfWork.CartRepository.GetByAsync(x => x.UserId == userId, cancellationToken: cancellationToken);
@@ -50,6 +52,7 @@ public class CartItemServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
+    /// <include file='ExternalServicesDocs\CartItemDocs.xml' path='/docs/members[@name="cartItemServices"]/PlusAsync'/>
     public async Task<OneOf<bool, Error>> PlusAsync(string userId, int id, CancellationToken cancellationToken = default)
     {
         var cartItemFromDb = await _unitOfWork.CartItemRepository
@@ -72,6 +75,7 @@ public class CartItemServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
+    /// <include file='ExternalServicesDocs\CartItemDocs.xml' path='/docs/members[@name="cartItemServices"]/MinusAsync'/>
     public async Task<OneOf<bool, Error>> MinusAsync(string userId, int id, CancellationToken cancellationToken = default)
     {
         var cartItemFromDb = await _unitOfWork.CartItemRepository
@@ -89,6 +93,7 @@ public class CartItemServices(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return true;
     }
+    /// <include file='ExternalServicesDocs\CartItemDocs.xml' path='/docs/members[@name="cartItemServices"]/RemoveAsync'/>
     public async Task<OneOf<bool, Error>> RemoveAsync(string userId, int id, CancellationToken cancellationToken = default)
     {
         var cartItemFromDb = await _unitOfWork.CartItemRepository
