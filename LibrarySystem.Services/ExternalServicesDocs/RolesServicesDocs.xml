@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="roleServices">
+		<RoleServices>
+			<summary>
+				Provides services for managing roles and their associated permissions.
+			</summary>
+		</RoleServices>
+
+		<GetAllRolesAsync>
+			<summary>
+				Retrieves all roles from the system.
+			</summary>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				An <see cref="IEnumerable{RoleResponse}"/> containing a list of roles.
+			</returns>
+		</GetAllRolesAsync>
+
+		<GetAllRolesWithPermissionsAsync>
+			<summary>
+				Retrieves all roles along with their associated permissions.
+			</summary>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				An <see cref="IEnumerable{RoleWithPermissionsResponse}"/> containing a list of roles and their permissions.
+			</returns>
+		</GetAllRolesWithPermissionsAsync>
+	</members>
+</docs>
+

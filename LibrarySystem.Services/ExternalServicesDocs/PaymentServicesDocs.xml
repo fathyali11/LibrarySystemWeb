@@ -5,8 +5,6 @@
 			<summary>
 				Provides services for managing payments, including checkout session creation, payment confirmation, and refunds.
 			</summary>
-			<param name="unitOfWork">The UnitOfWork instance for interacting with repositories.</param>
-			<param name="hybridCache">The HybridCache instance for managing cached data.</param>
 		</PaymentServices>
 
 		<CreateCheckoutSessionAsync>
