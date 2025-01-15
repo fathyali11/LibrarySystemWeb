@@ -1,5 +1,6 @@
 ﻿namespace LibrarySystem.Services.Services.Tokens
 {
+    /// <include file='ExternalServicesDocs\TokenServicesDocs.xml' path='/docs/members[@name="tokenServices"]/TokenServices'/>
     public class TokenServices(IOptions<JwtOptions> options,
         UserManager<ApplicationUser> userManager,
         IMapper mapper,
@@ -13,6 +14,7 @@
         private readonly IMapper _mapper = mapper;
 
         private readonly int _refreshTokenExpirationOnDays = 7;
+        /// <include file='ExternalServicesDocs\TokenServicesDocs.xml' path='/docs/members[@name="tokenServices"]/RefreshTokenAsync'/>
         public async Task<OneOf<AuthResponse, Error>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
             var userId = ValidateToken(request.token);
@@ -32,6 +34,7 @@
 
         }
 
+        /// <include file='ExternalServicesDocs\TokenServicesDocs.xml' path='/docs/members[@name="tokenServices"]/GenerateToken'/>
         public (string token, DateTime expiresOn) GenerateToken(ApplicationUser user,IEnumerable<string>roles,IEnumerable<string>permissions)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
@@ -62,13 +65,14 @@
             return (new JwtSecurityTokenHandler().WriteToken(token), expiration);
         }
 
+        /// <include file='ExternalServicesDocs\TokenServicesDocs.xml' path='/docs/members[@name="tokenServices"]/GenerateRefreshToken'/>
         public (string refreshToken, DateTime expiresOn) GenerateRefreshToken()
         {
             var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             var expiresOn = DateTime.UtcNow.AddDays(_refreshTokenExpirationOnDays);
             return (token!, expiresOn);
         }
-
+        /// <include file='ExternalServicesDocs\TokenServicesDocs.xml' path='/docs/members[@name="tokenServices"]/ValidateToken'/>
         private string? ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -95,7 +99,7 @@
                 return null;
             }
         }
-
+        /// <include file='ExternalServicesDocs\TokenServicesDocs.xml' path='/docs/members[@name="tokenServices"]/GenerateResponse'/>
         private async Task<AuthResponse> GenerateResponse(ApplicationUser user)
         {
             var response = _mapper.Map<AuthResponse>(user);

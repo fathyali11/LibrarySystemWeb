@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="tokenServices">
+		<TokenServices>
+			<summary>
+				Provides services for token generation, validation, and management in authentication workflows.
+			</summary>
+		</TokenServices>
+
+		<RefreshTokenAsync>
+			<summary>
+				Refreshes a token by validating the provided refresh token and generating a new access token.
+			</summary>
+			<param name="request">The request containing the access token and refresh token.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="AuthResponse"/>representing the new authentication response or <see cref="Error"/>an error
+			</returns>
+		</RefreshTokenAsync>
+
+		<GenerateToken>
+			<summary>
+				Generates a new JWT access token for a given user with their roles and permissions.
+			</summary>
+			<param name="user">The application user for whom the token is generated.</param>
+			<param name="roles">A list of roles assigned to the user.</param>
+			<param name="permissions">A list of permissions assigned to the user.</param>
+			<returns>
+				A tuple containing the generated token string and its expiration time.
+			</returns>
+		</GenerateToken>
+
+		<GenerateRefreshToken>
+			<summary>
+				Generates a secure refresh token and its expiration time.
+			</summary>
+			<returns>
+				A tuple containing the generated refresh token string and its expiration date.
+			</returns>
+		</GenerateRefreshToken>
+
+		<ValidateToken>
+			<summary>
+				Validates a given JWT token and extracts the user's ID if valid.
+			</summary>
+			<param name="token">The JWT token to validate.</param>
+			<returns>
+				The user ID if the token is valid; otherwise, <c>null</c>.
+			</returns>
+		</ValidateToken>
+
+		<GenerateResponse>
+			<summary>
+				Generates an authentication response for a given user, including an access token, refresh token, and expiration details.
+			</summary>
+			<param name="user">The application user for whom the response is generated.</param>
+			<returns>
+				An <see cref="AuthResponse"/> containing token details and user information.
+			</returns>
+		</GenerateResponse>
+	</members>
+</docs>
+
