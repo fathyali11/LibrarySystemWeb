@@ -1,10 +1,11 @@
 ﻿using Stripe.V2;
 
 namespace LibrarySystem.Services.Services.Fines;
+/// <include file='ExternalServicesDocs\FinesDocs.xml' path='/docs/members[@name="fineNotificationServices"]/FineNotificationServices'/>
 public class FineNotificationServices(ApplicationDbContext context,IUnitOfWork unitOfWork):FineRepository(context),IFineNotificationServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
-
+    /// <include file='ExternalServicesDocs\FinesDocs.xml' path='/docs/members[@name="fineNotificationServices"]/AddFine'/>
     public async Task AddFine()
     {
         var borrowedBooks = await _unitOfWork.BorrowedBookRepository

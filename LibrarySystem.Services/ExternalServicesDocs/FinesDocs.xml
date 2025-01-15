@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="fineNotificationServices">
+		<FineNotificationServices>
+			<summary>
+				Provides services for managing fine notifications, including calculating and adding fines for overdue borrowed books.
+			</summary>
+		</FineNotificationServices>
+
+		<AddFine>
+			<summary>
+				Calculates and adds fines for users who have borrowed books that are overdue. It checks for existing fines and updates or creates new fines as needed.
+			</summary>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+			</returns>
+		</AddFine>
+	</members>
+</docs>
+
