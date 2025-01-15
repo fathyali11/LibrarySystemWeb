@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="accountServices">
+		<AccountUserServices>
+			<summary>
+				Provides services for managing account user operations, including retrieving user details, updating user information, and changing user passwords.
+			</summary>
+		</AccountUserServices>
+
+		<GetAsync>
+			<summary>
+				Retrieves user details asynchronously.
+			</summary>
+			<param name="userId">The ID of the user to retrieve.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns an <see cref="AccountUserResponse"/> with the user's details, or an <see cref="Error"/> if the user is not found.
+			</returns>
+			<remarks>
+				This method uses projection to fetch the user's details based on their ID.
+			</remarks>
+		</GetAsync>
+
+		<UpdateAsync>
+			<summary>
+				Updates user details asynchronously.
+			</summary>
+			<param name="userId">The ID of the user to update.</param>
+			<param name="request">The request object containing updated user details.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the update is successful, or an <see cref="Error"/> if the user is not found.
+			</returns>
+			<remarks>
+				This method updates the user's first name, last name, and address based on the provided request.
+			</remarks>
+		</UpdateAsync>
+
+		<ChangePasswordAsync>
+			<summary>
+				Changes the user's password asynchronously.
+			</summary>
+			<param name="request">The request object containing the user's email, old password, and new password.</param>
+			<param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Optional.</param>
+			<returns>
+				A <see cref="Task"/> representing the asynchronous operation.
+				Returns <see cref="bool"/> if the password change is successful, or an <see cref="Error"/> if an error occurs during the process.
+			</returns>
+			<remarks>
+				This method validates the user's current password and updates it with the new password. Errors are returned if the operation fails.
+			</remarks>
+		</ChangePasswordAsync>
+
+	</members>
+</docs>
