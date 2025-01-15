@@ -1,5 +1,6 @@
 ﻿using LibrarySystem.Domain.DTO.Carts;
 namespace LibrarySystem.Services.Services.Carts;
+/// <include file='ExternalServicesDocs\CartServicesDocs.xml' path='/docs/members[@name="cartServices"]/CartServices'/>
 public class CartServices(ApplicationDbContext context,
     IUnitOfWork unitOfWork,
     IMapper mapper,
@@ -8,7 +9,7 @@ public class CartServices(ApplicationDbContext context,
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly IMapper _mapper=mapper;
     private readonly HybridCache _hybridCache = hybridCache;
-
+    /// <include file='ExternalServicesDocs\CartServicesDocs.xml' path='/docs/members[@name="cartServices"]/GetCartAsync'/>
     public async Task<OneOf<CartResponse, Error>> GetCartAsync(int id, CancellationToken cancellationToken = default)
     {
         CartResponse cached;
@@ -20,6 +21,7 @@ public class CartServices(ApplicationDbContext context,
             });
         return cached;
     }
+    /// <include file='ExternalServicesDocs\CartServicesDocs.xml' path='/docs/members[@name="cartServices"]/ClearCartAsync'/>
     public async Task<OneOf<bool, Error>> ClearCartAsync(int id, CancellationToken cancellationToken = default)
     {
         var cartFromDb = await _unitOfWork.CartRepository.GetCartWithItems(id, false,cancellationToken);

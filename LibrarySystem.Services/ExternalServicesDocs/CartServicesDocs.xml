@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="cartServices">
+		<CartServices>
+			<summary>
+				Provides services for managing a user's shopping cart, including retrieving the cart, clearing items from the cart, and updating quantities.
+			</summary>
+		</CartServices>
+
+		<GetCartAsync>
+			<summary>
+				Retrieves the user's cart along with its items, either from the cache or by querying the database if not found in the cache.
+			</summary>
+			<param name="id">The ID of the user's cart.</param>
+			<param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
+			<returns>
+				A <see cref="CartResponse"/> containing the cart details Or <see cref="Error"/> the operation fails
+			</returns>
+			
+		</GetCartAsync>
+
+		<ClearCartAsync>
+			<summary>
+				Clears all items from the user's cart, restoring the book quantities and resetting the total amount to zero.
+			</summary>
+			<param name="id">The ID of the user's cart to be cleared.</param>
+			<param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
+			<returns>
+				A <see cref="bool"/> indicating the success Or <see cref="Error"/> the operation fails
+			</returns>
+		</ClearCartAsync>
+	</members>
+</docs>
+
