@@ -4,10 +4,12 @@ using Stripe;
 using Stripe.Checkout;
 namespace LibrarySystem.Services.Services.Payments
 {
+    /// <include file='ExternalServicesDocs\PaymentServicesDocs.xml' path='/docs/members[@name="paymentServices"]/PaymentServices'/>
     public class PaymentServices(IUnitOfWork unitOfWork,HybridCache hybridCache) : IPaymentServices
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly HybridCache _hybridCache = hybridCache;
+        /// <include file='ExternalServicesDocs\PaymentServicesDocs.xml' path='/docs/members[@name="paymentServices"]/CreateCheckoutSessionAsync'/>
         public async Task<SessionResponse> CreateCheckoutSessionAsync(PaymentOrderRequest request, CancellationToken cancellationToken = default)
         {
             var options = new SessionCreateOptions
@@ -40,6 +42,7 @@ namespace LibrarySystem.Services.Services.Payments
             await _unitOfWork.OrderRepository.SetPaymentIdAndPaymentIntentId(request.OrderId, session.PaymentIntentId,session.Id);
             return new SessionResponse(session.Id, session.Url, session.SuccessUrl, session.CancelUrl, session.PaymentIntentId);
         }
+        /// <include file='ExternalServicesDocs\PaymentServicesDocs.xml' path='/docs/members[@name="paymentServices"]/ConfirmOrderPaymentStatus'/>
         public async Task<OneOf<bool, Error>> ConfirmOrderPaymentStatus(int orderId, CancellationToken cancellationToken = default)
         {
             var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
@@ -64,6 +67,7 @@ namespace LibrarySystem.Services.Services.Payments
             
             return PaymentErrors.NotPaid;
         }
+        /// <include file='ExternalServicesDocs\PaymentServicesDocs.xml' path='/docs/members[@name="paymentServices"]/RefundPaymentStatus'/>
         public async Task<OneOf<bool, Error>> RefundPaymentStatus(int orderId,CancellationToken cancellationToken=default)
         {
             var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);

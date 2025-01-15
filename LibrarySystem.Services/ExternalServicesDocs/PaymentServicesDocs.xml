@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="paymentServices">
+		<PaymentServices>
+			<summary>
+				Provides services for managing payments, including checkout session creation, payment confirmation, and refunds.
+			</summary>
+			<param name="unitOfWork">The UnitOfWork instance for interacting with repositories.</param>
+			<param name="hybridCache">The HybridCache instance for managing cached data.</param>
+		</PaymentServices>
+
+		<CreateCheckoutSessionAsync>
+			<summary>
+				Creates a checkout session for processing payments through Stripe. Configures payment details, success URL, and cancellation URL.
+			</summary>
+			<param name="request">The details of the payment order, including items and order information.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="SessionResponse"/> containing session details like session ID, URLs, and payment intent ID.
+			</returns>
+		</CreateCheckoutSessionAsync>
+
+		<ConfirmOrderPaymentStatus>
+			<summary>
+				Confirms the payment status of an order using Stripe's session details. Updates order status and caches accordingly.
+			</summary>
+			<param name="orderId">The ID of the order to confirm payment for.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="bool"/> indicating success or <see cref="Error"/> an error if the refund fails
+			</returns>
+		</ConfirmOrderPaymentStatus>
+
+		<RefundPaymentStatus>
+			<summary>
+				Initiates a refund for an order payment using Stripe's refund service. Updates the order status to reflect the refund.
+			</summary>
+			<param name="orderId">The ID of the order to refund.</param>
+			<param name="cancellationToken">A token to monitor for cancellation requests.</param>
+			<returns>
+				A <see cref="bool"/> indicating success or <see cref="Error"/> an error if the refund fails
+			</returns>
+			
+		</RefundPaymentStatus>
+	</members>
+</docs>
+
