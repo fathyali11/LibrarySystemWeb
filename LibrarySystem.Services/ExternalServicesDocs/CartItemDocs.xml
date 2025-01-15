@@ -15,7 +15,8 @@
 			<param name="request">The request containing the cart item details, such as book ID, category ID, author ID, and quantity.</param>
 			<param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
 			<returns>
-				A <see cref="OneOf{bool, Error}"/> indicating the result of the operation.
+				A <see cref="bool"/> indicate the operation done successfully.
+				Or <see cref="Error"/> indicate there is an error happend
 			</returns>
 		</AddOrderToCartAsync>
 
@@ -27,7 +28,8 @@
 			<param name="id">The ID of the cart item.</param>
 			<param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
 			<returns>
-				A <see cref="OneOf{bool, Error}"/> indicating the result of the operation.
+				A <see cref="bool"/> indicate the operation done successfully.
+				Or <see cref="Error"/> indicate there is an error happend
 			</returns>
 		</PlusAsync>
 
@@ -39,7 +41,8 @@
 			<param name="id">The ID of the cart item.</param>
 			<param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
 			<returns>
-				A <see cref="OneOf{bool, Error}"/> indicating the result of the operation.
+				A <see cref="bool"/> indicate the operation done successfully.
+				Or <see cref="Error"/> indicate there is an error happend
 			</returns>
 		</MinusAsync>
 
@@ -51,7 +54,8 @@
 			<param name="id">The ID of the cart item.</param>
 			<param name="cancellationToken">Cancellation token to cancel the operation if needed.</param>
 			<returns>
-				A <see cref="OneOf{bool, Error}"/> indicating the result of the operation.
+				A <see cref="bool"/> indicate the operation done successfully.
+				Or <see cref="Error"/> indicate there is an error happend
 			</returns>
 		</RemoveAsync>
 	</members>
