@@ -14,8 +14,14 @@ namespace Library.Web.Controllers
     public class AccountsController(IAccountUserServices accountUserServices) : ControllerBase
     {
         private readonly IAccountUserServices _accountUserServices = accountUserServices;
-        [HttpPut("update")]
 
+        /// <summary>
+        /// update profile
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("update")]
         public async Task<IActionResult> Update(AccountUserRequest request,CancellationToken cancellationToken)
         {
             var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Hangfire;
 using Library.Web;
 using Library.Web.ApiDocumentation;
@@ -22,7 +23,24 @@ builder.Services.AddOpenApi( options =>
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlDocsPath = $"{Directory.GetCurrentDirectory()}\\ExternalEndPointDocs";
+    if (Directory.Exists(xmlDocsPath))
+    {
+        var xmlFiles = Directory.GetFiles(xmlDocsPath, "*.xml", SearchOption.TopDirectoryOnly);
+        foreach (var xmlFile in xmlFiles)
+        {
+            options.IncludeXmlComments(xmlFile);
+        }
+    }
+    else
+    {
+        Console.WriteLine($"XML documentation folder not found: {xmlDocsPath}");
+    }
+});
+
 
 builder.Services.ServicesInjection(builder.Configuration);
 
@@ -62,13 +80,15 @@ app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
     app.MapScalarApiReference(option =>
     {
         option.Title = "Library System API";
         option.Theme = ScalarTheme.Mars;
     });
+
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    
 }
 app.UseHttpsRedirection();
 app.UseAuthorization();

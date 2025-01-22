@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members>
+		<BooksController>
+			<summary>
+				This controller for books
+			</summary>
+		</BooksController>
+		<GetAll>
+			<summary>
+				Retrieves all books, optionally including non-active books.
+			</summary>
+			<params name="include">
+				A boolean indicating whether to include non-active books (true) or not (false).
+			</params>
+			<params name="cancellationToken">
+				Token for canceling the operation.
+			</params>
+			<returns>
+				A list of books or an error response.
+			</returns>
+		</GetAll>
+	</members>
+</docs>

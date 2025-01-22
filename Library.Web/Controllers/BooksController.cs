@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Library.Web.Controllers;
+/// <include file='ExternalEndPointDocs\BooksControllerDocs.xml' path='/docs/members/BooksController'/>
 [Route("api/[controller]")]
 [ApiController]
 [EnableRateLimiting("token")]
 public class BooksController(IBookServices bookServices) : ControllerBase
 {
     private readonly IBookServices _bookServices=bookServices;
+
+    /// <include file='ExternalEndPointDocs\BooksControllerDocs.xml' path='/docs/members/GetAll'/>
     
     [HttpGet("include-{include}")]
     [HasPermission(MemberPermissions.GetBooks)]
@@ -24,8 +27,10 @@ public class BooksController(IBookServices bookServices) : ControllerBase
             res => Ok(res),
             error=>error.ToProblem());
     }
+
     [HttpPost("")]
     [HasPermission(SellerPermissions.CreateBook)]
+    
     public async Task<IActionResult> Add([FromForm]CreateBookRequest request,CancellationToken cancellationToken)
     {
         var response=await _bookServices.AddBookAsync(request,cancellationToken);
