@@ -1,17 +1,19 @@
 ﻿namespace LibrarySystem.Services.Services.Users;
+/// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/UserServices'/>
 public class UserServices(IUnitOfWork unitOfWork,
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
-    IMapper mapper):IUserServices
+    IMapper mapper) : IUserServices
 {
-    private readonly IUnitOfWork _unitOfWork=unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly IMapper _mapper = mapper;
+    /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/CreateUserAsync'/>
     public async Task<OneOf<UserResponse, Error>> CreateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken = default)
     {
         var roleIsExist = await _roleManager.Roles.AnyAsync(x => x.Name!.ToLower() == request.Role.ToLower());
-        if(!roleIsExist)
+        if (!roleIsExist)
             return RoleErrors.NotExist;
 
         var user = _mapper.Map<ApplicationUser>(request);
@@ -23,7 +25,7 @@ public class UserServices(IUnitOfWork unitOfWork,
         if (!roleResult.Succeeded)
             return new Error(roleResult.Errors.First().Code, roleResult.Errors.First().Description, StatusCodes.Status400BadRequest);
 
-        user.EmailConfirmed= true;
+        user.EmailConfirmed = true;
         await _unitOfWork.SaveChanges(cancellationToken);
 
 
@@ -31,7 +33,8 @@ public class UserServices(IUnitOfWork unitOfWork,
         response.Role = request.Role;
         return response;
     }
-    public async Task<OneOf<UserResponse, Error>> UpdateUserAsync(string userId,CreateOrUpdateUserRequest request, CancellationToken cancellationToken = default)
+    /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/UpdateUserAsync'/>
+    public async Task<OneOf<UserResponse, Error>> UpdateUserAsync(string userId, CreateOrUpdateUserRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
@@ -54,7 +57,7 @@ public class UserServices(IUnitOfWork unitOfWork,
 
         var userOldRole = await _userManager.GetRolesAsync(user);
 
-        if(!string.Equals(userOldRole.First(),request.Role))
+        if (!string.Equals(userOldRole.First(), request.Role))
         {
             var roleResult = await _userManager.RemoveFromRoleAsync(user, userOldRole.First());
             if (!roleResult.Succeeded)
@@ -68,6 +71,7 @@ public class UserServices(IUnitOfWork unitOfWork,
         response.Role = request.Role;
         return response;
     }
+    /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/GetUserByAsync'/>
     public async Task<OneOf<UserResponse, Error>> GetUserByAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -78,25 +82,28 @@ public class UserServices(IUnitOfWork unitOfWork,
         response.Role = role.First();
         return response;
     }
+    /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/GetAllUsersAsync'/>
     public async Task<OneOf<List<UserResponse>, Error>> GetAllUsersAsync(CancellationToken cancellationToken = default)
     {
-        var users=await _unitOfWork.UserRepository.GetAll(cancellationToken);
+        var users = await _unitOfWork.UserRepository.GetAll(cancellationToken);
         return users;
     }
+    /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/ChangeUserActivationAsync'/>
     public async Task<OneOf<bool, Error>> ChangeUserActivationAsync(string userId, CancellationToken cancellationToken = default)
     {
-        var userStatus = _userManager.Users.Where(x => x.Id == userId).Select(x => new {isActive=x.IsActive});
-        var result= await userStatus.FirstOrDefaultAsync(cancellationToken);
+        var userStatus = _userManager.Users.Where(x => x.Id == userId).Select(x => new { isActive = x.IsActive });
+        var result = await userStatus.FirstOrDefaultAsync(cancellationToken);
         if (result is null)
             return UserErrors.NotFound;
 
         await _userManager.Users
-            .Where(x=>x.Id==userId)
+            .Where(x => x.Id == userId)
             .ExecuteUpdateAsync(x => x.SetProperty(p => p.IsActive, !result.isActive));
         await _unitOfWork.SaveChanges(cancellationToken);
         return true;
     }
-    public async Task<OneOf<bool,Error>> ChangeRoleOfUserAsync(string userId,ChangeUserRoleRequest request,CancellationToken cancellationToken=default)
+    /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/ChangeRoleOfUserAsync'/>
+    public async Task<OneOf<bool, Error>> ChangeRoleOfUserAsync(string userId, ChangeUserRoleRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
@@ -107,7 +114,7 @@ public class UserServices(IUnitOfWork unitOfWork,
             return RoleErrors.NotExist;
 
         var userOldRole = await _userManager.GetRolesAsync(user);
-        if (string.Equals(request.Role, userOldRole.First(),StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(request.Role, userOldRole.First(), StringComparison.OrdinalIgnoreCase))
             return true;
 
         var roleRemoveResult = await _userManager.RemoveFromRoleAsync(user, userOldRole.First());
@@ -123,5 +130,3 @@ public class UserServices(IUnitOfWork unitOfWork,
 
     }
 }
-
-

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<docs>
+	<members name="userServices">
+		<UserServices>
+			<summary>
+				Provides services for user management, including creation, update, role management, and activation.
+			</summary>
+		</UserServices>
+		<CreateUserAsync>
+			<summary>
+				Creates a new user and assigns a role.
+			</summary>
+			<param name="request">The user creation request.</param>
+			<param name="cancellationToken">The cancellation token.</param>
+			<returns>
+				A <see cref="OneOf{T0, T1}"/> containing a <see cref="UserResponse"/> or an <see cref="Error"/>.
+			</returns>
+		</CreateUserAsync>
+		<UpdateUserAsync>
+			<summary>
+				Updates an existing user and their role.
+			</summary>
+			<param name="userId">The ID of the user to update.</param>
+			<param name="request">The user update request.</param>
+			<param name="cancellationToken">The cancellation token.</param>
+			<returns>
+				A <see cref="OneOf{T0, T1}"/> containing a <see cref="UserResponse"/> or an <see cref="Error"/>.
+			</returns>
+		</UpdateUserAsync>
+		<GetUserByAsync>
+			<summary>
+				Retrieves user details by their ID.
+			</summary>
+			<param name="userId">The ID of the user to retrieve.</param>
+			<param name="cancellationToken">The cancellation token.</param>
+			<returns>
+				A <see cref="OneOf{T0, T1}"/> containing a <see cref="UserResponse"/> or an <see cref="Error"/>.
+			</returns>
+		</GetUserByAsync>
+		<GetAllUsersAsync>
+			<summary>
+				Retrieves all users.
+			</summary>
+			<param name="cancellationToken">The cancellation token.</param>
+			<returns>
+				A <see cref="OneOf{T0, T1}"/> containing a list of <see cref="UserResponse"/> or an <see cref="Error"/>.
+			</returns>
+		</GetAllUsersAsync>
+		<ChangeUserActivationAsync>
+			<summary>
+				Toggles the activation status of a user.
+			</summary>
+			<param name="userId">The ID of the user whose activation status will be changed.</param>
+			<param name="cancellationToken">The cancellation token.</param>
+			<returns>
+				A <see cref="OneOf{T0, T1}"/> containing a <see cref="bool"/> indicating success or an <see cref="Error"/>.
+			</returns>
+		</ChangeUserActivationAsync>
+		<ChangeRoleOfUserAsync>
+			<summary>
+				Changes the role of a user.
+			</summary>
+			<param name="userId">The ID of the user whose role will be changed.</param>
+			<param name="request">The role change request.</param>
+			<param name="cancellationToken">The cancellation token.</param>
+			<returns>
+				A <see cref="OneOf{T0, T1}"/> containing a <see cref="bool"/> indicating success or an <see cref="Error"/>.
+			</returns>
+		</ChangeRoleOfUserAsync>
+	</members>
+</docs>
