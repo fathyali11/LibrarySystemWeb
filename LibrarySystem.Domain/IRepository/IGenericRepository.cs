@@ -3,12 +3,9 @@
 namespace LibrarySystem.Domain.IRepository;
 public interface IGenericRepository<T> where T : class
 {
-    Task<IEnumerable<T>> GetAllAsync(
+    IQueryable<T> GetAll(
          Expression<Func<T, bool>>? predicate = null,
          string? includedNavigations = null,
-         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-         string? searchTerm = null,
-         Expression<Func<T, bool>>? searchExpression = null,
          CancellationToken cancellationToken = default);
     Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations=null, CancellationToken cancellationToken = default);
     Task<T?> GetByIdAsync(int id);
