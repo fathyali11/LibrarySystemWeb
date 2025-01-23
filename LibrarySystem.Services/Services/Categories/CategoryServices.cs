@@ -27,7 +27,7 @@ public class CategoryServices(ApplicationDbContext context,
                 }
             );
         if (!string.IsNullOrEmpty(request.SearchTerm))
-            categories = categories.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+            categories = categories.Where(x => x.Name.Contains(request.SearchTerm,StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrEmpty(request.SortTerm))
             categories = categories.AsQueryable()
@@ -48,11 +48,11 @@ public class CategoryServices(ApplicationDbContext context,
                 {
                     var query  = _unitOfWork.CategoryRepository.GetAll(includedNavigations: "Books", cancellationToken: cancellationToken);
                     var categoreisWithBooks = await query.ToListAsync();
-                    return categoreisWithBooks
+                    return categoreisWithBooks;
                 }
             );
         if (!string.IsNullOrEmpty(request.SearchTerm))
-            categories = categories.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+            categories = categories.Where(x => x.Name.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrEmpty(request.SortTerm))
             categories = categories.AsQueryable()

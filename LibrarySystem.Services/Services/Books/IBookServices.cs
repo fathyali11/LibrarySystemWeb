@@ -1,4 +1,7 @@
-﻿namespace LibrarySystem.Services.Services.Books;
+﻿using LibrarySystem.Domain.Abstractions.Pagination;
+using LibrarySystem.Domain.DTO.Common;
+
+namespace LibrarySystem.Services.Services.Books;
 /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="iBookServices"]/IBookServices'/>
 public interface IBookServices : IBookRepository
 {
@@ -6,7 +9,7 @@ public interface IBookServices : IBookRepository
     Task<OneOf<BookResponse, Error>> AddBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default);
 
     /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="iBookServices"]/GetAllBooksAsync'/>
-    Task<OneOf<IEnumerable<BookResponse>, Error>> GetAllBooksAsync(bool? includeNotAvailable = null, CancellationToken cancellationToken = default);
+    Task<OneOf<PaginatedResult<Book,BookResponse>, Error>> GetAllBooksAsync(PaginatedRequest request, bool? includeNotAvailable = null, CancellationToken cancellationToken = default);
 
     /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="iBookServices"]/GetBookByIdAsync'/>
     Task<OneOf<BookResponse, Error>> GetBookByIdAsync(int id, CancellationToken cancellationToken = default);

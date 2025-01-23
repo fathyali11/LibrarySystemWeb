@@ -1,6 +1,7 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 using LibrarySystem.Domain.DTO.Books;
+using LibrarySystem.Domain.DTO.Common;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Books;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,10 @@ public class BooksController(IBookServices bookServices) : ControllerBase
     
     [HttpGet("include-{include}")]
     [HasPermission(MemberPermissions.GetBooks)]
-    public async Task<IActionResult> GetAll([FromRoute]bool include,CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromRoute]bool include, [FromQuery]PaginatedRequest request,CancellationToken cancellationToken)
     {
         
-        var result=await _bookServices.GetAllBooksAsync(include,cancellationToken:cancellationToken);
+        var result=await _bookServices.GetAllBooksAsync(request,include,cancellationToken:cancellationToken);
         return result.Match<IActionResult>(
             res => Ok(res),
             error=>error.ToProblem());

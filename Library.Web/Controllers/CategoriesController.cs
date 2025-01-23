@@ -1,6 +1,7 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 using LibrarySystem.Domain.DTO.Categories;
+using LibrarySystem.Domain.DTO.Common;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Categories;
 using Microsoft.AspNetCore.Authorization;
@@ -27,9 +28,9 @@ public class CategoriesController(ICategoryServices categoryServices) : Controll
 
     [HttpGet("")]
     [HasPermission(MemberPermissions.GetCategories)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] PaginatedRequest request, CancellationToken cancellationToken)
     {
-        var result = await _categoryServices.GetAllCategoriesAsync( cancellationToken);
+        var result = await _categoryServices.GetAllCategoriesAsync(request, cancellationToken);
         return result.Match<IActionResult>(
             response => Ok(response),
             error => error.ToProblem()
@@ -37,9 +38,9 @@ public class CategoriesController(ICategoryServices categoryServices) : Controll
     }
     [HttpGet("with-books")]
     [HasPermission(MemberPermissions.GetCategories)]
-    public async Task<IActionResult> GetAllWithBooks(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllWithBooks([FromQuery] PaginatedRequest request, CancellationToken cancellationToken)
     {
-        var result = await _categoryServices.GetAllCategoriesWithBooksAsync(cancellationToken);
+        var result = await _categoryServices.GetAllCategoriesWithBooksAsync(request, cancellationToken);
         return result.Match<IActionResult>(
             response => Ok(response),
             error => error.ToProblem()

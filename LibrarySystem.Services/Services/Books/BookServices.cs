@@ -1,4 +1,8 @@
-﻿namespace LibrarySystem.Services.Services.Books;
+﻿using System.Linq.Dynamic.Core;
+using LibrarySystem.Domain.Abstractions.Pagination;
+using LibrarySystem.Domain.DTO.Common;
+
+namespace LibrarySystem.Services.Services.Books;
 /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/BookServices'/>
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
@@ -47,27 +51,38 @@ public class BookServices(ApplicationDbContext context,
         return response;
     }
     /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/GetAllBooksAsync'/>
-    public async Task<OneOf<IEnumerable<BookResponse>, Error>> GetAllBooksAsync( bool? includeNotAvailable = null,CancellationToken cancellationToken = default)
+    public async Task<OneOf<PaginatedResult<Book,BookResponse>, Error>> GetAllBooksAsync(PaginatedRequest request, bool? includeNotAvailable = null,CancellationToken cancellationToken = default)
     {
-        IEnumerable<Book> cached;
+        IEnumerable<Book> books;
 
         if (includeNotAvailable == true)
-            cached = await _hybridCache.GetOrCreateAsync(GeneralConsts.AllBooksCachedKey,
-                async bookEntities =>
-                     await _unitOfWork.BookRepository.GetAllAsync(cancellationToken: cancellationToken)
+            books = await _hybridCache.GetOrCreateAsync(GeneralConsts.AllBooksCachedKey,
+                async bookEntity =>
+                {
+                    var query = _unitOfWork.BookRepository.GetAll(cancellationToken: cancellationToken);
+                    var bookEntities = await query.ToListAsync();
+                    return bookEntities;
+                }
                  );
         else
-            cached = await _hybridCache.GetOrCreateAsync(GeneralConsts.AllAvailableBooksCachedKey,
-                    async bookEntities =>
-                         await _unitOfWork.BookRepository.GetAllAsync(x => x.IsAvailable && x.IsActive, cancellationToken: cancellationToken)
+            books = await _hybridCache.GetOrCreateAsync(GeneralConsts.AllAvailableBooksCachedKey,
+                    async bookEntity =>
+                    {
+                        var query = _unitOfWork.BookRepository.GetAll(x => x.IsActive, cancellationToken: cancellationToken);
+                        var bookEntities = await query.ToListAsync();
+                        return bookEntities;
+                    }
                      );
 
+        if(!string.IsNullOrEmpty(request.SearchTerm))
+            books = books.Where(x => x.Title.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase));
 
-        if (!cached.Any())
-            return BookErrors.NotFound;
+        if(!string.IsNullOrEmpty(request.SortTerm))
+            books = books.AsQueryable().OrderBy($"{request.SortTerm} {request.SortBy}").ToList();
 
-        var response = _mapper.Map<List<BookResponse>>(cached);
-        return response;
+        var paginatedBooks=PaginatedResult<Book, BookResponse>.Create(books, request.PageNumber, request.PageSize);
+        paginatedBooks.Result = _mapper.Map<List<BookResponse>>(paginatedBooks.Values);
+        return paginatedBooks;
     }
     /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/GetBookByIdAsync'/>
     public async Task<OneOf<BookResponse, Error>> GetBookByIdAsync(int id, CancellationToken cancellationToken = default)

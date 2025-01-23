@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
+using LibrarySystem.Domain.DTO.Common;
 
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
@@ -27,9 +28,9 @@ public class AuthorsController(IAuthorServices authorServices) : ControllerBase
 
     [HttpGet("")]
     [HasPermission(SellerPermissions.GetAuthors)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] PaginatedRequest request,CancellationToken cancellationToken)
     {
-        var result = await _authorServices.GetAllAuthorsAsync(cancellationToken);
+        var result = await _authorServices.GetAllAuthorsAsync(request,cancellationToken);
         return result.Match<IActionResult>(
             response => Ok(response),
             error => error.ToProblem()
@@ -37,9 +38,9 @@ public class AuthorsController(IAuthorServices authorServices) : ControllerBase
     }
     [HttpGet("with-books")]
     [HasPermission(MemberPermissions.GetAuthors)]
-    public async Task<IActionResult> GetAllWithBooks(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllWithBooks([FromQuery] PaginatedRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authorServices.GetAllAuthorsWithBooksAsync(cancellationToken);
+        var result = await _authorServices.GetAllAuthorsWithBooksAsync(request,cancellationToken);
         return result.Match<IActionResult>(
             response => Ok(response),
             error => error.ToProblem()

@@ -33,7 +33,7 @@ public class AuthorServices(ApplicationDbContext context,
             );
 
         if (!string.IsNullOrEmpty(request.SearchTerm))
-            authers = authers.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+            authers = authers.Where(x => x.Name.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrEmpty(request.SortTerm))
             authers = authers.AsQueryable()
@@ -60,7 +60,7 @@ public class AuthorServices(ApplicationDbContext context,
             );
 
         if (!string.IsNullOrEmpty(request.SearchTerm))
-            authers = authers.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+            authers = authers.Where(x => x.Name.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrEmpty(request.SortTerm))
             authers = authers.AsQueryable()
