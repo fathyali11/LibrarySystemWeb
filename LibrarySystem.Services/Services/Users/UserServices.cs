@@ -1,14 +1,19 @@
-﻿namespace LibrarySystem.Services.Services.Users;
+﻿using LibrarySystem.Domain.Abstractions.Pagination;
+using LibrarySystem.Domain.DTO.Common;
+using System.Linq.Dynamic.Core;
+namespace LibrarySystem.Services.Services.Users;
 /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/UserServices'/>
 public class UserServices(IUnitOfWork unitOfWork,
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
-    IMapper mapper) : IUserServices
+    IMapper mapper,HybridCache hybridCache) : IUserServices
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly IMapper _mapper = mapper;
+    private readonly HybridCache _hybridCache = hybridCache;
+
     /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/CreateUserAsync'/>
     public async Task<OneOf<UserResponse, Error>> CreateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken = default)
     {
@@ -27,7 +32,7 @@ public class UserServices(IUnitOfWork unitOfWork,
 
         user.EmailConfirmed = true;
         await _unitOfWork.SaveChanges(cancellationToken);
-
+        await _hybridCache.RemoveAsync("AllUsers",cancellationToken);
 
         var response = _mapper.Map<UserResponse>(user);
         response.Role = request.Role;
@@ -67,6 +72,7 @@ public class UserServices(IUnitOfWork unitOfWork,
                 return new Error(roleResultNew.Errors.First().Code, roleResultNew.Errors.First().Description, StatusCodes.Status400BadRequest);
         }
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync("AllUsers", cancellationToken);
         var response = _mapper.Map<UserResponse>(user);
         response.Role = request.Role;
         return response;
@@ -83,10 +89,31 @@ public class UserServices(IUnitOfWork unitOfWork,
         return response;
     }
     /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/GetAllUsersAsync'/>
-    public async Task<OneOf<List<UserResponse>, Error>> GetAllUsersAsync(CancellationToken cancellationToken = default)
+    public async Task<OneOf<PaginatedResult<UserResponse,UserResponse>, Error>> GetAllUsersAsync(PaginatedRequest request,CancellationToken cancellationToken = default)
     {
-        var users = await _unitOfWork.UserRepository.GetAll(cancellationToken);
-        return users;
+        const string cacheKey= "AllUsers";
+        var users = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _ =>
+            {
+                var query = _unitOfWork.UserRepository.GetAll(cancellationToken);
+                return await query.ToListAsync(cancellationToken);
+            });
+
+        if(!string.IsNullOrEmpty(request.SearchTerm))
+            users=users.Where(x=>
+            x.FirstName.Contains(request.SearchTerm,StringComparison.OrdinalIgnoreCase) ||
+            x.LastName.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+            x.Email.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase) || 
+            x.UserName.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        if(!string.IsNullOrEmpty(request.SortTerm))
+            users=users.AsQueryable()
+                .OrderBy($"{request.SortTerm} {request.SortBy}").ToList();
+
+        var paginatedUsers = PaginatedResult<UserResponse,UserResponse>.Create(users, request.PageNumber, request.PageSize);
+        paginatedUsers.Result = _mapper.Map<List<UserResponse>>(paginatedUsers.Values);
+        return paginatedUsers;
+
     }
     /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/ChangeUserActivationAsync'/>
     public async Task<OneOf<bool, Error>> ChangeUserActivationAsync(string userId, CancellationToken cancellationToken = default)
@@ -100,6 +127,7 @@ public class UserServices(IUnitOfWork unitOfWork,
             .Where(x => x.Id == userId)
             .ExecuteUpdateAsync(x => x.SetProperty(p => p.IsActive, !result.isActive));
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync("AllUsers", cancellationToken);
         return true;
     }
     /// <include file='ExternalServicesDocs\UserServicesDocs.xml' path='/docs/members[@name="userServices"]/ChangeRoleOfUserAsync'/>
@@ -126,6 +154,7 @@ public class UserServices(IUnitOfWork unitOfWork,
             return new Error(roleCreateResult.Errors.First().Code, roleCreateResult.Errors.First().Description, StatusCodes.Status400BadRequest);
 
         await _unitOfWork.SaveChanges(cancellationToken);
+        await _hybridCache.RemoveAsync("AllUsers", cancellationToken);
         return true;
 
     }

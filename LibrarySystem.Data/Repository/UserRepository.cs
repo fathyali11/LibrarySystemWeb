@@ -15,7 +15,7 @@ namespace LibrarySystem.Data.Repository
         {
             return await _context.Users.AnyAsync(x => x.Email == email || x.UserName == userName);
         }
-        public async Task<List<UserResponse>> GetAll(CancellationToken cancellationToken = default)
+        public IQueryable<UserResponse> GetAll(CancellationToken cancellationToken = default)
         {
             var query = (
                 from user in _context.Users
@@ -39,7 +39,7 @@ namespace LibrarySystem.Data.Repository
                 ).AsSplitQuery()
                 .AsQueryable();
 
-            return await query.ToListAsync(cancellationToken);
+            return query;
         }
     }
 }

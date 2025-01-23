@@ -41,6 +41,7 @@
 			<summary>
 				Retrieves all users.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="cancellationToken">The cancellation token.</param>
 			<returns>
 				A <see cref="OneOf{T0, T1}"/> containing a list of <see cref="UserResponse"/> or an <see cref="Error"/>.

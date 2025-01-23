@@ -1,6 +1,7 @@
 ﻿using LibrarySystem.Domain.Abstractions;
 using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
 using LibrarySystem.Domain.DTO.ApplicationUsers;
+using LibrarySystem.Domain.DTO.Common;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -45,9 +46,9 @@ public class UsersController(IUserServices userServices) : ControllerBase
     }
     [HttpGet("")]
     [HasPermission(ManagerPermissions.GetUser)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery]PaginatedRequest request,CancellationToken cancellationToken)
     {
-        var result = await _userServices.GetAllUsersAsync(cancellationToken);
+        var result = await _userServices.GetAllUsersAsync(request,cancellationToken);
         return result.Match<IActionResult>(
             users => Ok(users),
             error => error.ToProblem()

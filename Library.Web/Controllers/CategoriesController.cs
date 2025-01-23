@@ -4,7 +4,6 @@ using LibrarySystem.Domain.DTO.Categories;
 using LibrarySystem.Domain.DTO.Common;
 using LibrarySystem.Services.CustomAuthorization;
 using LibrarySystem.Services.Services.Categories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
