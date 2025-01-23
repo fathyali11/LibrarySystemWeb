@@ -18,6 +18,7 @@
 			<summary>
 				Retrieves all books from the library, optionally including unavailable books.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="includeNotAvailable">A flag indicating whether to include unavailable books in the result. If null, it defaults to only available books.</param>
 			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
 			<returns>A result that contains either a list of book responses or an error.</returns>
@@ -108,6 +109,7 @@
 			<summary>
 				Retrieves all books, optionally including those that are not available.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="includeNotAvailable">
 				A boolean value indicating whether to include books that are not available.
 				If <c>true</c>, all books will be included; if <c>false</c>, only available and active books will be returned.

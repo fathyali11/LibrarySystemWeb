@@ -11,6 +11,7 @@
 			<summary>
 				Retrieves all categories from the repository.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
 			<returns>A result that contains either a list of categories' responses or an error.</returns>
 		</GetAllCategoriesAsync>
@@ -19,6 +20,7 @@
 			<summary>
 				Retrieves all categories with their associated books from the repository.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="cancellationToken">The token used to propagate cancellation requests.</param>
 			<returns>A result that contains either a list of categories with books or an error.</returns>
 		</GetAllCategoriesWithBooksAsync>
@@ -74,6 +76,7 @@
 				If categories are available in the cache, they will be retrieved from there.
 				Otherwise, the data is fetched from the database and cached for subsequent calls.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="cancellationToken">A token used to cancel the operation.</param>
 			<returns>
 				A task containing a result, either a list of categories or an error if the operation fails.
@@ -85,6 +88,7 @@
 				Asynchronously retrieves all categories with their associated books.
 				If the data is already cached, it will be returned from the cache; otherwise, it is fetched from the database and cached.
 			</summary>
+			<param name="request">contain pagination , search ,sort terms.</param>
 			<param name="cancellationToken">A token used to cancel the operation.</param>
 			<returns>
 				A task containing a result, either a list of categories with books or an error if the operation fails.
