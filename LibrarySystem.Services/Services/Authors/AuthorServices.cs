@@ -1,4 +1,10 @@
-﻿namespace LibrarySystem.Services.Services.Authors;
+﻿using LibrarySystem.Domain.Abstractions.Pagination;
+using LibrarySystem.Domain.DTO.Common;
+using Microsoft.EntityFrameworkCore.DynamicLinq;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+
+namespace LibrarySystem.Services.Services.Authors;
 /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/AuthorServices'/>
 
 public class AuthorServices(ApplicationDbContext context,
@@ -13,22 +19,33 @@ public class AuthorServices(ApplicationDbContext context,
     private readonly ILogger<AuthorServices> _logger = logger;
     private readonly IMapper _mapper=mapper;
     /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/GetAllAuthorsAsync'/>
-    public async Task<OneOf<IEnumerable<AuthorResponse>, Error>> GetAllAuthorsAsync(CancellationToken cancellationToken = default)
+    public async Task<OneOf<PaginatedResult<Author,AuthorResponse>, Error>> GetAllAuthorsAsync(PaginatedRequest request,CancellationToken cancellationToken = default)
     {
-        const string cashKey = "All-Authors";
+        string cashKey = $"All-Authors";
         var authers = await _hybridCache.GetOrCreateAsync(
                 cashKey,
                 async cached =>
                 {
-
-                    var authorEntities = await _unitOfWork.AuthorRepository.GetAllAsync(cancellationToken: cancellationToken);
-                    return _mapper.Map<List<AuthorResponse>>(authorEntities);
+                    var query = _unitOfWork.AuthorRepository.GetAll(cancellationToken: cancellationToken);
+                    var authorEntities =await query.ToListAsync(cancellationToken);
+                    return authorEntities;
                 }
             );
-        return authers;
+
+        if (!string.IsNullOrEmpty(request.SearchTerm))
+            authers = authers.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+
+        if (!string.IsNullOrEmpty(request.SortTerm))
+            authers = authers.AsQueryable()
+                         .OrderBy($"{request.SortTerm} {request.SortBy}")
+                         .ToList();
+        var paginatedAuthors = PaginatedResult<Author, AuthorResponse>.Create(authers, request.PageNumber, request.PageSize);
+
+        paginatedAuthors.Result = _mapper.Map<List<AuthorResponse>>(paginatedAuthors.Values);
+        return paginatedAuthors;
     }
     /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/GetAllAuthorsWithBooksAsync'/>
-    public async Task<OneOf<IEnumerable<AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(CancellationToken cancellationToken = default)
+    public async Task<OneOf<PaginatedResult<Author,AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(PaginatedRequest request, CancellationToken cancellationToken = default)
     {
         
         const string cashKey = "All-Authors-Books";
@@ -36,12 +53,26 @@ public class AuthorServices(ApplicationDbContext context,
                 cashKey,
                 async cached =>
                 {
-
-                    var authorEntities = await _unitOfWork.AuthorRepository.GetAllAsync(includedNavigations: "Books", cancellationToken: cancellationToken);
-                    return _mapper.Map<List<AuthorWithBooksResponse>>(authorEntities);
+                    var query =_unitOfWork.AuthorRepository.GetAll(includedNavigations: "Books", cancellationToken: cancellationToken);
+                    var authorEntities = await query.ToListAsync();
+                    return authorEntities;
                 }
             );
-        return authers;
+
+        if (!string.IsNullOrEmpty(request.SearchTerm))
+            authers = authers.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+
+        if (!string.IsNullOrEmpty(request.SortTerm))
+            authers = authers.AsQueryable()
+                         .OrderBy($"{request.SortTerm} {request.SortBy}")
+                         .ToList();
+
+        var paginatedAuthors = PaginatedResult<Author, AuthorWithBooksResponse>.Create(authers, request.PageNumber, request.PageSize);
+
+        paginatedAuthors.Result = _mapper.Map<List<AuthorWithBooksResponse>>(paginatedAuthors.Values);
+        return paginatedAuthors;
+
+        
     }
     /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/GetAuthorAsync'/>
     public async Task<OneOf<AuthorResponse, Error>> GetAuthorAsync(int id, CancellationToken cancellationToken = default)

@@ -1,12 +1,15 @@
-﻿namespace LibrarySystem.Services.Services.Authors;
+﻿using LibrarySystem.Domain.Abstractions.Pagination;
+using LibrarySystem.Domain.DTO.Common;
+
+namespace LibrarySystem.Services.Services.Authors;
 /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="iAuthorServices"]/IAuthorServices'/>
 
 public interface IAuthorServices:IAuthorRepository
 {
     /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="iAuthorServices"]/GetAllAuthorsAsync'/>
-    Task<OneOf<IEnumerable<AuthorResponse>,Error>> GetAllAuthorsAsync(CancellationToken cancellationToken=default);
+    Task<OneOf<PaginatedResult<Author, AuthorResponse>, Error>> GetAllAuthorsAsync(PaginatedRequest request, CancellationToken cancellationToken=default);
     /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="iAuthorServices"]/GetAllAuthorsWithBooksAsync'/>
-    Task<OneOf<IEnumerable<AuthorWithBooksResponse>,Error>> GetAllAuthorsWithBooksAsync(CancellationToken cancellationToken=default);
+    Task<OneOf<PaginatedResult<Author, AuthorWithBooksResponse>, Error>> GetAllAuthorsWithBooksAsync(PaginatedRequest request, CancellationToken cancellationToken = default);
     /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="iAuthorServices"]/GetAuthorAsync'/>
     Task<OneOf<AuthorResponse, Error>> GetAuthorAsync(int id,CancellationToken cancellationToken=default);
 
