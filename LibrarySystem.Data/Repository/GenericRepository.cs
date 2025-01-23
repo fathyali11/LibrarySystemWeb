@@ -13,12 +13,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _context = context;
         _dbSet = _context.Set<T>();
     }
-    public async Task<IEnumerable<T>> GetAllAsync(
+    public IQueryable<T> GetAll(
         Expression<Func<T, bool>>? predicate = null,
         string? includedNavigations = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-        string? searchTerm = null,
-        Expression<Func<T, bool>>? searchExpression = null,
         CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = _dbSet.AsQueryable();
@@ -27,7 +24,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             query = query.Where(predicate);
         }
 
-        
         if (includedNavigations is not null)
         {
             foreach (var includedNavigation in includedNavigations.Split(","))
@@ -36,22 +32,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             }
         }
 
-        
-        if (!string.IsNullOrEmpty(searchTerm) && searchExpression is not null)
-        {
-            query = query.Where(searchExpression);
-        }
-
-        
-        if (orderBy is not null)
-        {
-            query = orderBy(query);
-        }
-
-       
-        return await query.ToListAsync(cancellationToken);
+        return query;
     }
 
+    
     public async Task<T?> GetByAsync(Expression<Func<T, bool>>? predicate, string? includedNavigations=null, CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = _dbSet.AsQueryable();
