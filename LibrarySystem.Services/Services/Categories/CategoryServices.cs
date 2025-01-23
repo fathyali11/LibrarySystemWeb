@@ -1,4 +1,8 @@
-﻿namespace LibrarySystem.Services.Services.Categories;
+﻿using LibrarySystem.Domain.Abstractions.Pagination;
+using LibrarySystem.Domain.DTO.Common;
+using System.Linq.Dynamic.Core;
+
+namespace LibrarySystem.Services.Services.Categories;
 /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/CategoryServices'/>
 public class CategoryServices(ApplicationDbContext context, 
     IMapper mapper,IUnitOfWork unitOfWork,
@@ -10,33 +14,55 @@ public class CategoryServices(ApplicationDbContext context,
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly ILogger<CategoryServices> _logger = logger;
     private readonly IMapper _mapper=mapper;
-    public async Task<OneOf<IEnumerable<CategoryResponse>, Error>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
+    public async Task<OneOf<PaginatedResult<Category,CategoryResponse>, Error>> GetAllCategoriesAsync(PaginatedRequest request,CancellationToken cancellationToken = default)
     {
         const string cacheKey = "All-Categories";
         var categories = await _hybridCache.GetOrCreateAsync(
                 cacheKey,
                 async cached =>
                 {
-                    var categoryEntities = await _unitOfWork.CategoryRepository.GetAllAsync(cancellationToken: cancellationToken);
-                    return _mapper.Map<List<CategoryResponse>>(categoryEntities);
+                    var query = _unitOfWork.CategoryRepository.GetAll(cancellationToken: cancellationToken);
+                    var categoryEntities = await query.ToListAsync();
+                    return categoryEntities;
                 }
             );
+        if (!string.IsNullOrEmpty(request.SearchTerm))
+            categories = categories.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
 
-        return categories;
+        if (!string.IsNullOrEmpty(request.SortTerm))
+            categories = categories.AsQueryable()
+                         .OrderBy($"{request.SortTerm} {request.SortBy}")
+                         .ToList();
+
+        var paginatedCategories = PaginatedResult<Category, CategoryResponse>.Create(categories, request.PageNumber, request.PageSize);
+        paginatedCategories.Result = _mapper.Map<List<CategoryResponse>>(paginatedCategories.Values);
+        return paginatedCategories;
     }
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/GetAllCategoriesWithBooksAsync'/>
-    public async Task<OneOf<IEnumerable<CategoryWithBooksResponse>, Error>> GetAllCategoriesWithBooksAsync(CancellationToken cancellationToken = default)
+    public async Task<OneOf<PaginatedResult<Category,CategoryWithBooksResponse>, Error>> GetAllCategoriesWithBooksAsync(PaginatedRequest request,CancellationToken cancellationToken = default)
     {
         const string cachKey = "All-Categories-Books";
         var categories = await _hybridCache.GetOrCreateAsync(
                 cachKey,
                 async cached =>
                 {
-                    var categoreisWithBooks = await _unitOfWork.CategoryRepository.GetAllAsync(includedNavigations: "Books", cancellationToken: cancellationToken);
-                    return _mapper.Map<List<CategoryWithBooksResponse>>(categoreisWithBooks);
+                    var query  = _unitOfWork.CategoryRepository.GetAll(includedNavigations: "Books", cancellationToken: cancellationToken);
+                    var categoreisWithBooks = await query.ToListAsync();
+                    return categoreisWithBooks
                 }
             );
-        return categories;
+        if (!string.IsNullOrEmpty(request.SearchTerm))
+            categories = categories.Where(x => x.Name.Contains(request.SearchTerm)).ToList();
+
+        if (!string.IsNullOrEmpty(request.SortTerm))
+            categories = categories.AsQueryable()
+                         .OrderBy($"{request.SortTerm} {request.SortBy}")
+                         .ToList();
+
+        var paginatedCategories = PaginatedResult<Category, CategoryWithBooksResponse>.Create(categories, request.PageNumber, request.PageSize);
+
+        paginatedCategories.Result = _mapper.Map<List<CategoryWithBooksResponse>>(paginatedCategories.Values);
+        return paginatedCategories;
     }
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="categoryServices"]/GetCategoryByIdAsync'/>
     public async Task<OneOf<CategoryResponse, Error>> GetCategoryByIdAsync(int id, CancellationToken cancellationToken = default)

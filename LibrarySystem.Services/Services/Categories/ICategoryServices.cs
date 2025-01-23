@@ -1,11 +1,13 @@
-﻿namespace LibrarySystem.Services.Services.Categories;
+﻿using LibrarySystem.Domain.DTO.Common;
+
+namespace LibrarySystem.Services.Services.Categories;
 /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/ICategoryServices'/>
 public interface ICategoryServices:ICategoryRepository
 {
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/GetAllCategoriesAsync'/>
-    Task<OneOf<IEnumerable<CategoryResponse>,Error>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);
+    Task<OneOf<IEnumerable<CategoryResponse>,Error>> GetAllCategoriesAsync(PaginatedRequest request, CancellationToken cancellationToken=default);
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/GetAllCategoriesWithBooksAsync'/>
-    Task<OneOf<IEnumerable<CategoryWithBooksResponse>,Error>> GetAllCategoriesWithBooksAsync(CancellationToken cancellationToken=default);
+    Task<OneOf<IEnumerable<CategoryWithBooksResponse>,Error>> GetAllCategoriesWithBooksAsync(PaginatedRequest request, CancellationToken cancellationToken=default);
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/GetCategoryByIdAsync'/>
     Task<OneOf<CategoryResponse, Error>> GetCategoryByIdAsync(int id,CancellationToken cancellationToken=default);
     /// <include file='ExternalServicesDocs\CategoriesDocs.xml' path='/docs/members[@name="iCategoryServices"]/AddCategoryAsync'/>
