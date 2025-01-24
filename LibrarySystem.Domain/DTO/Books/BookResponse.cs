@@ -6,7 +6,6 @@ public record BookResponse(
     int Quantity,
     decimal PriceForBuy,
     decimal PriceForBorrow,
-    bool IsAvailable,
     bool IsActive,
     DateTime PublishedDate,
     int CategoryId,

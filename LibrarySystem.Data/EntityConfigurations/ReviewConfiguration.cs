@@ -17,10 +17,7 @@ namespace LibrarySystem.Data.EntityConfigurations
             builder.Property(r => r.Rating)
                 .IsRequired();
 
-            builder.HasOne(u=>u.User)
-                .WithMany(r=>r.Reviews)
-                .HasForeignKey(u=>u.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+           
 
             builder.HasOne(b=>b.Book)
                 .WithMany(r=>r.Reviews)

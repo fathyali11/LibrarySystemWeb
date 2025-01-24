@@ -34,7 +34,6 @@ public class CategoryMappings: Profile
                 x.PriceForBuy,
                 x.PriceForBorrow,
                 x.PublishedDate,
-                x.IsAvailable,
                 x.AuthorId
 
             })))

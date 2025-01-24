@@ -14,10 +14,6 @@ namespace LibrarySystem.Data.EntityConfigurations
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();
 
-            builder.HasOne(c => c.User)  
-           .WithOne(u => u.Cart)  
-           .HasForeignKey<Cart>(c => c.UserId) 
-           .OnDelete(DeleteBehavior.Cascade);  
 
             builder.HasMany(c => c.CartItems)  
                 .WithOne(ci => ci.Cart) 

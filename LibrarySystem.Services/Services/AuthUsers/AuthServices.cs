@@ -36,7 +36,7 @@ public class AuthServices(UserManager<ApplicationUser> userManager,
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
-                var error = result.Errors.FirstOrDefault();
+                var error = result.Errors.First();
                 return new Error(error!.Code, error.Description, StatusCodes.Status400BadRequest);
             }
 
@@ -92,19 +92,17 @@ public class AuthServices(UserManager<ApplicationUser> userManager,
             await _userManager.AddToRoleAsync(user,MemberRole.Name);
             await _unitOfWork.SaveChanges(cancellationToken);
             return true;
-
         }
     /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/ResendConfirmEmailAsync'/>
     public async Task<OneOf<bool,Error>> ResendConfirmEmailAsync(ResendConfirmEmailRequest request,CancellationToken cancellationToken=default)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if( user is null) 
-                return UserErrors.NotFound;
-
-            await SendConfirmEmail(user);
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user is null)
             return true;
 
-        }
+        await SendConfirmEmail(user);
+        return true;
+    }
     /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/ForgetPasswordAsync'/>
     public async Task<OneOf<bool, Error>> ForgetPasswordAsync(ForgetPasswordRequest request, CancellationToken cancellationToken = default)
         {
@@ -185,7 +183,6 @@ public class AuthServices(UserManager<ApplicationUser> userManager,
 
             _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
             BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody));
-            //await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Email", emailBody);
             _logger.LogInformation("email was sent");
         }
     /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/SendResetPassword'/>
@@ -206,7 +203,6 @@ public class AuthServices(UserManager<ApplicationUser> userManager,
 
             _logger.LogInformation($"\ntoken:{token}\nid={user.Id}\n");
             BackgroundJob.Enqueue(()=> _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody));
-            //await _emailSender.SendEmailAsync(user.Email!, "Reset Your Password", emailBody);
             _logger.LogInformation("email was sent");
         }
 }

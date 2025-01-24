@@ -10,7 +10,13 @@ namespace LibrarySystem.Data.EntityConfigurations
         {
             builder.HasKey(f => f.Id);
             builder.Property(f => f.Amount)
+                .HasColumnType("decimal(12,4)")
                 .IsRequired();
+
+            builder.Property(f => f.TotalAmount)
+               .HasColumnType("decimal(12,4)")
+               .IsRequired();
+
             builder.Property(f=>f.CreatedAt)
                 .IsRequired();
 

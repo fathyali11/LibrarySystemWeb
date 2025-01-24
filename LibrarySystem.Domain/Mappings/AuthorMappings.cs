@@ -31,7 +31,6 @@ public class AuthorMappings:Profile
                 x.PriceForBuy,
                 x.PriceForBorrow,
                 x.PublishedDate,
-                x.IsAvailable,
                 x.CategoryId
             })));
 

@@ -25,9 +25,18 @@
             if (user is null)
                 return UserErrors.InValidToken;
 
-            var refreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == request.refreshToken && x.IsActive);
-            if (refreshToken is null)
+            RefreshToken ?refreshToken;
+            try
+            {
+                refreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == request.refreshToken && x.IsActive);
+                if (refreshToken is null)
+                    return UserErrors.InValidRefreshToken;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
                 return UserErrors.InValidRefreshToken;
+            }
 
             refreshToken.RevokedOn = DateTime.UtcNow;
             return await GenerateResponse(user);

@@ -4,6 +4,7 @@ using LibrarySystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibrarySystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250124205612_removeIsAvailableFromBook")]
+    partial class removeIsAvailableFromBook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,7 +236,7 @@ namespace LibrarySystem.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Authors", (string)null);
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Book", b =>
@@ -324,7 +327,7 @@ namespace LibrarySystem.Data.Migrations
                     b.HasIndex("Title")
                         .IsUnique();
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.BorrowedBook", b =>
@@ -360,7 +363,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BorrowedBooks", (string)null);
+                    b.ToTable("BorrowedBooks");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Cart", b =>
@@ -386,7 +389,7 @@ namespace LibrarySystem.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.CartItem", b =>
@@ -419,7 +422,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Category", b =>
@@ -448,7 +451,7 @@ namespace LibrarySystem.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Fine", b =>
@@ -485,7 +488,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Fines", (string)null);
+                    b.ToTable("Fines");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Order", b =>
@@ -552,7 +555,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.OrderItem", b =>
@@ -585,7 +588,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Payment", b =>
@@ -628,7 +631,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("LibrarySystem.Domain.Entities.Review", b =>
@@ -660,7 +663,7 @@ namespace LibrarySystem.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

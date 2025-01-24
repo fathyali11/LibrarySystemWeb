@@ -48,29 +48,5 @@ public class BookConfigurations : IEntityTypeConfiguration<Book>
             .IsRequired()
             .HasColumnType("decimal(10, 2)");
 
-        
-
-        builder.Property(b => b.IsAvailable)
-            .HasComputedColumnSql("CASE WHEN [Quantity] > 0 THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", stored: false);
-
-        builder.HasOne(b => b.Author)
-            .WithMany(a => a.Books)
-            .HasForeignKey(b => b.AuthorId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(b => b.Category)
-            .WithMany(c => c.Books)
-            .HasForeignKey(b => b.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasMany(b => b.Reviews)
-                .WithOne(r => r.Book)
-                .HasForeignKey(b => b.BookId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasMany(b => b.BorrowedBooks)
-                .WithOne(bb => bb.Book)
-                .HasForeignKey(b => b.BookId)
-                .OnDelete(DeleteBehavior.Restrict);
     }
 }

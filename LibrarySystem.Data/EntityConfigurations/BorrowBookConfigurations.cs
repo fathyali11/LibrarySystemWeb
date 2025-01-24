@@ -26,7 +26,6 @@ public class BorrowBookConfigurations : IEntityTypeConfiguration<BorrowedBook>
         builder.HasOne(b => b.Book) 
            .WithMany(b=>b.BorrowedBooks)
            .HasForeignKey(b => b.BookId)
-           .IsRequired() 
            .OnDelete(DeleteBehavior.Restrict);
 
         
