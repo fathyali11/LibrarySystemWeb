@@ -4,6 +4,7 @@ using LibrarySystem.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibrarySystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250124212039_updateSeedingData")]
+    partial class updateSeedingData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1014,131 +1017,124 @@ namespace LibrarySystem.Data.Migrations
                         {
                             Id = 47,
                             ClaimType = "permissions",
-                            ClaimValue = "orders:get",
+                            ClaimValue = "orders:create",
                             RoleId = "4a666d8a-96ae-45c5-9882-a1e043fdf49e"
                         },
                         new
                         {
                             Id = 48,
                             ClaimType = "permissions",
-                            ClaimValue = "orders:create",
+                            ClaimValue = "orders:cancel",
                             RoleId = "4a666d8a-96ae-45c5-9882-a1e043fdf49e"
                         },
                         new
                         {
                             Id = 49,
                             ClaimType = "permissions",
-                            ClaimValue = "orders:update",
+                            ClaimValue = "orders:get",
                             RoleId = "4a666d8a-96ae-45c5-9882-a1e043fdf49e"
                         },
                         new
                         {
                             Id = 50,
                             ClaimType = "permissions",
-                            ClaimValue = "orders:delete",
+                            ClaimValue = "payments:create",
                             RoleId = "4a666d8a-96ae-45c5-9882-a1e043fdf49e"
                         },
                         new
                         {
                             Id = 51,
                             ClaimType = "permissions",
-                            ClaimValue = "payments:create",
-                            RoleId = "4a666d8a-96ae-45c5-9882-a1e043fdf49e"
-                        },
-                        new
-                        {
-                            Id = 52,
-                            ClaimType = "permissions",
                             ClaimValue = "books:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 53,
+                            Id = 52,
                             ClaimType = "permissions",
                             ClaimValue = "books:create",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 54,
+                            Id = 53,
                             ClaimType = "permissions",
                             ClaimValue = "books:update",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 55,
+                            Id = 54,
                             ClaimType = "permissions",
                             ClaimValue = "books:delete",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 56,
+                            Id = 55,
                             ClaimType = "permissions",
                             ClaimValue = "borrowedBooks:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 57,
+                            Id = 56,
                             ClaimType = "permissions",
                             ClaimValue = "borrowedBooks:return",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 58,
+                            Id = 57,
                             ClaimType = "permissions",
                             ClaimValue = "categories:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 59,
+                            Id = 58,
                             ClaimType = "permissions",
                             ClaimValue = "authors:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 60,
+                            Id = 59,
                             ClaimType = "permissions",
                             ClaimValue = "carts:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 61,
+                            Id = 60,
                             ClaimType = "permissions",
                             ClaimValue = "carts:add",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 62,
+                            Id = 61,
                             ClaimType = "permissions",
                             ClaimValue = "carts:remove",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 63,
+                            Id = 62,
                             ClaimType = "permissions",
                             ClaimValue = "orders:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 64,
+                            Id = 63,
                             ClaimType = "permissions",
                             ClaimValue = "orders:update",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
                         },
                         new
                         {
-                            Id = 65,
+                            Id = 64,
                             ClaimType = "permissions",
                             ClaimValue = "payments:get",
                             RoleId = "4b88c1d0-4256-4bb7-89d5-c0870ebeb512"
