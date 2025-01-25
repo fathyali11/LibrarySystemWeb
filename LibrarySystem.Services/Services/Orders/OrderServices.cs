@@ -56,6 +56,7 @@ namespace LibrarySystem.Services.Services.Orders
             var orderFromDb = await _unitOfWork.OrderRepository.GetByAsync(x=>x.Id==id,"OrderItems",cancellationToken);
             if(orderFromDb == null) 
                 return OrderErrors.NotFound;
+
             await _unitOfWork.BorrowedBookRepository.RemoveAsync(orderFromDb!.UserId,cancellationToken);
             _unitOfWork.OrderItemRepository.DeleteRange(orderFromDb.OrderItems);
             _unitOfWork.OrderRepository.Delete(orderFromDb);
