@@ -13,12 +13,12 @@ public static class MemberPermissions
     public  const string GetCarts  = "carts:get";
     public  const string ClearCarts = "carts:clear";
     public  const string OperationOnCart = "carts:operation"; // add, remove, plus, minus
-             
-    public  const string CreateOrder = "orders:create";
-    public  const string CancelOrder = "orders:cancel";
-             
-    public  const string GetOrders = "orders:get";
-             
+
+    public const string GetOrders = "orders:get";
+    public const string CreateOrder = "orders:create";
+    public const string UpdateOrder = "orders:update";
+    public const string DeleteOrder = "orders:delete";
+
     public const string CreatePayment = "payments:create";
 
     // this way is flixable but less performance than the commented way

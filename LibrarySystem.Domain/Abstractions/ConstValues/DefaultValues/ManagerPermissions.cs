@@ -39,9 +39,9 @@ public static class ManagerPermissions
     public const string DeleteAuthor  = "authors:delete";
 
     // Cart Permissions
-    public const string GetCarts      = "carts:get";
-    public const string AddToCart    = "carts:add";
-    public const string RemoveFromCart  = "carts:remove";
+    public const string GetCarts = "carts:get";
+    public const string ClearCarts = "carts:clear";
+    public const string OperationOnCart = "carts:operation"; // add, remove, plus, minus
 
     // Order Permissions
     public const string GetOrders = "orders:get";
