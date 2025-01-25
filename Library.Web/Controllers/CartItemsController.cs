@@ -23,7 +23,7 @@ public class CartItemsController(ICartItemServices cartItemServices) : Controlle
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
         var result = await _cartItemServices.AddOrderToCartAsync(userId!, request, cancellationToken);
         return result.Match<IActionResult>(
-            response=>Created(),
+            response=>Ok(response),
             error=>error.ToProblem()
             );
     }

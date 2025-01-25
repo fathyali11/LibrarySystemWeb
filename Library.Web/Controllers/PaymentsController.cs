@@ -34,7 +34,7 @@ public class PaymentsController(IPaymentServices paymentServices) : ControllerBa
             error=>error.ToProblem()
             );
     }
-    [HttpPost("refund-order-{orderId}")]
+    [HttpPut("refund-order-{orderId}")]
     [HasPermission(ManagerPermissions.DeletePayment)]
     public async Task<IActionResult> RefundOrder([FromRoute] int orderId,CancellationToken cancellationToken)
     {
