@@ -14,5 +14,6 @@ public interface IUnitOfWork
     ICartRepository CartRepository { get; }
     IFineRepository FineRepository { get; }
     IRoleRepository RoleRepository { get; }
+    IReviewsRepository ReviewsRepository { get; }
     Task SaveChanges(CancellationToken cancellationToken = default);
 }

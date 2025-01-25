@@ -21,6 +21,13 @@ public static class MemberPermissions
 
     public const string CreatePayment = "payments:create";
 
+
+    public const string GetReviews = "reviews:get";
+    public const string AddReview = "reviews:add";
+    public const string UpdateReview = "reviews:update";
+    public const string DeleteReview = "reviews:delete";
+
+
     // this way is flixable but less performance than the commented way
     public static IEnumerable<string?> AllPermissions =>
         typeof(MemberPermissions).GetFields()

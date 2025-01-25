@@ -24,6 +24,12 @@ public static class SellerPermissions
            
     public const string GetPayments  = "payments:get";
 
+    public const string GetReviews = "reviews:get";
+    public const string GetAllReviews = "reviews:getAll";
+    public const string AddReview = "reviews:add";
+    public const string UpdateReview = "reviews:update";
+    public const string DeleteReview = "reviews:delete";
+
     public static IEnumerable<string?> AllPermissions =>
         typeof(SellerPermissions).GetFields()
             .Select(p => p.GetValue(null)! as string)

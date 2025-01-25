@@ -65,6 +65,12 @@ public static class ManagerPermissions
     public const string UpdateRole = "roles:update";
     public const string DeleteRole = "roles:delete";
 
+
+    public const string GetReviews = "reviews:get";
+    public const string GetAllReviews = "reviews:getAll";
+    public const string AddReview = "reviews:add";
+    public const string UpdateReview = "reviews:update";
+    public const string DeleteReview = "reviews:delete";
     public static IEnumerable<string?> AllPermissions =>
         typeof(ManagerPermissions).GetFields()
             .Select(p => p.GetValue(null)! as string)

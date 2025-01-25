@@ -35,6 +35,8 @@ using LibrarySystem.Services.Services.Roles;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Security.Claims;
+using LibrarySystem.Services.Services.Reviews;
+using Stripe;
 
 namespace Library.Web
 {
@@ -73,7 +75,8 @@ namespace Library.Web
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IRoleServices, RoleServices>();
             services.AddScoped<IUserServices, UserServices>();
-
+            services.AddScoped<IReviewsRepository, ReviewsRepository>();
+            services.AddScoped<IReviewsServices, ReviewsServices>();
 
 
 
