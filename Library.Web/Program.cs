@@ -1,8 +1,10 @@
 using System.Reflection;
 using Hangfire;
+using HealthChecks.UI.Client;
 using Library.Web;
 using Library.Web.ApiDocumentation;
 using LibrarySystem.Domain.Abstractions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 using Serilog;
 using Stripe;
@@ -23,6 +25,8 @@ builder.Services.AddOpenApi( options =>
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 builder.Services.AddEndpointsApiExplorer();
+
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -70,6 +74,7 @@ var app = builder.Build();
 //        Cron.Daily);
 
 //}
+
 app.UseStaticFiles();
 app.MapStaticAssets();
 app.UseHangfireDashboard("/jobs");
@@ -94,6 +99,18 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.UseRateLimiter();
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    // UIResponseWriter => package: AspNetCore.HealthChecks.UI
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.UseHealthChecks("/health_api", new HealthCheckOptions
+{
+    // UIResponseWriter => package: AspNetCore.HealthChecks.UI
+    Predicate = _ => _.Tags.Contains("api"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 StripeConfiguration.ApiKey = app.Configuration[$"{nameof(StripeSettings)}:SecretKey"];
 app.Run();

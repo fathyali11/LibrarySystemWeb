@@ -37,6 +37,7 @@ using System.Threading.RateLimiting;
 using System.Security.Claims;
 using LibrarySystem.Services.Services.Reviews;
 using Stripe;
+using Library.Web.HealthChecks;
 
 namespace Library.Web
 {
@@ -97,7 +98,8 @@ namespace Library.Web
                 .ExceptionHandlerInjection()
                 .HangfireInjection(configuration)
                 .StripeInjection(configuration)
-                .RateLimitingInjection();
+                .RateLimitingInjection()
+                .HealthCheckInjection();
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
@@ -223,6 +225,19 @@ namespace Library.Web
                     tokenOptions.AutoReplenishment = true;
                 });
             });
+            return services;
+        }
+        private static IServiceCollection HealthCheckInjection(this IServiceCollection services)
+        {
+            services.AddHealthChecks()
+                // AddDbContextCheck => package: AspNetCore.HealthChecks.EntityFrameworkCore
+                .AddDbContextCheck<ApplicationDbContext>(name: "database")
+                // AddHangfire => package: AspNetCore.HealthChecks.Hangfire
+                .AddHangfire(config =>
+                {
+                    config.MinimumAvailableServers = 1;
+                })
+                .AddCheck<MailHealthChecks>("mail");
             return services;
         }
     }
