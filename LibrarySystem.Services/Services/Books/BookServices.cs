@@ -1,8 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using LibrarySystem.Domain.Abstractions.Pagination;
-using LibrarySystem.Domain.DTO.Common;
-
-namespace LibrarySystem.Services.Services.Books;
+﻿namespace LibrarySystem.Services.Services.Books;
 /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/BookServices'/>
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,

@@ -1,10 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions.Pagination;
-using LibrarySystem.Domain.DTO.Common;
-using Microsoft.EntityFrameworkCore.DynamicLinq;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-
-namespace LibrarySystem.Services.Services.Authors;
+﻿namespace LibrarySystem.Services.Services.Authors;
 /// <include file='ExternalServicesDocs\AuthorsDocs.xml' path='/docs/members[@name="authorServices"]/AuthorServices'/>
 
 public class AuthorServices(ApplicationDbContext context,

@@ -1,7 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions.Pagination;
-using LibrarySystem.Domain.DTO.Common;
-
-namespace LibrarySystem.Services.Services.Books;
+﻿namespace LibrarySystem.Services.Services.Books;
 /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="iBookServices"]/IBookServices'/>
 public interface IBookServices : IBookRepository
 {

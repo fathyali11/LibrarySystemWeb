@@ -1,6 +1,4 @@
-﻿using LibrarySystem.Domain.DTO.BorrowBooks;
-
-namespace LibrarySystem.Services.Services.BorrowedBooks;
+﻿namespace LibrarySystem.Services.Services.BorrowedBooks;
 /// <include file='ExternalServicesDocs\BorrowedBooksDocs.xml' path='/docs/members[@name="borrowedBookServices"]/BorrowedBookServices'/>
 public class BorrowedBookServices(ApplicationDbContext context,
     IUnitOfWork unitOfWork,HybridCache hybridCache): BorrowedBookRepository(context), IBorrowedBookServices

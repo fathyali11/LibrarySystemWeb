@@ -1,7 +1,4 @@
-﻿using Hangfire;
-using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
-
-namespace LibrarySystem.Services.Services.AuthUsers;
+﻿namespace LibrarySystem.Services.Services.AuthUsers;
 /// <include file='ExternalServicesDocs\AuthsDocs.xml' path='/docs/members[@name="authServices"]/AuthServices'/>
 public class AuthServices(UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,

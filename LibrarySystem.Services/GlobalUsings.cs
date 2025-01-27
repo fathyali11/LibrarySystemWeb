@@ -33,3 +33,10 @@ global using System.IdentityModel.Tokens.Jwt;
 global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using Microsoft.IdentityModel.Tokens;
+
+global using LibrarySystem.Domain.Abstractions.Pagination;
+global using LibrarySystem.Domain.DTO.Common;
+global using System.Linq.Dynamic.Core;
+global using Hangfire;
+global using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
+global using LibrarySystem.Domain.DTO.BorrowBooks;
