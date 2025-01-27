@@ -1,11 +1,4 @@
-﻿using System.Security.Claims;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.DTO.ApplicationUsers;
-using LibrarySystem.Services.Services.AccountUsers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-namespace Library.Web.Controllers
+﻿namespace Library.Web.Controllers
 {
     [Route("me")]
     [ApiController]

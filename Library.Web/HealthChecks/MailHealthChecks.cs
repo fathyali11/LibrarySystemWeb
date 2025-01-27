@@ -1,11 +1,4 @@
-﻿
-using LibrarySystem.Domain.Abstractions;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
-
-namespace Library.Web.HealthChecks;
+﻿namespace Library.Web.HealthChecks;
 
 public class MailHealthChecks(IOptions<EmailOptions> emailOptions) : IHealthCheck
 {

@@ -1,13 +1,4 @@
-﻿using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
-using LibrarySystem.Domain.DTO.Books;
-using LibrarySystem.Domain.DTO.Common;
-using LibrarySystem.Services.CustomAuthorization;
-using LibrarySystem.Services.Services.Books;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-
-namespace Library.Web.Controllers;
+﻿namespace Library.Web.Controllers;
 /// <include file='ExternalEndPointDocs\BooksControllerDocs.xml' path='/docs/members/BooksController'/>
 [Route("api/[controller]")]
 [ApiController]

@@ -1,51 +1,10 @@
-﻿using System.Text;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using LibrarySystem.Data.Data;
-using LibrarySystem.Data.Repository;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Entities;
-using LibrarySystem.Domain.FluentValidations.Categories;
-using LibrarySystem.Domain.IRepository;
-using LibrarySystem.Domain.Mappings;
-using LibrarySystem.Services.Services.AuthUsers;
-using LibrarySystem.Services.Services.Authors;
-using LibrarySystem.Services.Services.Books;
-using LibrarySystem.Services.Services.Categories;
-using LibrarySystem.Services.Services.Emails;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using LibrarySystem.Services.Services.AccountUsers;
-using LibrarySystem.Services.Services.Tokens;
-using LibrarySystem.Services.Services.CartItems;
-using LibrarySystem.Services.Services.Carts;
-using LibrarySystem.Services.Services.Orders;
-using Hangfire;
-using LibrarySystem.Services.Services.Notifications;
-using LibrarySystem.Services.Services.Payments;
-using LibrarySystem.Services.Services.Fines;
-using LibrarySystem.Services.Services.BorrowedBooks;
-using LibrarySystem.Services.CustomAuthorization;
-using Microsoft.AspNetCore.Authorization;
-using LibrarySystem.Services.Services.Users;
-using LibrarySystem.Services.Services.Roles;
-using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
-using System.Security.Claims;
-using LibrarySystem.Services.Services.Reviews;
-using Stripe;
-using Library.Web.HealthChecks;
-
-namespace Library.Web
+﻿namespace Library.Web
 {
     public static class DI
     {
         public static IServiceCollection ServicesInjection(this IServiceCollection services, IConfiguration configuration)
         {
-            
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookServices, BookServices>();
             services.AddScoped<IBookRepository, BookRepository>();
@@ -60,7 +19,7 @@ namespace Library.Web
             services.AddScoped<IOrderServices, OrderServices>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
-            services.AddScoped<ICartRepository,CartRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<ICartServices, CartServices>();
             services.AddScoped<ICartItemRepository, CartItemRepository>();
             services.AddScoped<ICartItemServices, CartItemServices>();
@@ -87,7 +46,7 @@ namespace Library.Web
 
 #pragma warning disable
             services.AddHybridCache();
-            #pragma warning restore
+#pragma warning restore
 
 
             return services
@@ -102,7 +61,7 @@ namespace Library.Web
                 .HealthCheckInjection();
         }
 
-        private static IServiceCollection AuthenticationInjection(this IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection AuthenticationInjection(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpContextAccessor();
 
@@ -124,13 +83,13 @@ namespace Library.Web
 
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
             })
                 .AddJwtBearer(options =>
                 {
-                    var jwtSettings=configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+                    var jwtSettings = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -143,7 +102,7 @@ namespace Library.Web
                         ValidateLifetime = true
                     };
                 });
-            
+
             return services;
         }
         private static IServiceCollection ValidatorsInjection(this IServiceCollection services)
@@ -184,7 +143,7 @@ namespace Library.Web
             services.AddHangfireServer();
 
             services.AddMvc();
-            return services;    
+            return services;
         }
         private static IServiceCollection StripeInjection(this IServiceCollection services, IConfiguration configuration)
         {
@@ -213,8 +172,8 @@ namespace Library.Web
                          )
                 );
 
-                
-                
+
+
                 rateLimiterOptions.AddTokenBucketLimiter("token", tokenOptions =>
                 {
                     tokenOptions.TokenLimit = 2;
@@ -238,6 +197,19 @@ namespace Library.Web
                     config.MinimumAvailableServers = 1;
                 })
                 .AddCheck<MailHealthChecks>("mail");
+            return services;
+        }
+        private static IServiceCollection CORSInjections(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
             return services;
         }
     }

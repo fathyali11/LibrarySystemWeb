@@ -1,14 +1,4 @@
-﻿using LibrarySystem.Domain.DTO.Author;
-using LibrarySystem.Services.Services.Authors;
-using Microsoft.AspNetCore.Mvc;
-using LibrarySystem.Domain.Abstractions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.RateLimiting;
-using LibrarySystem.Services.CustomAuthorization;
-using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
-using LibrarySystem.Domain.DTO.Common;
-
-namespace Library.Web.Controllers;
+﻿namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [EnableRateLimiting("token")]

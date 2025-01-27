@@ -1,14 +1,4 @@
-﻿using System.Security.Claims;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
-using LibrarySystem.Domain.DTO.Common;
-using LibrarySystem.Domain.DTO.Reviews;
-using LibrarySystem.Services.CustomAuthorization;
-using LibrarySystem.Services.Services.Reviews;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Library.Web.Controllers;
+﻿namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ReviewsController(IReviewsServices reviewsServices) : ControllerBase
@@ -20,7 +10,7 @@ public class ReviewsController(IReviewsServices reviewsServices) : ControllerBas
     public async Task<IActionResult> AddReview(ReviewRequest request, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var result = await _reviewsServices.AddReviewAsync(userId,request, cancellationToken);
+        var result = await _reviewsServices.AddReviewAsync(userId!,request, cancellationToken);
         return result.Match<IActionResult>(
             review => CreatedAtAction(nameof(GetReview), new {Id=review.Id},review),
             error => error.ToProblem());

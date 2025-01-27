@@ -1,13 +1,4 @@
-﻿using System.Security.Claims;
-using LibrarySystem.Domain.Abstractions;
-using LibrarySystem.Domain.Abstractions.ConstValues.DefaultValues;
-using LibrarySystem.Domain.DTO.CartItems;
-using LibrarySystem.Services.CustomAuthorization;
-using LibrarySystem.Services.Services.CartItems;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-
+﻿
 namespace Library.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
