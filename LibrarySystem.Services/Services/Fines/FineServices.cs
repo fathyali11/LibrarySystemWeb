@@ -2,7 +2,7 @@
 
 namespace LibrarySystem.Services.Services.Fines;
 /// <include file='ExternalServicesDocs\FinesDocs.xml' path='/docs/members[@name="fineNotificationServices"]/FineNotificationServices'/>
-public class FineNotificationServices(ApplicationDbContext context,IUnitOfWork unitOfWork):FineRepository(context),IFineNotificationServices
+public class FineServices(ApplicationDbContext context,IUnitOfWork unitOfWork):FineRepository(context),IFineServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     /// <include file='ExternalServicesDocs\FinesDocs.xml' path='/docs/members[@name="fineNotificationServices"]/AddFine'/>

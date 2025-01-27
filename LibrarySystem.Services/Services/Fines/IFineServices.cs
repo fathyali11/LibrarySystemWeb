@@ -1,5 +1,5 @@
 ﻿namespace LibrarySystem.Services.Services.Fines;
-public interface IFineNotificationServices:IFineRepository
+public interface IFineServices:IFineRepository
 {
     Task AddFine();
 }
