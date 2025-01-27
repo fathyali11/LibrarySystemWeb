@@ -52,28 +52,28 @@ builder.Services.ServicesInjection(builder.Configuration);
 
 var app = builder.Build();
 
-//using(var scope=app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var BorrowedBookNotificationService = services.GetRequiredService<IBorrowedBookNotificationServices>();
-//    var fineNoteficationServices = services.GetRequiredService<IFineNotificationServices>();
-//    var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var BorrowedBookNotificationService = services.GetRequiredService<IBorrowedBookNotificationServices>();
+    var fineNoteficationServices = services.GetRequiredService<IFineServices>();
+    var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
 
-    
-//    recurringJobManager.AddOrUpdate(
-//        "AddFine",
-//        () => fineNoteficationServices.AddFine(),
-//        Cron.Daily);
-//    recurringJobManager.AddOrUpdate(
-//        "SendNotificationToBorrower",
-//        () => BorrowedBookNotificationService.SendFineNotificationToBorrower(),
-//        Cron.Daily);
-//    recurringJobManager.AddOrUpdate(
-//        "SendReminderNotificationToBorrower",
-//        () => BorrowedBookNotificationService.SendReminderNotificationToBorrower(),
-//        Cron.Daily);
 
-//}
+    recurringJobManager.AddOrUpdate(
+        "AddFine",
+        () => fineNoteficationServices.AddFine(),
+        Cron.Daily);
+    recurringJobManager.AddOrUpdate(
+        "SendNotificationToBorrower",
+        () => BorrowedBookNotificationService.SendFineNotificationToBorrower(),
+        Cron.Daily);
+    recurringJobManager.AddOrUpdate(
+        "SendReminderNotificationToBorrower",
+        () => BorrowedBookNotificationService.SendReminderNotificationToBorrower(),
+        Cron.Daily);
+
+}
 
 app.UseStaticFiles();
 app.MapStaticAssets();

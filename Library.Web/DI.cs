@@ -29,7 +29,7 @@
             services.AddScoped<IBorrowedBookServices, BorrowedBookServices>();
             services.AddScoped<IPaymentServices, PaymentServices>();
             services.AddScoped<IFineRepository, FineRepository>();
-            services.AddScoped<IFineNotificationServices, FineNotificationServices>();
+            services.AddScoped<IFineServices, FineServices>();
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, ApplicationAuthorizationPolicyProvider>();
             services.AddScoped<IRoleRepository, RoleRepository>();
