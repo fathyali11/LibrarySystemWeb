@@ -4,12 +4,15 @@ using Newtonsoft.Json.Linq;
 namespace LibrarySystem.Services.Services.Notifications;
 public class BorrowedBookNotificationServices(IUnitOfWork unitOfWork,
     IEmailSender emailSender,
-    IOptions<EmailOptions> options,IFineNotificationServices fineServices) : IBorrowedBookNotificationServices
+    IOptions<EmailOptions> options,IFineServices fineServices) : IBorrowedBookNotificationServices
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IEmailSender _emailSender = emailSender;
     private readonly EmailOptions _options = options.Value;
-    private readonly IFineNotificationServices _fineServices = fineServices;
+    private readonly IFineServices _fineServices = fineServices;
+    /// <summary>
+    /// send for all users who have borrowed books and the due date is today
+    /// </summary>
     public async Task SendFineNotificationToBorrower()
     {
         var fines=await _unitOfWork.FineRepository.GetAllWithUserAndBookAsync(x => !x.IsPaid);
@@ -19,6 +22,9 @@ public class BorrowedBookNotificationServices(IUnitOfWork unitOfWork,
                 fine.BooksTitle, fine.DueAt, fine.Amount, fine.TotalAmount);
         }
     }
+    /// <summary>
+    /// send for all users who have borrowed books and the due date is tomorrow
+    /// </summary>
     public async Task SendReminderNotificationToBorrower()
     {
         var tomorrow = DateTime.Now.AddDays(1).Date;
