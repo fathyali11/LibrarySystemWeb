@@ -1,13 +1,9 @@
-using System.Reflection;
-using Hangfire;
 using HealthChecks.UI.Client;
 using Library.Web;
 using Library.Web.ApiDocumentation;
-using LibrarySystem.Domain.Abstractions;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 using Serilog;
-using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 
 
