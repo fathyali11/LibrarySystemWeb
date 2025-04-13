@@ -4,7 +4,7 @@ public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
     HybridCache hybridCache,
-    IWebHostEnvironment webHostEnvironment) : BookRepository(context, mapper), IBookServices
+    IWebHostEnvironment webHostEnvironment,ILogger<BookServices> logger) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly HybridCache _hybridCache = hybridCache;
@@ -35,6 +35,10 @@ public class BookServices(ApplicationDbContext context,
         var imagePath = await SaveFile(request.Image, _imagePath);
         book.FilePath = $"https://localhost:7157//books/{bookPath}";
         book.ImagePath = $"https://localhost:7157//images/{imagePath}";
+
+
+
+        logger.LogInformation("file path {book.FilePath} \n image path {book.ImagePath}",book.FilePath,book.ImagePath);
         book.RandomTitle= bookPath;
         book.RandomImageName=imagePath;
 
