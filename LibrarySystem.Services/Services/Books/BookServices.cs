@@ -1,14 +1,18 @@
-﻿namespace LibrarySystem.Services.Services.Books;
+﻿using LibrarySystem.Services.Services.BlobStorages;
+
+namespace LibrarySystem.Services.Services.Books;
 /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/BookServices'/>
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
     HybridCache hybridCache,
-    IWebHostEnvironment webHostEnvironment,ILogger<BookServices> logger) : BookRepository(context, mapper), IBookServices
+    IWebHostEnvironment webHostEnvironment,ILogger<BookServices> logger,
+    IBlobStorageService blobStorageService) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
+    private readonly IBlobStorageService _blobStorageService = blobStorageService;
     private readonly string _bookPath = $"{webHostEnvironment.WebRootPath}\\books";
     private readonly string _imagePath = $"{webHostEnvironment.WebRootPath}\\images";
 
@@ -31,15 +35,17 @@ public class BookServices(ApplicationDbContext context,
         
         Book book = _mapper.Map<Book>(request);
 
-        var bookPath=await SaveFile(request.Document, _bookPath);
-        var imagePath = await SaveFile(request.Image, _imagePath);
-        book.FilePath = $"https://localhost:7157//books/{bookPath}";
-        book.ImagePath = $"https://localhost:7157//images/{imagePath}";
+        // var bookPath=await SaveFile(request.Document, _bookPath);
+        var filePath  = await _blobStorageService.UploadFileAsync(request.Description, request.Document,"doc");
+        var imagePath = await _blobStorageService.UploadFileAsync(request.Description, request.Image, "image");
+        book.FilePath = filePath;
+        book.ImagePath = imagePath;
+
 
 
 
         logger.LogInformation("file path {book.FilePath} \n image path {book.ImagePath}",book.FilePath,book.ImagePath);
-        book.RandomTitle= bookPath;
+        book.RandomTitle= filePath;
         book.RandomImageName=imagePath;
 
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);

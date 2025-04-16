@@ -1,4 +1,6 @@
-﻿namespace Library.Web
+﻿using LibrarySystem.Services.Services.BlobStorages;
+
+namespace Library.Web
 {
     public static class DI
     {
@@ -37,6 +39,7 @@
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IReviewsRepository, ReviewsRepository>();
             services.AddScoped<IReviewsServices, ReviewsServices>();
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
 
 
 
@@ -58,7 +61,8 @@
                 .HangfireInjection(configuration)
                 .StripeInjection(configuration)
                 .RateLimitingInjection()
-                .HealthCheckInjection();
+                .HealthCheckInjection()
+                .ImageBlobStorageInjection(configuration);
         }
 
         private static IServiceCollection AuthenticationInjection(this IServiceCollection services, IConfiguration configuration)
@@ -121,6 +125,16 @@
         {
             services.AddOptions<EmailOptions>()
                 .Bind(configuration.GetSection(nameof(EmailOptions)))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            return services;
+        }
+
+        private static IServiceCollection ImageBlobStorageInjection(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<BlobSettings>()
+                .Bind(configuration.GetSection(nameof(BlobSettings)))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
