@@ -87,8 +87,7 @@ try
     app.UseExceptionHandler();
     app.UseHttpsRedirection();
     app.UseSerilogRequestLogging();
-    if (app.Environment.IsDevelopment())
-    {
+ 
         app.MapOpenApi();
         app.MapScalarApiReference(option =>
         {
@@ -99,7 +98,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
 
-    }
+    
     app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();

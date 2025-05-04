@@ -9,12 +9,6 @@ public class BookMapping:Profile
     public BookMapping()
     {
         CreateMap<CreateBookRequest, Book>()
-            .ForMember(dest => dest.Description, option => option.MapFrom(src => src.Description))
-            .ForMember(dest => dest.Quantity, option => option.MapFrom(src => src.Quantity))
-            .ForMember(dest => dest.PriceForBuy, option => option.MapFrom(src => src.PriceForBuy))
-            .ForMember(dest => dest.PriceForBorrow, option => option.MapFrom(src => src.PriceForBorrow))
-            .ForMember(dest => dest.CategoryId, option => option.MapFrom(src => src.CategoryId))
-            .ForMember(dest => dest.AuthorId, option => option.MapFrom(src => src.AuthorId))
             .ForMember(dest=>dest.Title, option => option.MapFrom(src=>src.Document.FileName))
             .ForMember(dest=>dest.FileContentType, option => option.MapFrom(src=>src.Document.ContentType))
             .ForMember(dest=>dest.FileExtension, option => option.MapFrom(src=> Path.GetExtension(src.Document.FileName)))

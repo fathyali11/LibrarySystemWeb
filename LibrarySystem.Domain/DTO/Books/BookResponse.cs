@@ -9,7 +9,9 @@ public record BookResponse(
     bool IsActive,
     DateTime PublishedDate,
     int CategoryId,
-    int AuthorId,
-    string FilePath,
-    string ImagePath
-    );
+    int AuthorId
+    )
+{
+    public string? ImagePath { get; set; }
+    public string? FilePath { get; set; }
+}

@@ -5,16 +5,13 @@ namespace LibrarySystem.Services.Services.Books;
 public class BookServices(ApplicationDbContext context,
     IMapper mapper,
     IUnitOfWork unitOfWork,
-    HybridCache hybridCache,
-    IWebHostEnvironment webHostEnvironment,ILogger<BookServices> logger,
+    HybridCache hybridCache,ILogger<BookServices> logger,
     IBlobStorageService blobStorageService) : BookRepository(context, mapper), IBookServices
 {
     private readonly IUnitOfWork _unitOfWork=unitOfWork;
     private readonly HybridCache _hybridCache = hybridCache;
     private readonly IMapper _mapper=mapper;
     private readonly IBlobStorageService _blobStorageService = blobStorageService;
-    private readonly string _bookPath = $"{webHostEnvironment.WebRootPath}\\books";
-    private readonly string _imagePath = $"{webHostEnvironment.WebRootPath}\\images";
 
 
 
@@ -36,8 +33,8 @@ public class BookServices(ApplicationDbContext context,
         Book book = _mapper.Map<Book>(request);
 
         // var bookPath=await SaveFile(request.Document, _bookPath);
-        var filePath  = await _blobStorageService.UploadFileAsync(request.Description, request.Document,"doc");
-        var imagePath = await _blobStorageService.UploadFileAsync(request.Description, request.Image, "image");
+        var filePath  = await _blobStorageService.UploadFileAsync(request.Document.FileName, request.Document,"doc");
+        var imagePath = await _blobStorageService.UploadFileAsync(request.Image.FileName, request.Image, "image");
         book.FilePath = filePath;
         book.ImagePath = imagePath;
 
@@ -45,8 +42,7 @@ public class BookServices(ApplicationDbContext context,
 
 
         logger.LogInformation("file path {book.FilePath} \n image path {book.ImagePath}",book.FilePath,book.ImagePath);
-        book.RandomTitle= filePath;
-        book.RandomImageName=imagePath;
+        
 
         var result = await _unitOfWork.BookRepository.AddAsync(book, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
@@ -79,7 +75,13 @@ public class BookServices(ApplicationDbContext context,
                     }
                      );
 
-        if(!string.IsNullOrEmpty(request.SearchTerm))
+        //if we work with local azureit
+        foreach (var bookEntity in books)
+        {
+            bookEntity.FilePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.FilePath, "file")}";
+            bookEntity.ImagePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.ImagePath, "image")}";
+        }
+        if (!string.IsNullOrEmpty(request.SearchTerm))
             books = books.Where(x => x.Title.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase));
 
         if(!string.IsNullOrEmpty(request.SortTerm))
@@ -99,6 +101,9 @@ public class BookServices(ApplicationDbContext context,
         if(book == null) 
             return BookErrors.NotFound;
         var response=_mapper.Map<BookResponse>(book);
+        // if we work with local azureit
+        response.FilePath += $"?{_blobStorageService.GenerateSasToken(book.FilePath, "file")}";
+        response.ImagePath += $"?{_blobStorageService.GenerateSasToken(book.ImagePath, "image")}";
         return response;
     }
     /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/UpdateBookAsync'/>
@@ -142,15 +147,13 @@ public class BookServices(ApplicationDbContext context,
         var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
         if (bookFromDb == null)
             return BookErrors.NotFound;
-        var fullPath = $"{_bookPath}\\{bookFromDb.RandomTitle}";
-        var isRemoved = await RemoveFile(fullPath);
+        var isRemoved =await _blobStorageService.DeleteFileAsync(bookFromDb.Title, "doc");
         if (!isRemoved)
             return BookErrors.NotFound;
 
         _mapper.Map(request, bookFromDb);
-        var documentPath = await SaveFile(request.Document, _bookPath);
-        bookFromDb.FilePath = $"https://localhost:7157//books/{documentPath}";
-        bookFromDb.RandomTitle = documentPath;
+        bookFromDb.FilePath = await _blobStorageService.UploadFileAsync(bookFromDb.Title, request.Document, "doc");
+        
         await _unitOfWork.SaveChanges(cancellationToken);
         await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
         await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
@@ -165,46 +168,15 @@ public class BookServices(ApplicationDbContext context,
         var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
         if(bookFromDb == null)
             return BookErrors.NotFound;
-        var fullPath = $"{_imagePath}\\{bookFromDb.RandomImageName}";
-        var isRemoved =await RemoveFile(fullPath);
-        if(!isRemoved)
+        var isRemoved =await _blobStorageService.DeleteFileAsync(bookFromDb.Title, "image");
+        if (!isRemoved)
             return BookErrors.NotFound;
 
         _mapper.Map(request, bookFromDb);
-        var imagePath = await SaveFile(request.Image, _imagePath);
-        bookFromDb.ImagePath = $"https://localhost:7157//images/{imagePath}";
-        bookFromDb.RandomImageName=imagePath;
+        bookFromDb.ImagePath =await _blobStorageService.UploadFileAsync(request.Image.FileName, request.Image, "image");
         await _unitOfWork.SaveChanges(cancellationToken);
         await _hybridCache.RemoveAsync(GeneralConsts.AllBooksCachedKey, cancellationToken);
         await _hybridCache.RemoveAsync(GeneralConsts.AllAvailableBooksCachedKey, cancellationToken);
         return _mapper.Map<BookResponse>(bookFromDb);
-    }
-
-    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/SaveFile'/>
-    private async Task<string> SaveFile(IFormFile file,string path)
-    {
-        var randomfileName = $"{Path.GetRandomFileName()}{Path.GetExtension(file.FileName)}";
-        var fullPath= Path.Combine(path, randomfileName);
-        using var stream = File.Create(fullPath);
-        await file.CopyToAsync(stream);
-
-        return randomfileName;
-    }
-    /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/RemoveFile'/>
-    private async Task<bool> RemoveFile(string path)
-    {
-        try
-        {
-            if(File.Exists(path))
-            {
-                await Task.Run(() => File.Delete(path)); 
-                return true;
-            }
-            return false;
-        }
-        catch
-        {
-            return false;
-        }
     }
 }

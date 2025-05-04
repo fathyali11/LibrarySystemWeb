@@ -6,14 +6,12 @@ public class Book
 
     // for book as a document 
     public string Title { get; set; }=string.Empty;
-    public string RandomTitle {  get; set; }=string.Empty;
     public string FileContentType {  get; set; }=string.Empty;
     public string FileExtension { get; set; } = string.Empty;
     public string FilePath {  get; set; }=string.Empty;
 
     // for book as a image 
     public string ImageName { get; set; } = string.Empty;
-    public string RandomImageName { get; set; } = string.Empty;
     public string ImageContentType { get; set; } = string.Empty;
     public string ImageExtension { get; set; } = string.Empty;
     public string ImagePath { get; set; }= string.Empty;
