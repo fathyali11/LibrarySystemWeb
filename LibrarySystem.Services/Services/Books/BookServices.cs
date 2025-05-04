@@ -75,12 +75,12 @@ public class BookServices(ApplicationDbContext context,
                     }
                      );
 
-        //if we work with local azureit
-        foreach (var bookEntity in books)
-        {
-            bookEntity.FilePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.FilePath, "file")}";
-            bookEntity.ImagePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.ImagePath, "image")}";
-        }
+        //if we work with local azureit and you need to add token to the file and image path
+        //foreach (var bookEntity in books)
+        //{
+        //    bookEntity.FilePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.FilePath, "file")}";
+        //    bookEntity.ImagePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.ImagePath, "image")}";
+        //}
         if (!string.IsNullOrEmpty(request.SearchTerm))
             books = books.Where(x => x.Title.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase));
 
