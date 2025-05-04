@@ -75,12 +75,7 @@ public class BookServices(ApplicationDbContext context,
                     }
                      );
 
-        //if we work with local azureit and you need to add token to the file and image path
-        //foreach (var bookEntity in books)
-        //{
-        //    bookEntity.FilePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.FilePath, "file")}";
-        //    bookEntity.ImagePath += $"?{_blobStorageService.GenerateSasToken(bookEntity.ImagePath, "image")}";
-        //}
+      
         if (!string.IsNullOrEmpty(request.SearchTerm))
             books = books.Where(x => x.Title.Contains(request.SearchTerm, StringComparison.OrdinalIgnoreCase));
 
@@ -101,9 +96,6 @@ public class BookServices(ApplicationDbContext context,
         if(book == null) 
             return BookErrors.NotFound;
         var response=_mapper.Map<BookResponse>(book);
-        // if we work with local azureit
-        response.FilePath += $"?{_blobStorageService.GenerateSasToken(book.FilePath, "file")}";
-        response.ImagePath += $"?{_blobStorageService.GenerateSasToken(book.ImagePath, "image")}";
         return response;
     }
     /// <include file='ExternalServicesDocs\BooksDocs.xml' path='/docs/members[@name="bookServices"]/UpdateBookAsync'/>
@@ -168,7 +160,7 @@ public class BookServices(ApplicationDbContext context,
         var bookFromDb = await _unitOfWork.BookRepository.GetByIdAsync(id);
         if(bookFromDb == null)
             return BookErrors.NotFound;
-        var isRemoved =await _blobStorageService.DeleteFileAsync(bookFromDb.Title, "image");
+        var isRemoved =await _blobStorageService.DeleteFileAsync(bookFromDb.ImageName, "image");
         if (!isRemoved)
             return BookErrors.NotFound;
 
