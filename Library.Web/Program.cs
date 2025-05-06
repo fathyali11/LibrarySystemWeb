@@ -27,6 +27,7 @@ try
 
 
 
+
     builder.Services.AddSwaggerGen(options =>
     {
         var xmlDocsPath = $"{Directory.GetCurrentDirectory()}\\ExternalEndPointDocs";
@@ -42,6 +43,34 @@ try
         {
             Console.WriteLine($"XML documentation folder not found: {xmlDocsPath}");
         }
+
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Library System", Version = "v1" });
+
+        var jwtSecurityScheme = new OpenApiSecurityScheme
+        {
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Description = "Enter JWT Bearer token",
+
+            Reference = new OpenApiReference
+            {
+                Id = "Bearer",
+                Type = ReferenceType.SecurityScheme
+            }
+        };
+
+        options.AddSecurityDefinition("Bearer", jwtSecurityScheme);
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                jwtSecurityScheme,
+                Array.Empty<string>()
+            }
+        });
     });
 
 
