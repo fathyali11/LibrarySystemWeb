@@ -53,7 +53,7 @@ try
             Name = "Authorization",
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
-            Description = "Enter JWT Bearer token",
+            Description = "Enter Your JWT Bearer token",
 
             Reference = new OpenApiReference
             {
